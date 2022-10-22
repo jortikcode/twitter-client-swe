@@ -1,7 +1,7 @@
 import React from 'react'
 import StileHomepage from '../StileHomepage.module.css';
 
-function Contenuto () {
+function ContenutoHomepage () {
     return (
         <React.Fragment>
             <h1 className={StileHomepage.Titolo}>La Ghigliottina</h1>
@@ -11,4 +11,4 @@ function Contenuto () {
     )
 }
 
-export default Contenuto
+export default ContenutoHomepage
