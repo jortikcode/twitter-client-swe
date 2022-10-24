@@ -1,0 +1,5 @@
+/api/search?query=foo
+dove foo è il cosa cercare 
+per una ricerca di un hashtag diventa query=%23foo
+per una ricerca di un utente diventa query=%40foo
+ritorna un JSON contenente al massimo 10 oggetti di questo tipo [{"edit_history_tweet_ids":[lista_di_id],"id":id_del_tweet,"text":contenuto_del_tweet}]
