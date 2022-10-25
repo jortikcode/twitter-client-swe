@@ -8,7 +8,7 @@ export const theme = (state = initialState, data) => {
     switch(data.type){
         case TOGGLE_COLOR_MODE:
             return {
-                ...initialState,
+                ...state,
                 darkMode: !data.payload.darkMode
             }
         default:
