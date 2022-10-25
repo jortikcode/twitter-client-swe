@@ -23,7 +23,7 @@ function ContenutoHomepage () {
                             <p className="text-3xl dark:text-white">Puoi effettuare ricerche di tweet e filtrarli come vuoi tu!</p>
                         </article>
                         <article className="order-5 flex justify-center items-center">
-                            <p className="text-3xl dark:text-white">Una volta effettuata la ricerca puoi visualizzare i risultati tantissimi modi diversi!</p>
+                            <p className="text-3xl dark:text-white">Una volta effettuata la ricerca puoi visualizzare i risultati in tantissimi modi diversi!</p>
                         </article>
                         <img className="order-6" alt="immagine illustrativa" src={`/images/${darkMode ? "visualize-dark.svg" : "visualize.svg"}`} />
                     </div>
