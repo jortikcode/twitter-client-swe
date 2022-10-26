@@ -22,10 +22,12 @@ const Search = () => {
                 <div className="flex flex-col gap-4">
                     <label className="text-3xl dark:text-white" htmlFor="query"> Cosa vorresti cercare? </label>
                     <input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="query" id="query" type="text" placeholder="Hashtag o keyword" {...register("query", {
+                        required: "Non e' possibile avviare la ricerca",
                         pattern: {
                             value: /^([#@])?[a-zA-Z0-9]+$/},
                             message: "Testo non valido, la ricerca accetta hashtag, utenti o "
                     })} />
+                    { errors.query && <p className="dark:text-red-300 text-red-600"> { errors.query.message } </p> }
                 </div>
                 <button className="text-3xl dark:text-white bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit"> Cerca </button>       
                 { (textTweets.length > 0) && (textTweets.map(tweet => (<p>{tweet}</p>))) }
