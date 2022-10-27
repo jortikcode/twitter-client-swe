@@ -1,4 +1,5 @@
 import React from "react"
+import TogglerColor from "./TogglerColor"
 
 function Navbar() { 
 	return (
@@ -9,7 +10,10 @@ function Navbar() {
 				</div>
 				<ul className="flex md:flex-row flex-col">
 					<li className="mx-4 my-6 md:my-0">
-						<a href="#" className="text-lg dark:text-sky-400 hover:text-cyan-500 duration-500">Home</a>
+						<a href="..." className="text-lg font-semibold dark:text-sky-400 hover:text-cyan-500 duration-500">Home</a>
+					</li>
+					<li className="mx-4 my-6 md:my-0">
+						<TogglerColor />
 					</li>
 				</ul>
 			</nav>
