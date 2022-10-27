@@ -1,18 +1,20 @@
-const express = require("express");
-const cors = require("cors");
-const path = require("path");
-const api = require("./twitterfetch");
+import express, { json, urlencoded } from "express";
+import cors from "cors";
+import { join } from "path";
+import api from "./twitterfetch.js";
+import * as url from 'url';
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const app = express();
 
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(json());
+app.use(urlencoded({ extended: false }));
+app.use(express.static(join(__dirname, 'build')));
 app.use("/api", api);
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+    res.sendFile(join(__dirname, 'build', 'index.html'));
 });
 
 const port = 3000;

@@ -2,13 +2,21 @@
 dove foo è il cosa cercare 
 per una ricerca di un hashtag diventa query=%23foo
 per una ricerca di un utente diventa query=%40foo
-ritorna un JSON contenente al massimo 10 oggetti di questo tipo [{"edit_history_tweet_ids":[lista_di_id],"id":id_del_tweet,"text":contenuto_del_tweet}]
+ritorna un JSON contenente al massimo "max_results" oggetti con i seguenti campi:
+- id
+- text
+- edit_history_tweet_ids
+- entities
+- attachments
+- referenced_tweets
+
+Per maggiori informazioni consultare la documentazione di twitter https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference/get-tweets-search-recent
 
 Errori:
 In caso di errore della richiesta verrà ritornato un JSON del tipo [{ error: "testo dell'errore" }]
 
 Parametri opzionali aggiuntivi:
-
+- max_results=INT (il massimo è 100 il default è 10)
 - start_time=YYYY-MM-DDTHH:mm:ssZ
 - end_time=YYYY-MM-DDTHH:mm:ssZ
 (dove la T e la Z sono caratteri costanti nella stringa)
