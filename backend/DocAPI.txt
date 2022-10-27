@@ -3,3 +3,13 @@ dove foo è il cosa cercare
 per una ricerca di un hashtag diventa query=%23foo
 per una ricerca di un utente diventa query=%40foo
 ritorna un JSON contenente al massimo 10 oggetti di questo tipo [{"edit_history_tweet_ids":[lista_di_id],"id":id_del_tweet,"text":contenuto_del_tweet}]
+
+Errori:
+In caso di errore della richiesta verrà ritornato un JSON del tipo [{ error: "testo dell'errore" }]
+
+Parametri opzionali aggiuntivi:
+
+- start_time=YYYY-MM-DDTHH:mm:ssZ
+- end_time=YYYY-MM-DDTHH:mm:ssZ
+(dove la T e la Z sono caratteri costanti nella stringa)
+Le api di twitter permettono la ricerca solo nell'ultima settimana quindi date più distanti di una settimana daranno un errore

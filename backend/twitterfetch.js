@@ -18,6 +18,11 @@ router.get("/search", async (req, res) => {
     if (!params.query) {
       throw "Paramentri per la richiesta mancanti";
     }
+    if(params.start_time && params.end_time){
+      if(Date.parse(params.start_time) > Date.parse(params.end_time)){
+        throw "Date non valide, la data di inizio è dopo della data di fine";
+      }
+    }
     if (params.start_time) {
       const start = Date.parse(params.start_time);
       if (start < today - oneWeekTimestamp) {
