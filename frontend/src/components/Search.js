@@ -3,30 +3,43 @@ import { useForm } from 'react-hook-form'
 import { useSelector, useDispatch } from 'react-redux'
 import { searchAction } from '../actions/customActions'
 
+// Ritorna la data in formato ISO
 function formatISO(date){
     return date.toISOString();
 }
 
+// Ritorna la data in formato YYYY-MM-DD, l'argomento e' una data in formato ISO 
 function formatYYYYMMDD(isoDate){
     return isoDate.split('T')[0];
 }
 
 const Search = () => {
+    // Espressioni regolari per la ricerca tramite hashtag (@hashtag) o nome utente (@username)
+    const hashtagSearchRegex = new RegExp("^(#)[a-zA-Z0-9]+$");
+    const userSearchRegex = new RegExp("^(@)[a-zA-Z0-9]+$");
+
+    // Timestamp di una settimana: 7 * 24 * 60 * 60 * 100
     const ONE_WEEK_TIMESTAMP = 604800000;
+    // Timestamp di adesso
     let now = new Date(Date.now());
+    // Timestamp di una settimana fa
     let oneWeekAgo = formatISO(new Date(now - ONE_WEEK_TIMESTAMP));
     now = formatISO(now);
 
+    // Oggetti utile per la manipolazione del form con lo hook useForm
     const { 
         register, 
         handleSubmit, 
         formState: { errors } } = useForm();
+    // Il dispatch viene utilizzato per riuscire a manipolare lo stato centralizzato di redux
     const dispatch = useDispatch();
     const { textTweets } = useSelector(state => state.tweets);
     const [ startDateFlag, setStartDateFlag ] = useState(false);
     const [ dateError, setDateError ] = useState(false);
 
+    // Funzione di submit del form
     const onSubmit = (data) => {
+        // Se le date sono state settate, allora bisogna prenderne il formato ISO
         data.startDate = data.startDate ? formatISO(new Date(data.startDate)) : oneWeekAgo;
         data.endDate = data.endDate ? formatISO(new Date(data.endDate)) : now;
 
@@ -36,6 +49,7 @@ const Search = () => {
             setDateError(true);
         }else{      
             setDateError(false);
+            // Si attiva l'azione per la ricerca e si aggiorna lo stato centralizzato
             dispatch(searchAction({
                 query: data.query,
                 startDate: data.startDate,
