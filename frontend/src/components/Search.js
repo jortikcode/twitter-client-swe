@@ -47,7 +47,12 @@ const Search = () => {
         if (data.startDate > data.endDate){
             data.endDate = now;
             setDateError(true);
-        }else{      
+        }else{
+            // Se si tratta di una ricerca di un hashtag/utente allora bisogna cambiare la query
+            if (hashtagSearchRegex.test(data.query))
+                data.query = "%23"+data.query.split('#')[1];
+            else if (userSearchRegex.test(data.query))
+                data.query = "%40"+data.query.split('@')[1];
             setDateError(false);
             // Si attiva l'azione per la ricerca e si aggiorna lo stato centralizzato
             dispatch(searchAction({
