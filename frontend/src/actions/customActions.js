@@ -15,7 +15,7 @@ export const themeAction = (darkMode) => {
 // Azione in cui viene fatta la chiamata alla API /search passandone la parola chiave
 export const searchAction = (data) => async (dispatch) => {
     // Richiesta fetch alla API
-    await fetch(`http://localhost:8000/api/search?query=${data.query}&start_time=${data.startDate}&end_time=${data.endDate}`)
+    await fetch(`/api/search?query=${data.query}&start_time=${data.startDate}&end_time=${data.endDate}`)
     .then(res => {
         if (!res.ok)
             // Ricerca falllita
