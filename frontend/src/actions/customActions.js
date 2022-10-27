@@ -12,8 +12,8 @@ export const themeAction = (darkMode) => {
 }
 
 // Azione in cui viene fatta la chiamata alla API /search passandone la parola chiave
-export const keywordSearch = (query) => async (dispatch) => {
-    const res = await fetch(`/api/search?query=${query}`)
+export const searchAction = (data) => async (dispatch) => {
+    const res = await fetch(`/api/search?query=${data.query}`)
     .then(res => {
         if (!res.ok)
             return searchFail(); 

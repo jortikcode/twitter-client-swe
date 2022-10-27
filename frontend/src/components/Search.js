@@ -1,16 +1,22 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useSelector, useDispatch } from 'react-redux'
-import { keywordSearch } from '../actions/customActions'
+import { searchAction } from '../actions/customActions'
 
 function formatISO(date){
     return date.toISOString();
 }
 
+function formatYYYYMMDD(isoDate){
+    return isoDate.split('T')[0];
+}
+
 const Search = () => {
     const ONE_WEEK_TIMESTAMP = 604800000;
-    const now = new Date(Date.now());
-    const oneWeekAgo = new Date(now - ONE_WEEK_TIMESTAMP);
+    let now = new Date(Date.now());
+    let oneWeekAgo = formatISO(new Date(now - ONE_WEEK_TIMESTAMP));
+    now = formatISO(now);
+
     const { 
         register, 
         handleSubmit, 
@@ -18,19 +24,25 @@ const Search = () => {
     const dispatch = useDispatch();
     const { textTweets } = useSelector(state => state.tweets);
     const [ startDateFlag, setStartDateFlag ] = useState(false);
-    const [ startDate, setStartDate ] = useState(formatISO(new Date(oneWeekAgo)).split('T')[0]);
+    const [ dateError, setDateError ] = useState(false);
 
     const onSubmit = (data) => {
-        console.log({
-            query: data.query,
-            startDate: formatISO(new Date(data.startDate)),
-            endDate: formatISO(new Date(data.endDate))
-       });
-        dispatch(keywordSearch({
-             query: data.query,
-             startDate: formatISO(new Date(data.startDate)),
-             endDate: formatISO(new Date(data.endDate))
-        }));
+        data.startDate = data.startDate ? formatISO(new Date(data.startDate)) : oneWeekAgo;
+        data.endDate = data.endDate ? formatISO(new Date(data.endDate)) : now;
+
+        // La data di fine deve venire dopo la data di inizio della finestra temporale
+        if (data.startDate > data.endDate){
+            data.endDate = now;
+            setDateError(true);
+        }else{      
+            setDateError(false);
+            dispatch(searchAction({
+                query: data.query,
+                startDate: data.startDate,
+                endDate: data.endDate
+            }));
+        }
+        
     }
 
     return (
@@ -59,26 +71,23 @@ const Search = () => {
                         <div className="flex gap-4 items-center">
                             <label className="text-center text-lg dark:text-white" htmlFor="startDateFlag"> Da </label>
                             <input className="border border-black rounded dark:border-0 p-3" type="date"
-                            min={formatISO(oneWeekAgo).split('T')[0]}
-                            max={formatISO(now).split('T')[0]} {...register("startDate", {
-                                onChange: event => {
-                                    setStartDate(event.target.value);
-                                },
-                                required: "Data di inizio mancante"
-                            })}
-                            value={startDate} />
+                            min={formatYYYYMMDD(oneWeekAgo)}
+                            max={formatYYYYMMDD(now)} {...register("startDate", {
+                                required: startDateFlag ? "Manca la data di fine" : false
+                            })} />
                         { errors.startDate && <p className="text-center dark:text-red-300 text-red-600"> { errors.startDate.message } </p> } 
                         </div>
                         <div className="flex gap-4 items-center">
                             <label className="text-center text-lg dark:text-white" htmlFor="startDateFlag"> A </label>
                             <input className="border border-black rounded dark:border-0 p-3" type="date"
-                            min={formatISO(new Date(startDate)).split('T')[0]}
-                            max={formatISO(now).split('T')[0]} {...register("endDate")} />
-                        { errors.endDate && <p className="text-center dark:text-red-300 text-red-600"> { errors.endDate.message } </p> } 
+                            min={formatYYYYMMDD(oneWeekAgo)}
+                            max={formatYYYYMMDD(now)} {...register("endDate", {
+                                required: startDateFlag ? "Manca la data di fine" : true
+                            })} />
+                        { (errors.endDate && <p className="text-center dark:text-red-300 text-red-600"> { errors.endDate.message } </p>)
+                        || (dateError && <p className="text-center dark:text-red-300 text-red-600"> Errore, prova a cercare con un'altra data di fine</p>) } 
                         </div>
-                    </> 
-                          
-                )}
+                    </>)}
                 <button className="text-3xl dark:text-white bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit"> Cerca </button>       
                 { (textTweets.length > 0) && (textTweets.map(tweet => (<p>{tweet}</p>))) }
             </form>
