@@ -41,6 +41,7 @@ router.get("/search", async (req, res) => {
       "geo",
       "id",
       "text",
+      "created_at"
     ];
     params["expansions"] = [
       "attachments.media_keys",

@@ -18,10 +18,10 @@ const Search = () => {
     const hashtagSearchRegex = new RegExp("^(#)[a-zA-Z0-9]+$");
     const userSearchRegex = new RegExp("^(@)[a-zA-Z0-9]+$");
 
-    // Timestamp di una settimana: 7 * 24 * 60 * 60 * 100
-    const ONE_WEEK_TIMESTAMP = 604800000;
+    // Timestamp di una settimana: 6 * 24 * 60 * 60 * 1000
+    const ONE_WEEK_TIMESTAMP = 6 * 24 * 60 * 60 * 1000;
     // Timestamp di adesso
-    let now = new Date(Date.now());
+    let now = new Date(formatYYYYMMDD(formatISO(new Date(Date.now()))));
     // Timestamp di una settimana fa
     let oneWeekAgo = formatISO(new Date(now - ONE_WEEK_TIMESTAMP));
     now = formatISO(now);
@@ -33,7 +33,7 @@ const Search = () => {
         formState: { errors } } = useForm();
     // Il dispatch viene utilizzato per riuscire a manipolare lo stato centralizzato di redux
     const dispatch = useDispatch();
-    const { textTweets } = useSelector(state => state.tweets);
+    const { textTweets, users, noMatch, creationDates } = useSelector(state => state.tweets);
     const [ startDateFlag, setStartDateFlag ] = useState(false);
     const [ dateError, setDateError ] = useState(false);
 
@@ -55,21 +55,28 @@ const Search = () => {
                 data.query = "%40"+data.query.split('@')[1];
             setDateError(false);
             // Si attiva l'azione per la ricerca e si aggiorna lo stato centralizzato
-            dispatch(searchAction({
-                query: data.query,
-                startDate: data.startDate,
-                endDate: data.endDate
-            }));
+            if (data.startDate !== oneWeekAgo && data.endDate !== now)
+                // E' stato settato un intervallo temporale dall'utente
+                dispatch(searchAction({
+                    query: data.query,
+                    startDate: data.startDate,
+                    endDate: data.endDate
+                }));
+            else
+                // Non e' stato settato alcun intervallo temporale
+                dispatch(searchAction({
+                    query: data.query
+                }));
         }
         
     }
 
     return (
-        <div className="flex w-full p-5 justify-center items-center dark:bg-gray-900">
+        <div className="flex flex-col w-full p-5 justify-center items-center dark:bg-gray-900">
             <form className="flex w-full flex-col justify-center items-center gap-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-col gap-4">
-                    <label className="text-center text-3xl dark:text-white" htmlFor="query"> Cosa vorresti cercare? </label>
-                    <input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="query" id="query" type="text" placeholder="Hashtag o keyword" {...register("query", {
+                    <label className="text-center text-3xl dark:text-sky-400 text-black" htmlFor="query"> Cosa vorresti cercare? </label>
+                    <input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="query" id="query" type="text" placeholder="#hashtag, keyword" {...register("query", {
                         required: "Testo mancante",
                         pattern: {
                             message: "Testo non valido",
@@ -92,7 +99,7 @@ const Search = () => {
                             <input className="border border-black rounded dark:border-0 p-3" type="date"
                             min={formatYYYYMMDD(oneWeekAgo)}
                             max={formatYYYYMMDD(now)} {...register("startDate", {
-                                required: startDateFlag ? "Manca la data di fine" : false
+                                required: startDateFlag ? "Manca la data di inizio" : false
                             })} />
                         { errors.startDate && <p className="text-center dark:text-red-300 text-red-600"> { errors.startDate.message } </p> } 
                         </div>
@@ -108,8 +115,17 @@ const Search = () => {
                         </div>
                     </>)}
                 <button className="text-3xl dark:text-white bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit"> Cerca </button>       
-                { (textTweets.length > 0) && (textTweets.map(tweet => (<p>{tweet}</p>))) }
             </form>
+            { ((textTweets.length > 0) && (
+                <div className="pt-8 flex gap-y-10 flex-col justify-center md:w-4/6 w-4/5 dark:text-white"> 
+                    {textTweets.map((tweet, index) => (<p key={index}> 
+                    (<span className="text-blue-700 dark:text-green-400"> {users[index].name} (@{users[index].username}) </span>) 
+                    Ha scritto il 
+                    (<span className="text-blue-700 dark:text-green-400"> {creationDates[index].toDateString()} </span>): {tweet}</p>))}
+                </div>)) || 
+                ((noMatch) && (
+                    <p className="pt-5 pb-5 dark:text-yellow-300">Nessun risultato trovato</p>
+                ))}
         </div>
     );
 }
