@@ -55,11 +55,18 @@ const Search = () => {
                 data.query = "%40"+data.query.split('@')[1];
             setDateError(false);
             // Si attiva l'azione per la ricerca e si aggiorna lo stato centralizzato
-            dispatch(searchAction({
-                query: data.query,
-                startDate: data.startDate,
-                endDate: data.endDate
-            }));
+            if (data.startDate !== oneWeekAgo && data.endDate !== now)
+                // E' stato settato un intervallo temporale dall'utente
+                dispatch(searchAction({
+                    query: data.query,
+                    startDate: data.startDate,
+                    endDate: data.endDate
+                }));
+            else
+                // Non e' stato settato alcun intervallo temporale
+                dispatch(searchAction({
+                    query: data.query
+                }));
         }
         
     }
@@ -69,7 +76,7 @@ const Search = () => {
             <form className="flex w-full flex-col justify-center items-center gap-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-col gap-4">
                     <label className="text-center text-3xl dark:text-sky-400 text-black" htmlFor="query"> Cosa vorresti cercare? </label>
-                    <input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="query" id="query" type="text" placeholder="#hashtag, @utente, keyword" {...register("query", {
+                    <input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="query" id="query" type="text" placeholder="#hashtag, keyword" {...register("query", {
                         required: "Testo mancante",
                         pattern: {
                             message: "Testo non valido",
