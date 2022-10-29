@@ -1,5 +1,5 @@
 import { Client } from "twitter-api-sdk";
-import Express from "express";
+import Express, { query } from "express";
 const router = Express.Router();
 import dotenv from "dotenv";
 dotenv.config();
@@ -41,7 +41,7 @@ router.get("/search", async (req, res) => {
       "geo",
       "id",
       "text",
-      "created_at"
+      "created_at",
     ];
     params["expansions"] = [
       "attachments.media_keys",
@@ -52,6 +52,16 @@ router.get("/search", async (req, res) => {
       "referenced_tweets.id.author_id",
     ];
     params["media.fields"] = ["preview_image_url", "type", "url"];
+    params["place.fields"] = [
+      "contained_within",
+      "country",
+      "country_code",
+      "full_name",
+      "geo",
+      "id",
+      "name",
+      "place_type",
+    ];
     const response = await client.tweets.tweetsRecentSearch(params);
     res.send(response);
   } catch (error) {
