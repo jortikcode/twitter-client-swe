@@ -10,7 +10,20 @@ ritorna un JSON contenente al massimo "max_results" oggetti con i seguenti campi
 - attachments
 - referenced_tweets
 
-Per maggiori informazioni consultare la documentazione di twitter https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference/get-tweets-search-recent
+
+/api/getID
+permette di ottenere l'ID di un utente inserendo il suo username
+
+/api/searchID
+permette di ottenere i tweet di un utente inserendo l'ID ottenuto in precedenza.
+
+
+Per maggiori informazioni consultare la documentazione di twitter:
+https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference/get-tweets-search-recent
+https://developer.twitter.com/en/docs/twitter-api/users/lookup/api-reference/get-users-by-username-username
+https://developer.twitter.com/en/docs/twitter-api/tweets/timelines/api-reference/get-users-id-tweets
+
+
 
 Errori:
 In caso di errore della richiesta verrà ritornato un JSON del tipo [{ error: "testo dell'errore" }]
