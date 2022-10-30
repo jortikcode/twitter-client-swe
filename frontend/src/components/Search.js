@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useSelector, useDispatch } from 'react-redux'
 import { searchAction } from '../actions/customActions'
+import { REPLY, TWEET, RETWEET, NOTYPE } from '../utils/constants';
 
 // Ritorna la data in formato ISO
 function formatISO(date){
@@ -33,7 +34,7 @@ const Search = () => {
         formState: { errors } } = useForm();
     // Il dispatch viene utilizzato per riuscire a manipolare lo stato centralizzato di redux
     const dispatch = useDispatch();
-    const { textTweets, users, noMatch, creationDates } = useSelector(state => state.tweets);
+    const { textTweets, users, noMatch, creationDates, types } = useSelector(state => state.tweets);
     const [ startDateFlag, setStartDateFlag ] = useState(false);
     const [ dateError, setDateError ] = useState(false);
 
@@ -120,7 +121,10 @@ const Search = () => {
                 <div className="pt-8 flex gap-y-10 flex-col justify-center md:w-4/6 w-4/5 dark:text-white"> 
                     {textTweets.map((tweet, index) => (<p key={index}> 
                     (<span className="text-blue-700 dark:text-green-400"> {users[index].name} (@{users[index].username}) </span>) 
-                    Ha scritto il 
+                    {types[index] === REPLY ? "Ha risposto " 
+                    : types[index] === RETWEET ? "Ha retwittato " 
+                    : types[index] === TWEET ? "Ha twittato " 
+                    : NOTYPE}
                     (<span className="text-blue-700 dark:text-green-400"> {creationDates[index].toDateString()} </span>): {tweet}</p>))}
                 </div>)) || 
                 ((noMatch) && (
