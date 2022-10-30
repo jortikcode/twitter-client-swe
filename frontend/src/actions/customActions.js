@@ -5,9 +5,33 @@ import {
     NO_MATCHES
 } from './constants'
 
-function isRetweet(tweet){
+import {
+    REPLY,
+    RETWEET,
+    TWEET,
+    NOTYPE
+} from '../utils/constants'
+
+// Funzione che ritorna il tipo del tweet passato come argomento
+function getType(tweet){
     if (tweet?.referenced_tweets)
-        return tweet?.referenced_tweets[0]?.type === "retweeted" || false; 
+        switch (tweet.referenced_tweets[0]?.type){
+            case 'replied_to':
+                return REPLY;
+            case 'retweeted':
+                return RETWEET;
+            default:
+                return NOTYPE;
+        }
+    return TWEET;
+}
+
+// Ritorna il testo (campo text) del retweet in allRetweets con id che vale retweetId
+function getRetweetText(retweetId, allRetweets){
+    for (const retweet_extended of allRetweets)
+        if (retweetId === retweet_extended.id)
+            return retweet_extended?.text;
+    throw new Error("Retweet text not found");
 }
 
 /* Ritorna un array che contiene elementi del tipo
@@ -15,11 +39,11 @@ function isRetweet(tweet){
         name: ...,
         username: ...
     }
-    degli autori con id in authors_id
+    degli autori con id in authorsId
 */
-function getAuthours(authors_id, allAuthors){
+function getAuthours(authorsId, allAuthors){
     let authors_info = []
-    for (const author_id of authors_id){
+    for (const author_id of authorsId){
         authors_info.push(allAuthors.find(extended_author => {
             return extended_author.id === author_id;
         }))
@@ -51,22 +75,26 @@ export const searchAction = (data) => async (dispatch) => {
             dispatch(noMatches());
         else{
             // Array contenente gli id degli autori dei tweet ricevuti dalla richiesta
-            let authors_id = [];
+            let authorsId = [];
+            // Array contenete i tipi dei tweet: TWEET, RETWEET, REPLY
+            let types = [];
 
             // Aggiornamento stato con le nuove informazioni ottenute dalla richiesta fetch
             dispatch(searchSuccess(
                 json.data.map((tweet, index) => {
-                    authors_id.push(tweet.author_id);
-                    if (isRetweet(tweet)){
+                    authorsId.push(tweet.author_id);
+                    types.push(getType(tweet));
+                    if (types[index] === RETWEET){
                         // Si tratta di un retweet, e' necessario accedere al testo completo in un altro modo
-                        return json.includes.tweets[index]?.text;
+                        return getRetweetText(tweet.referenced_tweets[0].id, json.includes.tweets);
                     }
                     return tweet.text
                 }),
                 json.data.map(tweet => {
                     return new Date(tweet.created_at)
                 }),
-                getAuthours(authors_id, json.includes.users)
+                getAuthours(authorsId, json.includes.users),
+                types
                 ));
             }
     })
@@ -75,13 +103,14 @@ export const searchAction = (data) => async (dispatch) => {
     });
 }
 
-function searchSuccess(textTweets = [], creationDates = [], users = {}){
+function searchSuccess(textTweets = [], creationDates = [], users = {}, types = []){
     return ({
         type: SEARCH_SUCCESS,
         payload: {
             textTweets,
             creationDates,
-            users
+            users,
+            types
         }
     });
 }

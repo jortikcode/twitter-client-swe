@@ -8,7 +8,8 @@ const initialState = {
     textTweets: [],
     users: [],
     creationDates: [],
-    noMatch: false
+    noMatch: false,
+    types: []
 };
 
 export function tweets(state = initialState, data){
@@ -19,7 +20,8 @@ export function tweets(state = initialState, data){
                 textTweets: data.payload.textTweets,
                 users: data.payload.users,
                 creationDates: data.payload.creationDates,
-                noMatch: false
+                noMatch: false,
+                types: data.payload.types
             });
         case SEARCH_FAIL:
             return ({
