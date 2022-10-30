@@ -1,5 +1,5 @@
 import { Client } from "twitter-api-sdk";
-import Express, { query } from "express";
+import Express from "express";
 const router = Express.Router();
 import dotenv from "dotenv";
 dotenv.config();
