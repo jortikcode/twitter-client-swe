@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useSelector, useDispatch } from 'react-redux'
 import { searchAction } from '../actions/customActions'
-import { REPLY, TWEET, RETWEET, NOTYPE } from '../utils/constants';
+import { REPLY, TWEET, RETWEET, QUOTED, NOTYPE } from '../utils/constants';
 
 // Ritorna la data in formato ISO
 function formatISO(date){
@@ -123,7 +123,8 @@ const Search = () => {
                     (<span className="text-blue-700 dark:text-green-400"> {users[index].name} (@{users[index].username}) </span>) 
                     {types[index] === REPLY ? "Ha risposto " 
                     : types[index] === RETWEET ? "Ha retwittato " 
-                    : types[index] === TWEET ? "Ha twittato " 
+                    : types[index] === TWEET ? "Ha twittato "
+                    : types[index] === QUOTED ? "Ha citato "
                     : NOTYPE}
                     (<span className="text-blue-700 dark:text-green-400"> {creationDates[index].toDateString()} </span>): {tweet}</p>))}
                 </div>)) || 

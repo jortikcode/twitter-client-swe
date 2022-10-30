@@ -9,7 +9,8 @@ import {
     REPLY,
     RETWEET,
     TWEET,
-    NOTYPE
+    NOTYPE,
+    QUOTED
 } from '../utils/constants'
 
 // Funzione che ritorna il tipo del tweet passato come argomento
@@ -20,6 +21,8 @@ function getType(tweet){
                 return REPLY;
             case 'retweeted':
                 return RETWEET;
+            case 'quoted':
+                return QUOTED;
             default:
                 return NOTYPE;
         }
