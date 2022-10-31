@@ -56,14 +56,22 @@ const Search = () => {
                 data.query = "%40"+data.query.split('@')[1];
             setDateError(false);
             // Si attiva l'azione per la ricerca e si aggiorna lo stato centralizzato
-            if (data.startDate !== oneWeekAgo && data.endDate !== now)
+            if (data.startDate !== oneWeekAgo || data.endDate !== now){
+                // Se la data di inizio e la data di fine coincidono, la data di fine deve essere "shiftata" di 24 ore in avanti
+                if (data.endDate === data.startDate){
+                    let shiftedEndDate = new Date(data.endDate);
+                    shiftedEndDate.setDate(shiftedEndDate.getDate() + 1);
+
+                    data.endDate = formatISO(shiftedEndDate);
+                }
+
                 // E' stato settato un intervallo temporale dall'utente
                 dispatch(searchAction({
                     query: data.query,
                     startDate: data.startDate,
                     endDate: data.endDate
                 }));
-            else
+            }else
                 // Non e' stato settato alcun intervallo temporale
                 dispatch(searchAction({
                     query: data.query
