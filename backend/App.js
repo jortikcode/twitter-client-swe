@@ -13,7 +13,10 @@ app.use(urlencoded({ extended: false }));
 app.use(express.static(join(__dirname, 'build')));
 app.use("/api", api);
 
-app.get('/', (req, res) => {
+/* La route /* e' generica, fa match con ogni richiesta.
+Express verifica le route in ordine di dichiarazione, quindi le route /api non verranno inglobate
+poiche' dichiarate prima */
+app.get('/*', (req, res) => {
     res.sendFile(join(__dirname, 'build', 'index.html'));
 });
 
