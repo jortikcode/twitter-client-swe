@@ -73,7 +73,7 @@ const Search = () => {
     }
 
     return (
-        <div className="flex flex-col w-full p-5 justify-center items-center dark:bg-gray-900">
+        <div className="flex flex-col w-full min-h-screen h-auto p-5 items-center dark:bg-gray-900">
             <form className="flex w-full flex-col justify-center items-center gap-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-col gap-4">
                     <label className="text-center text-3xl dark:text-sky-400 text-black" htmlFor="query"> Cosa vorresti cercare? </label>
