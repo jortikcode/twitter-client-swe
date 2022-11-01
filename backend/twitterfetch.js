@@ -69,24 +69,31 @@ router.get("/search", async (req, res) => {
   }
 });
 
-
 router.get("/getID", async (req, res) => {
   //Username del profilo twitter
-  let params = req.query
+  let params = req.query;
   //Interrogazione della API all'URL https://api.twitter.com/2/users/by/username/:username
   const response = await client.users.findUserByUsername(params);
   res.send(response.data.id);
-})
-
-
+});
 
 router.get("/searchID", async (req, res) => {
   //ID del profilo twitter
-  let params = req.query
+  let params = req.query;
+  params["tweet.fields"] = ["geo"];
+  params["place.fields"] = [
+    "contained_within",
+    "country",
+    "country_code",
+    "full_name",
+    "geo",
+    "id",
+    "name",
+    "place_type",
+  ];
   //Interrogazione della API all'URL https://api.twitter.com/2/users/:id/tweets
   const response = await client.tweets.usersIdTweets(params);
   res.send(response);
-
-})
+});
 
 export default router;
