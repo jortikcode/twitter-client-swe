@@ -35,14 +35,14 @@ const Search = () => {
     // Il dispatch viene utilizzato per riuscire a manipolare lo stato centralizzato di redux
     const dispatch = useDispatch();
     const { textTweets, users, noMatch, creationDates, types } = useSelector(state => state.tweets);
-    const [ startDateFlag, setStartDateFlag ] = useState(false);
+    const [ intervalSearch, setIntervalSearch ] = useState(false);
     const [ dateError, setDateError ] = useState(false);
 
     // Funzione di submit del form
     const onSubmit = (data) => {
         // Se le date sono state settate, allora bisogna prenderne il formato ISO
-        data.startDate = data.startDate ? formatISO(new Date(data.startDate)) : oneWeekAgo;
-        data.endDate = data.endDate ? formatISO(new Date(data.endDate)) : now;
+        data.startDate = data.startDate && intervalSearch ? formatISO(new Date(data.startDate)) : oneWeekAgo;
+        data.endDate = data.endDate && intervalSearch ? formatISO(new Date(data.endDate)) : now;
 
         // La data di fine deve venire dopo la data di inizio della finestra temporale
         if (data.startDate > data.endDate){
@@ -56,14 +56,22 @@ const Search = () => {
                 data.query = "%40"+data.query.split('@')[1];
             setDateError(false);
             // Si attiva l'azione per la ricerca e si aggiorna lo stato centralizzato
-            if (data.startDate !== oneWeekAgo && data.endDate !== now)
+            if (data.startDate !== oneWeekAgo || data.endDate !== now){
+                // Se la data di inizio e la data di fine coincidono, la data di fine deve essere "shiftata" di 24 ore in avanti
+                if (data.endDate === data.startDate){
+                    let shiftedEndDate = new Date(data.endDate);
+                    shiftedEndDate.setDate(shiftedEndDate.getDate() + 1);
+
+                    data.endDate = formatISO(shiftedEndDate);
+                }
+
                 // E' stato settato un intervallo temporale dall'utente
                 dispatch(searchAction({
                     query: data.query,
                     startDate: data.startDate,
                     endDate: data.endDate
                 }));
-            else
+            }else
                 // Non e' stato settato alcun intervallo temporale
                 dispatch(searchAction({
                     query: data.query
@@ -73,7 +81,7 @@ const Search = () => {
     }
 
     return (
-        <div className="flex flex-col w-full p-5 justify-center items-center dark:bg-gray-900">
+        <div className="flex flex-col w-full min-h-screen h-auto p-5 items-center dark:bg-gray-900">
             <form className="flex w-full flex-col justify-center items-center gap-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-col gap-4">
                     <label className="text-center text-3xl dark:text-sky-400 text-black" htmlFor="query"> Cosa vorresti cercare? </label>
@@ -86,30 +94,30 @@ const Search = () => {
                     { errors.query && <p className="text-center dark:text-red-300 text-red-600"> { errors.query.message } </p> }
                 </div>
                 <div className="flex gap-4">
-                    <input type="checkbox" id="startDateFlag" name="startDateFlag" value={startDateFlag} onChange={
+                    <input type="checkbox" id="intervalSearch" name="intervalSearch" value={intervalSearch} onChange={
                         event => {
-                            setStartDateFlag(event.target.checked);
+                            setIntervalSearch(event.target.checked);
                         }
                     } />
-                    <label className="text-center text-lg dark:text-white" htmlFor="startDateFlag"> Invervallo di tempo </label>
+                    <label className="text-center text-lg dark:text-white" htmlFor="intervalSearch"> Invervallo di tempo </label>
                 </div>
-                {startDateFlag && (
+                {intervalSearch && (
                     <>
                         <div className="flex gap-4 items-center">
-                            <label className="text-center text-lg dark:text-white" htmlFor="startDateFlag"> Da </label>
-                            <input className="border border-black rounded dark:border-0 p-3" type="date"
+                            <label className="text-center text-lg dark:text-white" htmlFor="dataInizio"> Da </label>
+                            <input name="dataInizio" id="dataInizio" className="border border-black rounded dark:border-0 p-3" type="date"
                             min={formatYYYYMMDD(oneWeekAgo)}
                             max={formatYYYYMMDD(now)} {...register("startDate", {
-                                required: startDateFlag ? "Manca la data di inizio" : false
+                                required: intervalSearch ? "Manca la data di inizio" : false
                             })} />
                         { errors.startDate && <p className="text-center dark:text-red-300 text-red-600"> { errors.startDate.message } </p> } 
                         </div>
                         <div className="flex gap-4 items-center">
-                            <label className="text-center text-lg dark:text-white" htmlFor="startDateFlag"> A </label>
-                            <input className="border border-black rounded dark:border-0 p-3" type="date"
+                            <label className="text-center text-lg dark:text-white" htmlFor="dataFine"> A </label>
+                            <input name="dataFine" id="dataFine" className="border border-black rounded dark:border-0 p-3" type="date"
                             min={formatYYYYMMDD(oneWeekAgo)}
                             max={formatYYYYMMDD(now)} {...register("endDate", {
-                                required: startDateFlag ? "Manca la data di fine" : true
+                                required: intervalSearch ? "Manca la data di fine" : true
                             })} />
                         { (errors.endDate && <p className="text-center dark:text-red-300 text-red-600"> { errors.endDate.message } </p>)
                         || (dateError && <p className="text-center dark:text-red-300 text-red-600"> Errore, prova a cercare con un'altra data di fine</p>) } 
