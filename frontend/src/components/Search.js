@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useSelector, useDispatch } from 'react-redux'
 import { searchAction } from '../actions/customActions'
-import { REPLY, TWEET, RETWEET, QUOTED, NOTYPE } from '../utils/constants';
+import Tweet from './Tweet';
 
 // Ritorna la data in formato ISO
 function formatISO(date){
@@ -126,19 +126,20 @@ const Search = () => {
                 <button className="text-3xl dark:text-white bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit"> Cerca </button>       
             </form>
             { ((textTweets.length > 0) && (
-                <div className="pt-8 flex gap-y-10 flex-col justify-center md:w-4/6 w-4/5 dark:text-white"> 
-                    {textTweets.map((tweet, index) => (<p key={index}> 
-                    (<span className="text-blue-700 dark:text-green-400"> {users[index].name} (@{users[index].username}) </span>) 
-                    {types[index] === REPLY ? "Ha risposto " 
-                    : types[index] === RETWEET ? "Ha retwittato " 
-                    : types[index] === TWEET ? "Ha twittato "
-                    : types[index] === QUOTED ? "Ha citato "
-                    : NOTYPE}
-                    (<span className="text-blue-700 dark:text-green-400"> {creationDates[index].toDateString()} </span>): {tweet}</p>))}
-                </div>)) || 
-                ((noMatch) && (
-                    <p className="pt-5 pb-5 dark:text-yellow-300">Nessun risultato trovato</p>
-                ))}
+                <div className="pt-8 flex gap-y-10 flex-col justify-center md:w-4/6 w-4/5 dark:text-white">
+                    {textTweets.map((tweet, index) =>
+                    <Tweet 
+                    key={index}
+                    name={users[index].name} 
+                    username={users[index].username} 
+                    type={types[index]}
+                    date={creationDates[index].toDateString()}
+                    text={tweet} />)}
+                </div> 
+            )) || 
+            ((noMatch) && (
+                <p className="pt-5 pb-5 dark:text-yellow-300">Nessun risultato trovato</p>
+            ))}
         </div>
     );
 }
