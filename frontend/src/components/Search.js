@@ -129,13 +129,17 @@ const Search = () => {
                 <div className="pt-8 flex gap-y-10 flex-col justify-center md:w-4/6 w-4/5 dark:text-white">
                     {textTweets.map((tweet, index) =>
                     <Tweet 
+                    key={index}
                     name={users[index].name} 
                     username={users[index].username} 
                     type={types[index]}
                     date={creationDates[index].toDateString()}
                     text={tweet} />)}
                 </div> 
-            )) }
+            )) || 
+            ((noMatch) && (
+                <p className="pt-5 pb-5 dark:text-yellow-300">Nessun risultato trovato</p>
+            ))}
         </div>
     );
 }
