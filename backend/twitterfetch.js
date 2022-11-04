@@ -64,31 +64,35 @@ router.get("/search", async (req, res) => {
       "place_type",
     ];
     const response = await client.tweets.tweetsRecentSearch(params);
-    // Array contenente gli id degli autori dei tweet ricevuti dalla richiesta
-    let authorsId = [];
-    // Array contenete i tipi dei tweet: TWEET, RETWEET, REPLY
-    let types = [];
-    const { payload } = cr.default.searchSuccess(
-      response.data.map((tweet, index) => {
-        authorsId.push(tweet.author_id);
-        types.push(cr.default.getType(tweet));
-        if (types[index] === "RETWEET") {
-          // Si tratta di un retweet, e' necessario accedere al testo completo in un altro modo
-          return cr.default.getRetweetText(
-            tweet.referenced_tweets[0].id,
-            response.includes.tweets
-          );
-        }
-        return tweet.text;
-      }),
-      response.data.map((tweet) => {
-        return new Date(tweet.created_at);
-      }),
-      cr.default.getAuthours(authorsId, response.includes.users),
-      types
-    );
-
-    res.status(200).json(payload);
+    if (response.meta.result_count == 0)
+      // Non sono stati trovati risultati
+      res.status(200).json({no_matches: true});
+    else{
+      // Array contenente gli id degli autori dei tweet ricevuti dalla richiesta
+      let authorsId = [];
+      // Array contenete i tipi dei tweet: TWEET, RETWEET, REPLY
+      let types = [];
+      const { payload } = cr.default.searchSuccess(
+        response.data.map((tweet, index) => {
+          authorsId.push(tweet.author_id);
+          types.push(cr.default.getType(tweet));
+          if (types[index] === "RETWEET") {
+            // Si tratta di un retweet, e' necessario accedere al testo completo in un altro modo
+            return cr.default.getRetweetText(
+              tweet.referenced_tweets[0].id,
+              response.includes.tweets
+            );
+          }
+          return tweet.text;
+        }),
+        response.data.map((tweet) => {
+          return new Date(tweet.created_at);
+        }),
+        cr.default.getAuthours(authorsId, response.includes.users),
+        types
+      );
+      res.status(200).json(payload);
+    }
   } catch (error) {
     res.status(500).send({ error: error });
   }
