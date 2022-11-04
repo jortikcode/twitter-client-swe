@@ -1,17 +1,23 @@
+const REPLY = "REPLYTO";
+const TWEET = "TWEET";
+const RETWEET = "RETWEET";
+const QUOTED = "QUOTED";
+const NOTYPE = "NOTYPE";
+
 // Funzione che ritorna il tipo del tweet passato come argomento
 const getType = (tweet) => {
   if (tweet?.referenced_tweets)
     switch (tweet.referenced_tweets[0]?.type) {
       case "replied_to":
-        return "REPLY";
+        return REPLY;
       case "retweeted":
-        return "RETWEET";
+        return RETWEET;
       case "quoted":
-        return "QUOTED";
+        return QUOTED;
       default:
-        return "NOTYPE";
+        return NOTYPE;
     }
-  return "TWEET";
+  return TWEET;
 };
 
 // Ritorna il testo (campo text) del retweet in allRetweets con id che vale retweetId
