@@ -5,13 +5,15 @@ import SearchForm from './screens/SearchForm';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path='/' element={<Homepage />} />
-        <Route path='/search' element={<SearchForm />} />
-      </Routes>
-    </BrowserRouter>
+    <div id="app">
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path='/' element={<Homepage />} />
+          <Route path='/search' element={<SearchForm />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 }
 
