@@ -54,13 +54,13 @@ function searchSuccess(textTweets = [], creationDates = [], users = [], types = 
     });
 }
 
-function noMatches(){
+export function noMatches(){
     return ({
         type: NO_MATCHES
     });
 }
 
-function searchFail(){
+export function searchFail(){
     return ({
         type: SEARCH_FAIL
     });
