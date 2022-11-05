@@ -66,16 +66,24 @@ router.get("/search", async (req, res) => {
     const response = await client.tweets.tweetsRecentSearch(params);
     if (response.meta.result_count == 0)
       // Non sono stati trovati risultati
-      res.status(200).json({no_matches: true});
+      res.status(404).json({no_matches: true});
     else{
       // Array contenente gli id degli autori dei tweet ricevuti dalla richiesta
       let authorsId = [];
       // Array contenete i tipi dei tweet: TWEET, RETWEET, REPLY
       let types = [];
+      let geo = [];
+      let tweetsId = [];
+      const places = {...response.includes.places};
+      let placeIndex = 0;
       const { payload } = cr.default.searchSuccess(
         response.data.map((tweet, index) => {
           authorsId.push(tweet.author_id);
+          tweetsId.push(tweet.id);
           types.push(cr.default.getType(tweet));
+          if(tweet.geo && places){
+            geo.push(cr.default.getGeo(tweet.geo.place_id, tweet.id, places[placeIndex++]));
+          }
           if (types[index] === "RETWEET") {
             // Si tratta di un retweet, e' necessario accedere al testo completo in un altro modo
             return cr.default.getRetweetText(
@@ -91,6 +99,12 @@ router.get("/search", async (req, res) => {
         cr.default.getAuthours(authorsId, response.includes.users),
         types
       );
+      if(response.meta.next_token){
+        payload["next_token"] = response.meta.next_token;
+      }
+      if(geo.length > 0){
+        payload["geo"] = geo;
+      }
       res.status(200).json(payload);
     }
   } catch (error) {
