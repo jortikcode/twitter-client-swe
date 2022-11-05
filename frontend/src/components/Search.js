@@ -133,7 +133,7 @@ const Search = () => {
                     name={users[index].name} 
                     username={users[index].username} 
                     type={types[index]}
-                    date={creationDates[index].toDateString()}
+                    date={new Date(creationDates[index]).toDateString()}
                     text={tweet} />)}
                 </div> 
             )) || 

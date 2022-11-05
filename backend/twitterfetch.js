@@ -2,6 +2,7 @@ import { Client } from "twitter-api-sdk";
 import Express from "express";
 const router = Express.Router();
 import dotenv from "dotenv";
+import * as cr from "./utils/customResponse.js";
 dotenv.config();
 
 const oneWeekTimestamp = 604800000;
@@ -63,7 +64,35 @@ router.get("/search", async (req, res) => {
       "place_type",
     ];
     const response = await client.tweets.tweetsRecentSearch(params);
-    res.send(response);
+    if (response.meta.result_count == 0)
+      // Non sono stati trovati risultati
+      res.status(200).json({no_matches: true});
+    else{
+      // Array contenente gli id degli autori dei tweet ricevuti dalla richiesta
+      let authorsId = [];
+      // Array contenete i tipi dei tweet: TWEET, RETWEET, REPLY
+      let types = [];
+      const { payload } = cr.default.searchSuccess(
+        response.data.map((tweet, index) => {
+          authorsId.push(tweet.author_id);
+          types.push(cr.default.getType(tweet));
+          if (types[index] === "RETWEET") {
+            // Si tratta di un retweet, e' necessario accedere al testo completo in un altro modo
+            return cr.default.getRetweetText(
+              tweet.referenced_tweets[0].id,
+              response.includes.tweets
+            );
+          }
+          return tweet.text;
+        }),
+        response.data.map((tweet) => {
+          return new Date(tweet.created_at);
+        }),
+        cr.default.getAuthours(authorsId, response.includes.users),
+        types
+      );
+      res.status(200).json(payload);
+    }
   } catch (error) {
     res.status(500).send({ error: error });
   }
@@ -80,17 +109,6 @@ router.get("/getID", async (req, res) => {
 router.get("/searchID", async (req, res) => {
   //ID del profilo twitter
   let params = req.query;
-  params["tweet.fields"] = ["geo"];
-  params["place.fields"] = [
-    "contained_within",
-    "country",
-    "country_code",
-    "full_name",
-    "geo",
-    "id",
-    "name",
-    "place_type",
-  ];
   //Interrogazione della API all'URL https://api.twitter.com/2/users/:id/tweets
   const response = await client.tweets.usersIdTweets(params);
   res.send(response);
