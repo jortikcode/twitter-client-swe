@@ -3,7 +3,7 @@ import Express from "express";
 const router = Express.Router();
 import dotenv from "dotenv";
 import * as cr from "./utils/customResponse.js";
-import { sentimentAnalysis } from "./utils/sentimentAnalisys.js";
+import { sentimentAnalysis, removeTweetsNotSupported } from "./utils/sentimentAnalisys.js";
 dotenv.config();
 
 const oneWeekTimestamp = 604800000;
@@ -102,6 +102,7 @@ router.get(
       res.status(500).send({ error: error });
     }
   },
+  removeTweetsNotSupported,
   sentimentAnalysis
 );
 
