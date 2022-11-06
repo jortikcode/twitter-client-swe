@@ -46,7 +46,7 @@ function isValidDateRange(startDateString, endDateString, todayString, oneWeekAg
     return response;
 }
 
-const Search = () => {
+const SearchForm = () => {
     // Espressioni regolari per la ricerca tramite hashtag (@hashtag) o nome utente (@username)
     const hashtagSearchRegex = new RegExp("^(#)[a-zA-Z0-9]+$");
     const userSearchRegex = new RegExp("^(@)[a-zA-Z0-9]+$");
@@ -158,4 +158,4 @@ const Search = () => {
     );
 }
 
-export default Search;
+export default SearchForm;
