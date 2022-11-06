@@ -1,6 +1,5 @@
 import { 
     NO_MATCHES,
-    SEARCH_FAIL,
     SEARCH_SUCCESS
 } from "../actions/constants";
 
@@ -22,14 +21,6 @@ export function tweets(state = initialState, data){
                 creationDates: data.payload.creationDates,
                 noMatch: false,
                 types: data.payload.types
-            });
-        case SEARCH_FAIL:
-            return ({
-                ...state,
-                textTweets: [],
-                users: {},
-                creationDates: [],
-                noMatch: false
             });
         case NO_MATCHES:
             return ({

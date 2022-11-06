@@ -63,6 +63,14 @@ const searchSuccess = (
   };
 };
 
+/* Prende il placeID, il tweetID
+  e places direttamente dalla risposta
+  Ritorna un array con le coordinate
+  e il tweetID di riferimento */
+const getGeo = (placeID, tweetID, places) => {
+  return {ref: tweetID, place: places.geo.bbox};
+};
+
 const searchFail = () => {
   return {
     type: "SEARCH_FAIL",
@@ -75,4 +83,5 @@ export default {
   getAuthours,
   getRetweetText,
   getType,
+  getGeo,
 };
