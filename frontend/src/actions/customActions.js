@@ -1,6 +1,5 @@
 import { 
     TOGGLE_COLOR_MODE,
-    SEARCH_FAIL,
     SEARCH_SUCCESS,
     NO_MATCHES
 } from './constants'
@@ -16,13 +15,7 @@ export const themeAction = (darkMode) => {
 export const searchAction = (data) => async (dispatch) => {
     // Richiesta fetch alla API
     await fetch(`/api/search?query=${data.query}${data.startDate ? `&start_time=${ `${data.startDate}`}&end_time=${data.endDate}` : ``}`)
-    .then(res => {
-        if (!res.ok)
-            // Ricerca falllita
-            return searchFail(); 
-        else
-            return res.json();  
-    })
+    .then(res => res.json())
     .then(json => {
         if (json?.no_matches)
             // Nessun risultato e' stato trovato
@@ -57,11 +50,5 @@ function searchSuccess(textTweets = [], creationDates = [], users = [], types = 
 function noMatches(){
     return ({
         type: NO_MATCHES
-    });
-}
-
-function searchFail(){
-    return ({
-        type: SEARCH_FAIL
     });
 }
