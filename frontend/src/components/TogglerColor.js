@@ -14,9 +14,9 @@ const TogglerColor = (props) => {
 
     useEffect(() => {
         if (darkMode)
-            document.getElementById('root').classList.add('dark');
+            document.getElementById('app').classList.add('dark');
         else
-            document.getElementById('root').classList.remove('dark');
+            document.getElementById('app').classList.remove('dark');
     }, [darkMode, dispatch])
     
     return (
