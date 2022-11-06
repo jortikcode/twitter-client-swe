@@ -16,7 +16,7 @@ const prepareDataInput = (req, res, next) => {
   try {
     let params = req.query;
     let today = Date.now();
-    if (!params.query) {
+    if (!params.query && !params.username) {
       throw "Paramentri per la richiesta mancanti";
     }
     if (params.start_time && params.end_time) {
@@ -137,8 +137,9 @@ const getUserID = async (req, res, next) => {
 router.get("/tweets", prepareDataInput, getUserID, async (req, res) => {
   try {
     const id = req.userID;
-    const params = req.params;
-    response = await client.tweets.usersIdTweets(id, params);
+    /* Devo escludere il campo username dai parametri se no
+     non sono validi per la richiesta */
+    const response = await client.tweets.usersIdTweets(id, params);
     if (response.meta.result_count == 0)
       // Non sono stati trovati risultati
       return res.status(200).json({ no_matches: true });
