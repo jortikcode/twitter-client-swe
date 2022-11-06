@@ -2,13 +2,30 @@ import {
     TOGGLE_COLOR_MODE,
     SEARCH_FAIL,
     SEARCH_SUCCESS,
-    NO_MATCHES
+    NO_MATCHES,
+    TOGGLE_INTERVAL,
+    DATE_ERROR,
 } from './constants'
 
 export const themeAction = (darkMode) => {
     return ({
         type: TOGGLE_COLOR_MODE,
         payload: {darkMode}
+    });
+}
+
+export const dateErrorAction = (msg) => {
+    return ({
+        type: DATE_ERROR,
+        payload: {msg}
+    });
+}
+
+
+export const intervalSearchAction = (isIntervalEnabled) => {
+    return ({
+        type: TOGGLE_INTERVAL,
+        payload: {isIntervalEnabled}
     });
 }
 
