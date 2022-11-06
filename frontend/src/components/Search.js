@@ -9,9 +9,41 @@ function formatISO(date){
     return date.toISOString();
 }
 
+function secondsGranularity(isoDate){
+    const isoSecondsGranularity = `${isoDate.substring(0, isoDate.length - 7)}00.000Z`;
+    return isoSecondsGranularity;
+}
+
 // Ritorna la data in formato YYYY-MM-DD, l'argomento e' una data in formato ISO 
 function formatYYYYMMDD(isoDate){
     return isoDate.split('T')[0];
+}
+
+function isValidDateRange(startDateString, endDateString, todayString, oneWeekAgoString){
+    const startDate = new Date(startDateString);
+    const endDate = new Date(endDateString);
+    const today = new Date(todayString);
+    const oneWeekAgo = new Date(oneWeekAgoString);
+    let response = {
+        msg: "Valid",
+        isValid: true
+    };
+    if (startDate > endDate)
+        response = {
+            msg: "La data di inizio e' oltre la data di fine dell'intervallo",
+            isValid: false
+        }
+    else if (endDate > today)
+        response = {
+            msg: "La data di fine e' oltre la data odierna, non e' possibile cercare tweet del futuro!",
+            isValid: false
+        }   
+    else if (startDate < oneWeekAgo)
+        response = {
+            msg: "La data di inizio dell'intervallo e' oltre una settimana fa, puoi cercare tweet solo all'interno dell'ultima settimana",
+            isValid: false
+        }
+    return response;
 }
 
 const Search = () => {
@@ -19,13 +51,19 @@ const Search = () => {
     const hashtagSearchRegex = new RegExp("^(#)[a-zA-Z0-9]+$");
     const userSearchRegex = new RegExp("^(@)[a-zA-Z0-9]+$");
 
-    // Timestamp di una settimana: 6 * 24 * 60 * 60 * 1000
-    const ONE_WEEK_TIMESTAMP = 6 * 24 * 60 * 60 * 1000;
-    // Timestamp di adesso
-    let now = new Date(formatYYYYMMDD(formatISO(new Date(Date.now()))));
-    // Timestamp di una settimana fa
-    let oneWeekAgo = formatISO(new Date(now - ONE_WEEK_TIMESTAMP));
-    now = formatISO(now);
+    // Millisecondi di una settimana: 6 * 24 * 60 * 60 * 1000
+    const ONE_WEEK_MILLISECONDS = 6 * 24 * 60 * 60 * 1000;
+    // Millisecondi di un giorno: 24 * 60 * 60 * 1000
+    const ONE_DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
+
+    // Timestamp di adesso shiftato di error millisecondi indietro
+    const error = 60 * 1000;
+    const now = new Date(Date.now() - error);
+    // Data in formato ISO di oggi
+    let today = new Date(formatYYYYMMDD(formatISO(new Date(Date.now()))));
+    // Data in formato ISO di una settimana fa
+    let oneWeekAgo = formatISO(new Date(today - ONE_WEEK_MILLISECONDS));
+    today = formatISO(today);
 
     // Oggetti utile per la manipolazione del form con lo hook useForm
     const { 
@@ -36,40 +74,45 @@ const Search = () => {
     const dispatch = useDispatch();
     const { textTweets, users, noMatch, creationDates, types } = useSelector(state => state.tweets);
     const [ intervalSearch, setIntervalSearch ] = useState(false);
-    const [ dateError, setDateError ] = useState(false);
+    const [ dateError, setDateError ] = useState("");
 
     // Funzione di submit del form
     const onSubmit = (data) => {
         // Se le date sono state settate, allora bisogna prenderne il formato ISO
         data.startDate = data.startDate && intervalSearch ? formatISO(new Date(data.startDate)) : oneWeekAgo;
-        data.endDate = data.endDate && intervalSearch ? formatISO(new Date(data.endDate)) : now;
+        data.endDate = data.endDate && intervalSearch ? formatISO(new Date(data.endDate)) : today;
 
-        // La data di fine deve venire dopo la data di inizio della finestra temporale
-        if (data.startDate > data.endDate){
-            data.endDate = now;
-            setDateError(true);
+
+        /* Check sull'intervallo delle date, deve valere:
+        1. startDate < endDate
+        2. endDate > oneWeekago
+        3. startDate < today */
+        const { isValid, msg } = isValidDateRange(data.startDate, data.endDate, today, oneWeekAgo);
+        if (! isValid){
+            setDateError(msg);
         }else{
             // Se si tratta di una ricerca di un hashtag/utente allora bisogna cambiare la query
             if (hashtagSearchRegex.test(data.query))
                 data.query = "%23"+data.query.split('#')[1];
             else if (userSearchRegex.test(data.query))
                 data.query = "%40"+data.query.split('@')[1];
-            setDateError(false);
+            setDateError("");
             // Si attiva l'azione per la ricerca e si aggiorna lo stato centralizzato
-            if (data.startDate !== oneWeekAgo || data.endDate !== now){
+            if (data.startDate !== oneWeekAgo || data.endDate !== today){
                 // Se la data di inizio e la data di fine coincidono, la data di fine deve essere "shiftata" di 24 ore in avanti
                 if (data.endDate === data.startDate){
-                    let shiftedEndDate = new Date(data.endDate);
-                    shiftedEndDate.setDate(shiftedEndDate.getDate() + 1);
-
+                    let shiftedEndDate = Date.parse(data.endDate);
+                    shiftedEndDate = new Date(shiftedEndDate + ONE_DAY_MILLISECONDS);
+                    // Bisogna evitare che la data shiftata vada oltre il giorno odierno 
+                    shiftedEndDate = shiftedEndDate.getTime() > now ? new Date(now) : shiftedEndDate;
                     data.endDate = formatISO(shiftedEndDate);
                 }
 
                 // E' stato settato un intervallo temporale dall'utente
                 dispatch(searchAction({
                     query: data.query,
-                    startDate: data.startDate,
-                    endDate: data.endDate
+                    startDate: secondsGranularity(data.startDate),
+                    endDate: secondsGranularity(data.endDate)
                 }));
             }else
                 // Non e' stato settato alcun intervallo temporale
@@ -106,8 +149,7 @@ const Search = () => {
                         <div className="flex gap-4 items-center">
                             <label className="text-center text-lg dark:text-white" htmlFor="dataInizio"> Da </label>
                             <input name="dataInizio" id="dataInizio" className="border border-black rounded dark:border-0 p-3" type="date"
-                            min={formatYYYYMMDD(oneWeekAgo)}
-                            max={formatYYYYMMDD(now)} {...register("startDate", {
+                            {...register("startDate", {
                                 required: intervalSearch ? "Manca la data di inizio" : false
                             })} />
                         { errors.startDate && <p className="text-center dark:text-red-300 text-red-600"> { errors.startDate.message } </p> } 
@@ -115,13 +157,13 @@ const Search = () => {
                         <div className="flex gap-4 items-center">
                             <label className="text-center text-lg dark:text-white" htmlFor="dataFine"> A </label>
                             <input name="dataFine" id="dataFine" className="border border-black rounded dark:border-0 p-3" type="date"
-                            min={formatYYYYMMDD(oneWeekAgo)}
-                            max={formatYYYYMMDD(now)} {...register("endDate", {
+                            {...register("endDate", {
                                 required: intervalSearch ? "Manca la data di fine" : true
                             })} />
-                        { (errors.endDate && <p className="text-center dark:text-red-300 text-red-600"> { errors.endDate.message } </p>)
-                        || (dateError && <p className="text-center dark:text-red-300 text-red-600"> Errore, prova a cercare con un'altra data di fine</p>) } 
+                            { (errors.endDate && <p className="text-center dark:text-red-300 text-red-600"> { errors.endDate.message } </p>) } 
                         </div>
+                        
+                        { (dateError && <p className="text-center dark:text-red-300 text-red-600"> {dateError} </p>) }
                     </>)}
                 <button className="text-3xl dark:text-white bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit"> Cerca </button>       
             </form>
