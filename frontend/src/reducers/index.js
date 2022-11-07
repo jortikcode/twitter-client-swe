@@ -1,4 +1,4 @@
-import { combineReducers } from '@reduxjs/toolkit'
+import { combineReducers } from 'redux'
 import { theme } from './theme'
 import { tweets } from './tweets'
 

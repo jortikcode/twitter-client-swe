@@ -134,7 +134,7 @@ const Search = () => {
                     username={users[index].username} 
                     type={types[index]}
                     date={new Date(creationDates[index]).toDateString()}
-                    text={tweet.text} />)}
+                    text={tweet} />)}
                 </div> 
             )) || 
             ((noMatch) && (
