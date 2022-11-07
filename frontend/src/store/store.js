@@ -1,9 +1,5 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
 import { reducer } from '../reducers/index'
 
-export const setupStore = (preloadedState = {}) => {
-    return configureStore({
-      reducer,
-      preloadedState
-    });
-}
+export const store = createStore(reducer, applyMiddleware(thunk));
