@@ -1,28 +1,31 @@
 import { useDispatch, useSelector } from "react-redux";
-import { intervalSearchAction } from "../actions/customActions";
+import { filtersAction } from "../actions/customActions";
 
 
 const SearchFilters = ({ register, errors }) => {
-    const { isIntervalEnabled, dateError } = useSelector(state => state.form);
+    const { filtersEnabled, dateError } = useSelector(state => state.form);
     const dispatch = useDispatch();
 
     return (
     <>
-        <div className="flex gap-4">
-            <input type="checkbox" id="intervalSearch" name="intervalSearch" value={isIntervalEnabled} onChange={
+
+        <label htmlFor="filtersEnabled" className="inline-flex relative items-center mb-5 cursor-pointer">
+            <input type="checkbox" value="" id="filtersEnabled" className="sr-only peer" onChange={
                 event => {
-                    dispatch(intervalSearchAction(event.target.checked));
+                    dispatch(filtersAction(event.target.checked));
                 }
             } />
-            <label className="text-center text-lg dark:text-white" htmlFor="intervalSearch"> Invervallo di tempo </label>
-        </div>
-        {isIntervalEnabled && (
+            <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>            
+            <span className="ml-3 text-lg font-medium text-gray-900 dark:text-white">Filtri</span>
+        </label>
+        
+        {filtersEnabled && (
             <>
                 <div className="flex gap-4 items-center">
                     <label className="text-center text-lg dark:text-white" htmlFor="dataInizio"> Da </label>
                     <input name="dataInizio" id="dataInizio" className="border border-black rounded dark:border-0 p-3" type="date"
                     {...register("startDate", {
-                        required: isIntervalEnabled ? "Manca la data di inizio" : false
+                        required: filtersEnabled ? "Manca la data di inizio" : false
                     })} />
                 { errors.startDate && <p className="text-center dark:text-red-300 text-red-600"> { errors.startDate.message } </p> } 
                 </div>
@@ -30,7 +33,7 @@ const SearchFilters = ({ register, errors }) => {
                     <label className="text-center text-lg dark:text-white" htmlFor="dataFine"> A </label>
                     <input name="dataFine" id="dataFine" className="border border-black rounded dark:border-0 p-3" type="date"
                     {...register("endDate", {
-                        required: isIntervalEnabled ? "Manca la data di fine" : true
+                        required: filtersEnabled ? "Manca la data di fine" : true
                     })} />
                     { (errors.endDate && <p className="text-center dark:text-red-300 text-red-600"> { errors.endDate.message } </p>) } 
                 </div>

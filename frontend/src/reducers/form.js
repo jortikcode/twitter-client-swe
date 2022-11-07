@@ -1,16 +1,16 @@
-import { DATE_ERROR, TOGGLE_INTERVAL } from "../actions/constants";
+import { DATE_ERROR, TOGGLE_FILTERS } from "../actions/constants";
 
 const initialState = {
-    isIntervalEnabled: false,
+    filtersEnabled: false,
     msg: ""
 };
 
 export const form = (state = initialState, data) => {
     switch(data.type){
-        case TOGGLE_INTERVAL:
+        case TOGGLE_FILTERS:
             return {
                 ...state,
-                isIntervalEnabled: data.payload.isIntervalEnabled
+                filtersEnabled: data.payload.filtersEnabled
             };
         case DATE_ERROR:
             return {

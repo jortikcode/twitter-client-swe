@@ -3,7 +3,7 @@ import {
     SEARCH_FAIL,
     SEARCH_SUCCESS,
     NO_MATCHES,
-    TOGGLE_INTERVAL,
+    TOGGLE_FILTERS,
     DATE_ERROR,
 } from './constants'
 
@@ -22,10 +22,10 @@ export const dateErrorAction = (msg) => {
 }
 
 
-export const intervalSearchAction = (isIntervalEnabled) => {
+export const filtersAction = (filtersEnabled) => {
     return ({
-        type: TOGGLE_INTERVAL,
-        payload: {isIntervalEnabled}
+        type: TOGGLE_FILTERS,
+        payload: {filtersEnabled}
     });
 }
 

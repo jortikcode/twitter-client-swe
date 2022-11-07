@@ -73,13 +73,13 @@ const SearchForm = () => {
     // Il dispatch viene utilizzato per riuscire a manipolare lo stato centralizzato di redux
     const dispatch = useDispatch();
     const { textTweets, users, noMatch, creationDates, types } = useSelector(state => state.tweets);
-    const { isIntervalEnabled } = useSelector(state => state.form);
+    const { filtersEnabled } = useSelector(state => state.form);
 
     // Funzione di submit del form
     const onSubmit = (data) => {
         // Se le date sono state settate, allora bisogna prenderne il formato ISO
-        data.startDate = data.startDate && isIntervalEnabled ? formatISO(new Date(data.startDate)) : oneWeekAgo;
-        data.endDate = data.endDate && isIntervalEnabled ? formatISO(new Date(data.endDate)) : today;
+        data.startDate = data.startDate && filtersEnabled ? formatISO(new Date(data.startDate)) : oneWeekAgo;
+        data.endDate = data.endDate && filtersEnabled ? formatISO(new Date(data.endDate)) : today;
 
 
         /* Check sull'intervallo delle date, deve valere:
