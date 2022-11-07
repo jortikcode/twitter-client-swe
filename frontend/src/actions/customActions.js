@@ -1,13 +1,30 @@
 import { 
     TOGGLE_COLOR_MODE,
     SEARCH_SUCCESS,
-    NO_MATCHES
+    NO_MATCHES,
+    TOGGLE_FILTERS,
+    DATE_ERROR,
 } from './constants'
 
 export const themeAction = (darkMode) => {
     return ({
         type: TOGGLE_COLOR_MODE,
         payload: {darkMode}
+    });
+}
+
+export const dateErrorAction = (msg) => {
+    return ({
+        type: DATE_ERROR,
+        payload: {msg}
+    });
+}
+
+
+export const filtersAction = (filtersEnabled) => {
+    return ({
+        type: TOGGLE_FILTERS,
+        payload: {filtersEnabled}
     });
 }
 

@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Homepage from './screens/Homepage'
 import Navbar from './components/Navbar'
-import SearchForm from './screens/SearchForm';
+import SearchPage from './screens/SearchPage';
 
 function App() {
   return (
