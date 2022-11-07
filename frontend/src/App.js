@@ -10,7 +10,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path='/' element={<Homepage />} />
-          <Route path='/search' element={<SearchForm />} />
+          <Route path='/search' element={<SearchPage />} />
         </Routes>
       </BrowserRouter>
     </div>
