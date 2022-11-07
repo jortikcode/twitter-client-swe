@@ -23,7 +23,7 @@ const getType = (tweet) => {
 // Ritorna il testo (campo text) del retweet in allRetweets con id che vale retweetId
 const getRetweetText = (retweetId, allRetweets) => {
   for (const retweet_extended of allRetweets)
-    if (retweetId === retweet_extended.id) return retweet_extended?.text;
+    if (retweetId === retweet_extended.id) return {text: retweet_extended?.text, lang: retweet_extended?.lang};
   throw new Error("Retweet text not found");
 };
 
@@ -63,6 +63,14 @@ const searchSuccess = (
   };
 };
 
+/* Prende il placeID, il tweetID
+  e places direttamente dalla risposta
+  Ritorna un array con le coordinate
+  e il tweetID di riferimento */
+const getGeo = (placeID, tweetID, places) => {
+  return {ref: tweetID, place: places.geo.bbox};
+};
+
 const searchFail = () => {
   return {
     type: "SEARCH_FAIL",
@@ -75,4 +83,5 @@ export default {
   getAuthours,
   getRetweetText,
   getType,
+  getGeo,
 };
