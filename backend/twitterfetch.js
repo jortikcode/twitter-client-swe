@@ -90,7 +90,7 @@ const prepareResponse = (req, res, next) => {
           req.response.includes.tweets
         );
       }
-      return tweet.text?.lang ? tweet.text : { text: tweet.text, lang: "und" };
+      return {text: tweet.text, lang: tweet.lang};
     }),
     req.response.data.map((tweet) => {
       return new Date(tweet.created_at);
