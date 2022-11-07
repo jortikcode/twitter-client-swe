@@ -72,43 +72,48 @@ const prepareDataInput = (req, res, next) => {
   }
 };
 
-router.get("/search", prepareDataInput, async (req, res) => {
+/* Middleware che prepara la risposta */
+const prepareResponse = (req, res) => {
+  // Array contenente gli id degli autori dei tweet ricevuti dalla richiesta
+  let authorsId = [];
+  // Array contenete i tipi dei tweet: TWEET, RETWEET, REPLY
+  let types = [];
+  const { payload } = cr.default.searchSuccess(
+    req.response.data.map((tweet, index) => {
+      authorsId.push(tweet.author_id);
+      types.push(cr.default.getType(tweet));
+      if (types[index] === "RETWEET") {
+        // Si tratta di un retweet, e' necessario accedere al testo completo in un altro modo
+        return cr.default.getRetweetText(
+          tweet.referenced_tweets[0].id,
+          req.response.includes.tweets
+        );
+      }
+      return tweet.text;
+    }),
+    req.response.data.map((tweet) => {
+      return new Date(tweet.created_at);
+    }),
+    cr.default.getAuthours(authorsId, req.response.includes.users),
+    types
+  );
+  res.status(200).json(payload);
+}
+
+router.get("/search", prepareDataInput, async (req, res, next) => {
   try {
     const params = req.params;
-    const response = await client.tweets.tweetsRecentSearch(params);
-    if (response.meta.result_count == 0)
+    req.response = await client.tweets.tweetsRecentSearch(params);
+    if (req.response.meta.result_count == 0)
       // Non sono stati trovati risultati
       res.status(404).json({ no_matches: true });
-    else {
-      // Array contenente gli id degli autori dei tweet ricevuti dalla richiesta
-      let authorsId = [];
-      // Array contenete i tipi dei tweet: TWEET, RETWEET, REPLY
-      let types = [];
-      const { payload } = cr.default.searchSuccess(
-        response.data.map((tweet, index) => {
-          authorsId.push(tweet.author_id);
-          types.push(cr.default.getType(tweet));
-          if (types[index] === "RETWEET") {
-            // Si tratta di un retweet, e' necessario accedere al testo completo in un altro modo
-            return cr.default.getRetweetText(
-              tweet.referenced_tweets[0].id,
-              response.includes.tweets
-            );
-          }
-          return tweet.text;
-        }),
-        response.data.map((tweet) => {
-          return new Date(tweet.created_at);
-        }),
-        cr.default.getAuthours(authorsId, response.includes.users),
-        types
-      );
-      res.status(200).json(payload);
+    else{
+      next();
     }
   } catch (error) {
     res.status(500).send({ error: error });
   }
-});
+}, prepareResponse);
 
 /* Middleware per prendere l'id dell'utente dal sul username */
 const getUserID = async (req, res, next) => {
@@ -134,39 +139,22 @@ const getUserID = async (req, res, next) => {
 
 /* GET /api/tweets?username=string&start_time=string&end_time=string&max_results=int
 }*/
-router.get("/tweets", prepareDataInput, getUserID, async (req, res) => {
+router.get("/tweets", prepareDataInput, getUserID, async (req, res, next) => {
   try {
     const id = req.userID;
     /* Devo escludere il campo username dai parametri se no
      non sono validi per la richiesta */
-    const response = await client.tweets.usersIdTweets(id, params);
-    if (response.meta.result_count == 0)
+    let params = req.params;
+    delete params.username;
+    console.log(req.params);
+    req.response = await client.tweets.usersIdTweets(id, params);
+    if (req.response.meta.result_count == 0)
       // Non sono stati trovati risultati
       return res.status(200).json({ no_matches: true });
-    // Array contenete i tipi dei tweet: TWEET, RETWEET, REPLY
-    let types = [];
-    const { payload } = cr.default.searchSuccess(
-      response.data.map((tweet, index) => {
-        types.push(cr.default.getType(tweet));
-        if (types[index] === "RETWEET") {
-          // Si tratta di un retweet, e' necessario accedere al testo completo in un altro modo
-          return cr.default.getRetweetText(
-            tweet.referenced_tweets[0].id,
-            response.includes.tweets
-          );
-        }
-        return tweet.text;
-      }),
-      response.data.map((tweet) => {
-        return new Date(tweet.created_at);
-      }),
-      [],
-      types
-    );
-    return res.status(200).json(payload);
+    next();
   } catch (error) {
     return res.status(500).send({ errore: "Errore HTTP " + error });
   }
-});
+}, prepareResponse);
 
 export default router;
