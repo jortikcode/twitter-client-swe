@@ -7,8 +7,7 @@ import CustomMarker from './CustomMarker'
 // Responsive map style
 const leafletcontainer = {
     height: '50vh', 
-    width: '100wh',
-    margin: '3em'
+    width: '100wh'
 };
 
 export default function Map(props) {

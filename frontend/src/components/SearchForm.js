@@ -101,7 +101,7 @@ const SearchForm = () => {
                 data.query = "%40"+data.query.split('@')[1];
             dispatch(dateErrorAction(""));
             // Si attiva l'azione per la ricerca e si aggiorna lo stato centralizzato
-            if (data.startDate !== oneWeekAgo || data.endDate !== today || data.username){
+            if ((data.startDate !== oneWeekAgo || data.endDate !== today || data.username) && filtersEnabled){
                 // Se la data di inizio e la data di fine coincidono, la data di fine deve essere "shiftata" di 24 ore in avanti
                 if (data.endDate === data.startDate){
                     let shiftedEndDate = Date.parse(data.endDate);
@@ -182,6 +182,7 @@ const SearchForm = () => {
                 <p className="pt-5 pb-5 dark:text-yellow-300">Nessun risultato trovato</p>
             ))}
         </div>
+        <div className="w-full md:p-8 p-3 dark:bg-gray-900">
         {places.length > 0 && (
                 <Map 
                 textTweets = {textTweets} 
@@ -190,6 +191,7 @@ const SearchForm = () => {
                 dates = {creationDates}
                 tweetPlaces = {places} />
             )}
+        </div>
     </>
     );
 }
