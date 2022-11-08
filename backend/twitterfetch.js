@@ -106,6 +106,25 @@ const prepareResponse = (req, res, next) => {
   next();
 }
 
+
+/* Middleware per le immagini di profilo degli utenti in users */
+const profilePicUrl = async (req, res, next) => {
+  req.payload.users = await Promise.all(
+    req.payload.users.map(async userInfo => {
+      const pfpUrl = await client.users.findUserById(userInfo.id, {
+        "user.fields": [
+            "profile_image_url"
+        ]
+      });
+      return {
+        ...userInfo,
+        pfpUrl: pfpUrl.data.profile_image_url 
+      }
+    })
+  );  
+  return res.send(req.payload);
+}
+
 router.get("/search", prepareDataInput, async (req, res, next) => {
   try {
     const params = req.params;
@@ -121,6 +140,7 @@ router.get("/search", prepareDataInput, async (req, res, next) => {
   }
 },
 prepareResponse,
+profilePicUrl,
 removeTweetsNotSupported,
 sentimentAnalysis
 );
@@ -168,6 +188,7 @@ router.get("/tweets", prepareDataInput, getUserID, async (req, res, next) => {
   }
 }, 
 prepareResponse,
+profilePicUrl,
 removeTweetsNotSupported,
 sentimentAnalysis);
 
