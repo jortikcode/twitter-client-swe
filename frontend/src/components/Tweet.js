@@ -1,27 +1,7 @@
-import { RETWEET,
-        REPLY,
-        TWEET,
-        QUOTED,
-        NOTYPE  } from "../utils/constants";
+import { getPrefix } from "../utils/tweets";
 
 const Tweet = (props) => {
-    let tweetTypeQuote;
-    switch(props.type){
-        case REPLY:
-            tweetTypeQuote = "Ha risposto";
-            break;
-        case RETWEET:
-            tweetTypeQuote = "Ha retwittato";
-            break;
-        case TWEET:
-            tweetTypeQuote = "Ha twittato";
-            break;
-        case QUOTED:
-            tweetTypeQuote = "Ha citato";
-            break;
-        default:
-            tweetTypeQuote = NOTYPE;
-    }
+    const tweetTypeQuote = getPrefix(props.type);
     return (
         <div>
             <p>
