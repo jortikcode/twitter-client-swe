@@ -22,7 +22,7 @@ export function tweets(state = initialState, data){
                 users: data.payload.users,
                 creationDates: data.payload.creationDates,
                 noMatch: false,
-                sentiments: data.payload.sentimentAnalysis,
+                sentiments: data.payload.sentiments,
                 types: data.payload.types,
                 places: data.payload.places
             });
