@@ -49,8 +49,9 @@ const getAuthours = (authorsId, allAuthors) => {
 const searchSuccess = (
   textTweets = [],
   creationDates = [],
-  users = {},
-  types = []
+  users = [],
+  types = [],
+  places = []
 ) => {
   return {
     type: "SEARCH_SUCCESS",
@@ -59,16 +60,35 @@ const searchSuccess = (
       creationDates,
       users,
       types,
+      places
     },
   };
 };
 
-/* Prende il placeID, il tweetID
-  e places direttamente dalla risposta
-  Ritorna un array con le coordinate
-  e il tweetID di riferimento */
-const getGeo = (placeID, tweetID, places) => {
-  return {ref: tweetID, place: places.geo.bbox};
+/* Prende i placesID e il campo includes.places direttamente dalla risposta
+  Ritorna un array con elementi del tipo: 
+  {
+    position: [int, int]
+    index: int
+  } 
+  dove index e' l'indice del tweet le cui coordinate sono position */
+const getGeo = (placesID, allPlaces) => {
+  let placesInfo = []
+  let index = 0;
+  for (const placeId of placesID){
+    const placeCoords = allPlaces.find((extended_place) => {
+      return extended_place.id === placeId;
+    })?.geo?.bbox; 
+    
+    if (placeCoords)
+      // Poiche' le coordinate di twitter sono 2 (dovrebbe essere un'area di un rettangolo), ne prendiamo la media
+      placesInfo.push({
+        position: [(placeCoords[0] + placeCoords[2]) / 2, (placeCoords[1] + placeCoords[3]) / 2],
+        index
+      });
+    index++;
+  }
+  return placesInfo;
 };
 
 const searchFail = () => {
