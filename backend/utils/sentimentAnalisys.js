@@ -10,6 +10,7 @@ export const removeTweetsNotSupported = (req, res, next) => {
       payload.users.splice(index, 1);
       payload.creationDates.splice(index, 1);
       payload.types.splice(index, 1);
+      payload.places.splice(index, 1);
       continue;
     }
     index++;
