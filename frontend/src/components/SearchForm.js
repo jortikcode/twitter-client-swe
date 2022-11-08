@@ -167,12 +167,13 @@ const SearchForm = () => {
             </form>
 
             { ((textTweets.length > 0) && (
-                <div className="pt-8 flex gap-y-10 flex-col justify-center md:w-4/6 w-4/5 dark:text-white">
+                <div className="pt-8 flex gap-y-10 flex-col justify-center items-center md:w-4/6 w-4/5 dark:text-white">
                     {textTweets.map((tweet, index) =>
                     <Tweet 
                     key={index}
                     name={users[index].name} 
                     username={users[index].username} 
+                    pfpUrl={users[index].pfpUrl}
                     type={types[index]}
                     date={new Date(creationDates[index]).toDateString()}
                     text={tweet.text} />)}

@@ -29,6 +29,7 @@ export default function Map(props) {
                             position={place.position}
                             text={props.textTweets[tweetIndex].text}
                             username={props.users[tweetIndex].username}
+                            pfpUrl={props.users[tweetIndex].pfpUrl}
                             name={props.users[tweetIndex].name}
                             type={props.types[tweetIndex]}
                             key={tweetIndex}

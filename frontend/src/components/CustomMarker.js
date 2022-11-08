@@ -15,9 +15,12 @@ const CustomMarker = (props) => {
             })}>
             <Popup className="md:w-80 w-52 max-w-100">
                 <div className="flex flex-col w-100 overflow-hidden">
-                    <span className="inline-flex flex-row">
-                        <img src={props.pfpUrl} alt="immagine profilo"></img>
-                        <span className="inline-block align-bottom"><b className="text-cyan-600">{props.name} (@{props.username}) </b></span>
+                    <span className="flex flex-rowitems-center">
+                        <img src={props.pfpUrl} className="h-auto w-10 rounded-full" alt="immagine profilo"></img>
+                        <div className="flex flex-col md:pl-2 pl-0">
+                            <span className="inline-block align-bottom font-bold text-sky-400">{props.name}</span>
+                            <span className="inline-block align-bottom font-bold text-sky-400">@{props.username}</span>
+                        </div>    
                     </span>
                     <p className="w-100 overflow-hidden">
                         {textTypeTweet}: {props.text}
