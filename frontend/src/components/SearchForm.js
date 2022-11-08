@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import { searchAction, dateErrorAction } from '../actions/customActions'
 import Tweet from './Tweet';
 import SearchFilters from './SearchFilters'
+import Map from './Map'
+import { useState } from 'react';
 
 // Ritorna la data in formato ISO
 function formatISO(date){
@@ -70,9 +72,11 @@ const SearchForm = () => {
         register, 
         handleSubmit, 
         formState: { errors } } = useForm();
+    // Stato per tenere traccia del tipo della ricerca: per utente o per parola chiave
+    const [ type, setType ] = useState("username");
     // Il dispatch viene utilizzato per riuscire a manipolare lo stato centralizzato di redux
     const dispatch = useDispatch();
-    const { textTweets, users, noMatch, creationDates, types } = useSelector(state => state.tweets);
+    const { textTweets, users, noMatch, creationDates, types, places } = useSelector(state => state.tweets);
     const { filtersEnabled } = useSelector(state => state.form);
 
     // Funzione di submit del form
@@ -96,7 +100,6 @@ const SearchForm = () => {
             else if (userSearchRegex.test(data.query))
                 data.query = "%40"+data.query.split('@')[1];
             dispatch(dateErrorAction(""));
-            // setDateError("");
             // Si attiva l'azione per la ricerca e si aggiorna lo stato centralizzato
             if (data.startDate !== oneWeekAgo || data.endDate !== today){
                 // Se la data di inizio e la data di fine coincidono, la data di fine deve essere "shiftata" di 24 ore in avanti
@@ -110,35 +113,59 @@ const SearchForm = () => {
 
                 // E' stato settato un intervallo temporale dall'utente
                 dispatch(searchAction({
+                    type,
                     query: data.query,
+                    username: data.username,
                     startDate: secondsGranularity(data.startDate),
                     endDate: secondsGranularity(data.endDate)
                 }));
             }else
                 // Non e' stato settato alcun intervallo temporale
                 dispatch(searchAction({
-                    query: data.query
+                    type,
+                    query: data.query,
+                    username: data.username
                 }));
         }
         
     }
 
     return (
+    <>
         <div className="flex flex-col w-full min-h-screen h-auto p-5 items-center dark:bg-gray-900">
             <form className="flex w-full flex-col justify-center items-center gap-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-col gap-4">
                     <label className="text-center text-3xl dark:text-sky-400 text-black" htmlFor="query"> Cosa vorresti cercare? </label>
+                    <div className="flex md:flex-row flex-col justify-center items-center">
+                        <label className="text-center dark:text-white" htmlFor="type">
+                            Scegli il tipo di ricerca:
+                        </label>
+                        <select className="ml-3" value={type} onChange={(e) => {
+                            setType(e.target.value);
+                        }}>
+                            <option className="dark:text-white" value="username">Per utente</option>
+                            <option className="dark:text-white" value="keyword">Per parola chiave</option>
+                        </select>
+                    </div>
+                    {type === "keyword" ? (
                     <input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="query" id="query" type="text" placeholder="#hashtag, keyword" {...register("query", {
                         required: "Testo mancante",
                         pattern: {
                             message: "Testo non valido",
                             value: /^([#@])?[a-zA-Z0-9]+$/}
-                    })} />
+                    })} />) : 
+                    (<input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="username" id="username" type="text" placeholder="username without @" {...register("username", {
+                        required: "Testo mancante",
+                        pattern: {
+                            message: "Testo non valido",
+                            value: /^([#@])?[a-zA-Z0-9]+$/}
+                    })} />)}
                     { errors.query && <p className="text-center dark:text-red-300 text-red-600"> { errors.query.message } </p> }
                 </div>
                 <SearchFilters register={register} errors={errors} />
                 <button className="text-3xl dark:text-white bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit"> Cerca </button>       
             </form>
+
             { ((textTweets.length > 0) && (
                 <div className="pt-8 flex gap-y-10 flex-col justify-center md:w-4/6 w-4/5 dark:text-white">
                     {textTweets.map((tweet, index) =>
@@ -155,6 +182,15 @@ const SearchForm = () => {
                 <p className="pt-5 pb-5 dark:text-yellow-300">Nessun risultato trovato</p>
             ))}
         </div>
+        {places.length > 0 && (
+                <Map 
+                textTweets = {textTweets} 
+                users = {users}
+                types = {types}
+                dates = {creationDates}
+                tweetPlaces = {places} />
+            )}
+    </>
     );
 }
 

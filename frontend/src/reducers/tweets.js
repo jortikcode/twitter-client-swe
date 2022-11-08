@@ -8,7 +8,9 @@ const initialState = {
     users: [],
     creationDates: [],
     noMatch: false,
-    types: []
+    sentiments: [],
+    types: [],
+    places: []
 };
 
 export function tweets(state = initialState, data){
@@ -20,7 +22,9 @@ export function tweets(state = initialState, data){
                 users: data.payload.users,
                 creationDates: data.payload.creationDates,
                 noMatch: false,
-                types: data.payload.types
+                sentiments: data.payload.sentimentAnalysis,
+                types: data.payload.types,
+                places: data.payload.places
             });
         case NO_MATCHES:
             return ({
@@ -28,7 +32,10 @@ export function tweets(state = initialState, data){
                 textTweets: [],
                 users: {},
                 creationDates: [],
-                noMatch: true
+                noMatch: true,
+                sentiments: [],
+                types: [],
+                places: []
             })
         default:
             return state;

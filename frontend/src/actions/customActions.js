@@ -31,7 +31,7 @@ export const filtersAction = (filtersEnabled) => {
 // Azione in cui viene fatta la chiamata alla API /search passandone la parola chiave
 export const searchAction = (data) => async (dispatch) => {
     // Richiesta fetch alla API
-    await fetch(`/api/search?query=${data.query}${data.startDate ? `&start_time=${ `${data.startDate}`}&end_time=${data.endDate}` : ``}`)
+    await fetch(`/api/${data.type === "keyword" ? `search?query=${data.query}` : `tweets?username=${data.username}`}${data.startDate ? `&start_time=${ `${data.startDate}`}&end_time=${data.endDate}` : ``}`)
     .then(res => res.json())
     .then(json => {
         if (json?.no_matches)
@@ -43,7 +43,9 @@ export const searchAction = (data) => async (dispatch) => {
                 json.textTweets,
                 json.creationDates,
                 json.users,
-                json.types
+                json.sentimentAnalysis,
+                json.types,
+                json.places
                 ));
             }
     })
@@ -52,14 +54,16 @@ export const searchAction = (data) => async (dispatch) => {
     });
 }
 
-function searchSuccess(textTweets = [], creationDates = [], users = [], types = []){
+function searchSuccess(textTweets = [], creationDates = [], users = [], sentiments = [], types = [], places = []){
     return ({
         type: SEARCH_SUCCESS,
         payload: {
             textTweets,
             creationDates,
             users,
-            types
+            sentiments,
+            types,
+            places
         }
     });
 }
