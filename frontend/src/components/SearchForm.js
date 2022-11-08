@@ -101,7 +101,7 @@ const SearchForm = () => {
                 data.query = "%40"+data.query.split('@')[1];
             dispatch(dateErrorAction(""));
             // Si attiva l'azione per la ricerca e si aggiorna lo stato centralizzato
-            if (data.startDate !== oneWeekAgo || data.endDate !== today){
+            if (data.startDate !== oneWeekAgo || data.endDate !== today || data.username){
                 // Se la data di inizio e la data di fine coincidono, la data di fine deve essere "shiftata" di 24 ore in avanti
                 if (data.endDate === data.startDate){
                     let shiftedEndDate = Date.parse(data.endDate);
