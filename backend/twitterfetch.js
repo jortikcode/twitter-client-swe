@@ -103,7 +103,7 @@ const prepareResponse = (req, res, next) => {
     cr.default.getGeo(placesId, req.response.includes.places)
   );
   req.payload = payload;
-  req.next_token = req.response.meta.next_token;
+  req.nextToken = req.response.meta.next_token;
   next();
 }
 
