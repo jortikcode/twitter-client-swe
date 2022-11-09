@@ -47,7 +47,8 @@ export const searchAction = (data) => async (dispatch) => {
                 json.users,
                 json.sentimentAnalysis,
                 json.types,
-                json.places
+                json.places,
+                json.nextToken
                 ));
             }
     })
@@ -71,7 +72,7 @@ export const loadingAction = (isLoading) => {
     }
 }
 
-function searchSuccess(textTweets = [], creationDates = [], users = [], sentiments = [], types = [], places = []){
+function searchSuccess(textTweets = [], creationDates = [], users = [], sentiments = [], types = [], places = [], nextToken = ""){
     return ({
         type: SEARCH_SUCCESS,
         payload: {
@@ -80,7 +81,8 @@ function searchSuccess(textTweets = [], creationDates = [], users = [], sentimen
             users,
             sentiments,
             types,
-            places
+            places,
+            nextToken
         }
     });
 }

@@ -13,7 +13,8 @@ const initialState = {
     sentiments: [],
     types: [],
     places: [],
-    isLoading: false
+    isLoading: false,
+    nextToken: ""
 };
 
 export function tweets(state = initialState, data){
@@ -28,7 +29,8 @@ export function tweets(state = initialState, data){
                 sentiments: data.payload.sentiments,
                 types: data.payload.types,
                 places: data.payload.places,
-                isLoading: false
+                isLoading: false,
+                nextToken: data.payload.nextToken
             });
         case NO_MATCHES:
             return ({
@@ -40,7 +42,8 @@ export function tweets(state = initialState, data){
                 sentiments: [],
                 types: [],
                 places: [],
-                isLoading: false
+                isLoading: false,
+                nextToken: data.payload.nextToken
             })
         case LOADING:
             return {
