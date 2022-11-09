@@ -1,4 +1,6 @@
 import { 
+    CLEAR_TWEETS,
+    LOADING,
     NO_MATCHES,
     SEARCH_SUCCESS
 } from "../actions/constants";
@@ -10,7 +12,8 @@ const initialState = {
     noMatch: false,
     sentiments: [],
     types: [],
-    places: []
+    places: [],
+    isLoading: false
 };
 
 export function tweets(state = initialState, data){
@@ -24,7 +27,8 @@ export function tweets(state = initialState, data){
                 noMatch: false,
                 sentiments: data.payload.sentiments,
                 types: data.payload.types,
-                places: data.payload.places
+                places: data.payload.places,
+                isLoading: false
             });
         case NO_MATCHES:
             return ({
@@ -35,8 +39,18 @@ export function tweets(state = initialState, data){
                 noMatch: true,
                 sentiments: [],
                 types: [],
-                places: []
+                places: [],
+                isLoading: false
             })
+        case LOADING:
+            return {
+                ...state,
+                isLoading: data.payload.isLoading
+            }
+        case CLEAR_TWEETS:
+            return {
+                ...initialState
+            }
         default:
             return state;
     }

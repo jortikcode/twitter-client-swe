@@ -4,6 +4,8 @@ import {
     NO_MATCHES,
     TOGGLE_FILTERS,
     DATE_ERROR,
+    LOADING,
+    CLEAR_TWEETS
 } from './constants'
 
 export const themeAction = (darkMode) => {
@@ -52,6 +54,21 @@ export const searchAction = (data) => async (dispatch) => {
     .catch(e => {
         throw new Error("Errore HTTP");
     });
+}
+
+export const clearTweets = () => {
+    return {
+        type: CLEAR_TWEETS
+    }
+}
+
+export const loadingAction = (isLoading) => {
+    return {
+        type: LOADING,
+        payload: {
+            isLoading: isLoading
+        }
+    }
 }
 
 function searchSuccess(textTweets = [], creationDates = [], users = [], sentiments = [], types = [], places = []){
