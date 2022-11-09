@@ -77,7 +77,6 @@ const SearchForm = () => {
     // Il dispatch viene utilizzato per riuscire a manipolare lo stato centralizzato di redux
     const dispatch = useDispatch();
     const { textTweets, users, noMatch, creationDates, types, places, sentiments, isLoading } = useSelector(state => state.tweets);
-    console.log(isLoading);
     const { filtersEnabled } = useSelector(state => state.form);
 
     // Funzione di submit del form
