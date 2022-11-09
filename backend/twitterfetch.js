@@ -103,6 +103,7 @@ const prepareResponse = (req, res, next) => {
     cr.default.getGeo(placesId, req.response.includes.places)
   );
   req.payload = payload;
+  req.next_token = req.response.meta.next_token;
   next();
 }
 
@@ -122,7 +123,7 @@ const profilePicUrl = async (req, res, next) => {
       }
     })
   );  
-  return res.send(req.payload);
+  next();
 }
 
 router.get("/search", prepareDataInput, async (req, res, next) => {

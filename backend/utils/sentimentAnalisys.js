@@ -31,7 +31,10 @@ const sentimentAnalysis = (req, res, next) => {
     });
   }
   req.payload["sentimentAnalysis"] = result;
-  res.status(200).json(req.payload);
+  res.status(200).json({
+    ...req.payload,
+    next_token: req.next_token
+  });
 };
 
 export { sentimentAnalysis };
