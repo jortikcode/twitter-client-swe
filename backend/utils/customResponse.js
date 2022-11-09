@@ -78,14 +78,16 @@ const getGeo = (placesID, allPlaces) => {
   for (const placeId of placesID){
     if (! placeId)
       continue;
-    const placeCoords = allPlaces.find((extended_place) => {
+    const place = allPlaces.find((extended_place) => {
       return extended_place.id === placeId;
-    })?.geo?.bbox; 
-    
+    })
+    const placeCoords = place?.geo?.bbox; 
+    const placeName = place?.name;
     if (placeCoords)
       // Poiche' le coordinate di twitter sono 2 (dovrebbe essere un'area di un rettangolo), ne prendiamo la media
       placesInfo.push({
         position: [(placeCoords[1] + placeCoords[3]) / 2, (placeCoords[0] + placeCoords[2]) / 2],
+        name: placeName,
         index
       });
     index++;

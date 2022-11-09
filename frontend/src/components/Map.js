@@ -13,7 +13,6 @@ const leafletcontainer = {
 export default function Map(props) {
     // Coordinate di Bologna
     const BOLOGNA_COORDS = [44.494887, 11.3426163];
-
     return (
         <>
             <div className="dark:bg-gray-900 bg-white">
@@ -26,6 +25,7 @@ export default function Map(props) {
                         const tweetIndex = place.index;
                         return (
                         <CustomMarker
+                            placeName={place.name}
                             position={place.position}
                             text={props.textTweets[tweetIndex].text}
                             username={props.users[tweetIndex].username}

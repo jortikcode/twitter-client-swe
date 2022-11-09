@@ -13,6 +13,9 @@ const Tweet = (props) => {
                 <span className="flex items-center text-blue-600 dark:text-gray-400 font-semibold">
                     {props.date}
                 </span>
+                <span className="flex items-center text-blue-400 dark:text-gray-500 font-semibold">
+                    {props.placeName}
+                </span>
             </div>
             
         </div>
