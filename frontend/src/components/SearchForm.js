@@ -153,16 +153,18 @@ const SearchForm = () => {
                     <input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="query" id="query" type="text" placeholder="#hashtag, keyword" {...register("query", {
                         required: "Testo mancante",
                         pattern: {
-                            message: "Testo non valido",
-                            value: /^([#@])?[a-zA-Z0-9]+$/}
+                            message: "Keyword non valido",
+                            value: /^([#@])?[a-zA-Z0-9_]+$/}
                     })} />) : 
                     (<input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="username" id="username" type="text" placeholder="username without @" {...register("username", {
                         required: "Testo mancante",
                         pattern: {
-                            message: "Testo non valido",
-                            value: /^([#@])?[a-zA-Z0-9]+$/}
+                            message: "Username non valido",
+                            value: /^([#@])?[a-zA-Z0-9_]+$/}
                     })} />)}
                     { errors.query && <p className="text-center dark:text-red-300 text-red-600"> { errors.query.message } </p> }
+                    { errors.username && <p className="text-center dark:text-red-300 text-red-600"> { errors.username.message } </p> }
+
                 </div>
                 <SearchFilters register={register} errors={errors} />
                 <button className="text-3xl dark:text-white bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit"> Cerca </button>       
