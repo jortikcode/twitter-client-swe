@@ -14,7 +14,8 @@ const initialState = {
     types: [],
     places: [],
     isLoading: false,
-    nextToken: ""
+    nextToken: "",
+    previousToken: ""
 };
 
 export function tweets(state = initialState, data){
@@ -30,7 +31,8 @@ export function tweets(state = initialState, data){
                 types: data.payload.types,
                 places: data.payload.places,
                 isLoading: false,
-                nextToken: data.payload.nextToken
+                nextToken: data.payload.nextToken,
+                previousToken: data.payload.previousToken
             });
         case NO_MATCHES:
             return ({
@@ -43,7 +45,8 @@ export function tweets(state = initialState, data){
                 types: [],
                 places: [],
                 isLoading: false,
-                nextToken: data.payload.nextToken
+                nextToken: "",
+                previousToken: ""
             })
         case LOADING:
             return {

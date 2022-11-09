@@ -104,6 +104,7 @@ const prepareResponse = (req, res, next) => {
   );
   req.payload = payload;
   req.nextToken = req.response.meta.next_token;
+  req.previousToken = req.response.meta.previous_token;
   next();
 }
 
