@@ -71,7 +71,9 @@ const SearchForm = () => {
     const { 
         register, 
         handleSubmit, 
-        formState: { errors } } = useForm();
+        formState: { errors } } = useForm({
+            defaultValues: {}
+        });
     // Stato per tenere traccia del tipo della ricerca: per utente o per parola chiave
     const [ type, setType ] = useState("username");
     // Il dispatch viene utilizzato per riuscire a manipolare lo stato centralizzato di redux
@@ -103,7 +105,14 @@ const SearchForm = () => {
             else if (userSearchRegex.test(data.query))
                 data.query = "%40"+data.query.split('@')[1];
             dispatch(dateErrorAction(""));
-            // Si attiva l'azione per la ricerca e si aggiorna lo stato centralizzato
+            
+            // Dati da mandare per la ricerca
+            let dataToAction = {};
+            dataToAction["type"] = type;
+            dataToAction["query"] = data.query;
+            dataToAction["username"] = data.username;
+
+            // E' stato settato un intervallo temporale dall'utente
             if ((data.startDate !== oneWeekAgo || data.endDate !== today || data.username) && filtersEnabled){
                 // Se la data di inizio e la data di fine coincidono, la data di fine deve essere "shiftata" di 24 ore in avanti
                 if (data.endDate === data.startDate){
@@ -113,21 +122,14 @@ const SearchForm = () => {
                     shiftedEndDate = shiftedEndDate.getTime() > now ? new Date(now) : shiftedEndDate;
                     data.endDate = formatISO(shiftedEndDate);
                 }
-                // E' stato settato un intervallo temporale dall'utente
-                dispatch(searchAction({
-                    type,
-                    query: data.query,
-                    username: data.username,
-                    startDate: secondsGranularity(data.startDate),
-                    endDate: secondsGranularity(data.endDate)
-                }));                
-            }else
-                // Non e' stato settato alcun intervallo temporale
-                dispatch(searchAction({
-                    type,
-                    query: data.query,
-                    username: data.username
-                }));
+                dataToAction["startDate"] = secondsGranularity(data.startDate); 
+                dataToAction["endDate"] = secondsGranularity(data.endDate);             
+            }
+            console.log(dataToAction);
+            if (data.maxResults !== 10 && filtersEnabled)
+                dataToAction["maxResults"] = data.maxResults;
+            // Si attiva l'azione per la ricerca e si aggiorna lo stato centralizzato
+            dispatch(searchAction(dataToAction));
         }
         
     }
@@ -138,30 +140,36 @@ const SearchForm = () => {
             <form className="flex w-full flex-col justify-center items-center gap-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-col gap-4">
                     <label className="text-center text-3xl dark:text-sky-400 text-black" htmlFor="query"> Cosa vorresti cercare? </label>
-                    <div className="flex md:flex-row flex-col justify-center items-center">
-                        <label className="text-center dark:text-white" htmlFor="type">
-                            Scegli il tipo di ricerca:
-                        </label>
-                        <select className="ml-3" value={type} onChange={(e) => {
-                            setType(e.target.value);
+                    <div className="flex md:flex-row flex-col justify-center items-center md:space-x-3 space-x-0 md:space-y-0 space-y-3">
+                        <button type="button" className="p-2 bg-sky-400 rounded-full ml-3" onClick={(e) => {
+                            const newType = type === "username" ? "keyword" : "username";
+                            setType(newType);
                         }}>
-                            <option className="dark:text-white" value="username">Per utente</option>
-                            <option className="dark:text-white" value="keyword">Per parola chiave</option>
-                        </select>
+                            {type === "username" ? (
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207">
+                                </path>
+                            </svg>) : (
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14">
+                                </path>
+                            </svg>
+                            )}
+                        </button>
+                        {type === "keyword" ? (
+                        <input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="query" id="query" type="text" placeholder="#hashtag, keyword" {...register("query", {
+                            required: "Testo mancante",
+                            pattern: {
+                                message: "Keyword non valido",
+                                value: /^([#@])?[a-zA-Z0-9_]+$/}
+                        })} />) : 
+                        (<input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="username" id="username" type="text" placeholder="username senza @" {...register("username", {
+                            required: "Testo mancante",
+                            pattern: {
+                                message: "Username non valido",
+                                value: /^[a-zA-Z0-9_]+$/}
+                        })} />)}
                     </div>
-                    {type === "keyword" ? (
-                    <input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="query" id="query" type="text" placeholder="#hashtag, keyword" {...register("query", {
-                        required: "Testo mancante",
-                        pattern: {
-                            message: "Keyword non valido",
-                            value: /^([#@])?[a-zA-Z0-9_]+$/}
-                    })} />) : 
-                    (<input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="username" id="username" type="text" placeholder="username without @" {...register("username", {
-                        required: "Testo mancante",
-                        pattern: {
-                            message: "Username non valido",
-                            value: /^([#@])?[a-zA-Z0-9_]+$/}
-                    })} />)}
                     { errors.query && <p className="text-center dark:text-red-300 text-red-600"> { errors.query.message } </p> }
                     { errors.username && <p className="text-center dark:text-red-300 text-red-600"> { errors.username.message } </p> }
 
