@@ -7,6 +7,7 @@ class PieChart extends React.Component {
 
       this.state = {
       
+    
         series: this.props.sentAnalysis,
         options: {
           chart: {
@@ -38,11 +39,9 @@ class PieChart extends React.Component {
 
     render() {
       return (
-        
-
-  <div className="chart">
-<ReactApexChart options={this.state.options} series={this.state.series} type="pie" width={580} />
-</div>
+        <div className="chart">
+        <ReactApexChart options={this.state.options} series={this.state.series} type="pie" />
+        </div>
       );
     }
   }
