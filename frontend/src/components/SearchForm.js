@@ -138,25 +138,6 @@ const SearchForm = () => {
         
     }
 
-    //funzione che calcola quanti tweet hanno sentimento negativo, neutro o positivo
-    function sentimentHandler () {
-        let sentArray = [0, 0, 0]
-        for (let x in sentiments) {
-          if (x.score < 0){
-            sentArray[0] = sentArray[0] + 1
-        } else if (x.score == 0){
-            sentArray[1] = sentArray[1] + 1
-        } else if (x.score > 0){
-            sentArray[2] = sentArray[2] + 1
-        }
-        }
-     return sentArray
-    }
-
-    //calcolo sentimentHandler solo quando l'array sentiments viene modificato
-    //let sentimento = useEffect (sentimentHandler, [sentiments])
-    let sentimento = sentimentHandler()
-
     return (
     <>
         <div className="flex flex-col w-full min-h-screen h-auto p-5 items-center dark:bg-gray-900">
@@ -244,37 +225,9 @@ const SearchForm = () => {
         </div>
       
 
-
-        {  ((sentiments.length > 0) && (
-                <div >
-                    {sentiments.map((index) =>
-                    {
-                        let sentArray = [0, 0, 0]
-                            if (sentiments[index].score < 0){
-                              sentArray[0] = sentArray[0] + 1
-                          } else if (sentiments[index].score == 0){
-                              sentArray[1] = sentArray[1] + 1
-                          } else if (sentiments[index].score > 0){
-                              sentArray[2] = sentArray[2] + 1
-                          }
-                          
-                        return (<PieChart
-                            sentAnalysis = {sentArray} 
-                            />)})}
-                </div> 
-                        )) }
-
-
-
-
-
-
-         
-            
-       
-     
-       
-       
+        <div className="w-full md:p-8 p-3 dark:bg-gray-900">
+        {  ((sentiments.length > 0) && (<PieChart sentAnalysis = {sentiments} />)) }
+        </div>  
     </>
     );
 }
