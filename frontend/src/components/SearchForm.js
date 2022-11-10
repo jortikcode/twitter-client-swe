@@ -62,9 +62,11 @@ const SearchForm = () => {
     const error = 60 * 1000;
     const now = new Date(Date.now() - error);
     // Data in formato ISO di oggi
-    let today = new Date(formatYYYYMMDD(formatISO(new Date(Date.now()))));
+    const todayDefaultFormat = formatYYYYMMDD(formatISO(new Date(Date.now())));
+    let today = new Date(todayDefaultFormat);
     // Data in formato ISO di una settimana fa
     let oneWeekAgo = formatISO(new Date(today - ONE_WEEK_MILLISECONDS));
+    const oneWeekAgoDefaultFormat = formatYYYYMMDD(oneWeekAgo);
     today = formatISO(today);
 
     // Oggetti utile per la manipolazione del form con lo hook useForm
@@ -72,7 +74,11 @@ const SearchForm = () => {
         register, 
         handleSubmit, 
         formState: { errors } } = useForm({
-            defaultValues: {}
+            defaultValues: {
+                startDate: oneWeekAgoDefaultFormat,
+                endDate: todayDefaultFormat,
+                maxResults: 10
+            }
         });
     // Stato per tenere traccia del tipo della ricerca: per utente o per parola chiave
     const [ type, setType ] = useState("username");
@@ -114,18 +120,16 @@ const SearchForm = () => {
 
             // E' stato settato un intervallo temporale dall'utente
             if ((data.startDate !== oneWeekAgo || data.endDate !== today || data.username) && filtersEnabled){
-                // Se la data di inizio e la data di fine coincidono, la data di fine deve essere "shiftata" di 24 ore in avanti
-                if (data.endDate === data.startDate){
-                    let shiftedEndDate = Date.parse(data.endDate);
-                    shiftedEndDate = new Date(shiftedEndDate + ONE_DAY_MILLISECONDS);
-                    // Bisogna evitare che la data shiftata vada oltre il giorno odierno 
-                    shiftedEndDate = shiftedEndDate.getTime() > now ? new Date(now) : shiftedEndDate;
-                    data.endDate = formatISO(shiftedEndDate);
-                }
+                // La data di fine deve essere "shiftata" di 24 ore in avanti
+                let shiftedEndDate = Date.parse(data.endDate);
+                shiftedEndDate = new Date(shiftedEndDate + ONE_DAY_MILLISECONDS);
+                // Bisogna evitare che la data shiftata vada oltre il giorno odierno 
+                shiftedEndDate = shiftedEndDate.getTime() > now ? new Date(now) : shiftedEndDate;
+                data.endDate = formatISO(shiftedEndDate);
+                
                 dataToAction["startDate"] = secondsGranularity(data.startDate); 
                 dataToAction["endDate"] = secondsGranularity(data.endDate);             
             }
-            console.log(dataToAction);
             if (data.maxResults !== 10 && filtersEnabled)
                 dataToAction["maxResults"] = data.maxResults;
             // Si attiva l'azione per la ricerca e si aggiorna lo stato centralizzato
