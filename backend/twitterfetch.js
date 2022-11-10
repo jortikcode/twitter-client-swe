@@ -79,9 +79,12 @@ const prepareResponse = (req, res, next) => {
   let authorsId = [];
   // Array contenete i tipi dei tweet: TWEET, RETWEET, REPLY
   let types = [];
+  // Array contenente i place id dei tweet
+  let placesId = [];
   const { payload } = cr.default.searchSuccess(
     req.response.data.map((tweet, index) => {
       authorsId.push(tweet.author_id);
+      placesId.push(tweet?.geo?.place_id);
       types.push(cr.default.getType(tweet));
       if (types[index] === "RETWEET") {
         // Si tratta di un retweet, e' necessario accedere al testo completo in un altro modo
@@ -96,9 +99,31 @@ const prepareResponse = (req, res, next) => {
       return new Date(tweet.created_at);
     }),
     cr.default.getAuthours(authorsId, req.response.includes.users),
-    types
+    types,
+    cr.default.getGeo(placesId, req.response.includes.places)
   );
   req.payload = payload;
+  req.nextToken = req.response.meta.next_token;
+  req.previousToken = req.response.meta.previous_token;
+  next();
+}
+
+
+/* Middleware per le immagini di profilo degli utenti in users */
+const profilePicUrl = async (req, res, next) => {
+  req.payload.users = await Promise.all(
+    req.payload.users.map(async userInfo => {
+      const pfpUrl = await client.users.findUserById(userInfo.id, {
+        "user.fields": [
+            "profile_image_url"
+        ]
+      });
+      return {
+        ...userInfo,
+        pfpUrl: pfpUrl.data.profile_image_url 
+      }
+    })
+  );  
   next();
 }
 
@@ -117,6 +142,7 @@ router.get("/search", prepareDataInput, async (req, res, next) => {
   }
 },
 prepareResponse,
+profilePicUrl,
 removeTweetsNotSupported,
 sentimentAnalysis
 );
@@ -164,6 +190,7 @@ router.get("/tweets", prepareDataInput, getUserID, async (req, res, next) => {
   }
 }, 
 prepareResponse,
+profilePicUrl,
 removeTweetsNotSupported,
 sentimentAnalysis);
 

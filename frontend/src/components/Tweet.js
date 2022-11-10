@@ -1,38 +1,25 @@
-import { RETWEET,
-        REPLY,
-        TWEET,
-        QUOTED,
-        NOTYPE  } from "../utils/constants";
+import { getPrefix } from "../utils/tweets";
 
 const Tweet = (props) => {
-    let tweetTypeQuote;
-    switch(props.type){
-        case REPLY:
-            tweetTypeQuote = "Ha risposto";
-            break;
-        case RETWEET:
-            tweetTypeQuote = "Ha retwittato";
-            break;
-        case TWEET:
-            tweetTypeQuote = "Ha twittato";
-            break;
-        case QUOTED:
-            tweetTypeQuote = "Ha citato";
-            break;
-        default:
-            tweetTypeQuote = NOTYPE;
-    }
+    const tweetTypeQuote = getPrefix(props.type);
     return (
-        <div>
-            <p>
-                <span className="text-blue-700 dark:text-green-400"> 
-                    {props.name} ({props.username})
-                </span> il 
-                <span className="text-blue-700 dark:text-green-400"> 
-                    {props.date} 
-                </span> {tweetTypeQuote} : {props.text}
-            </p>
+        <>
+        <div className="flex flex-col items-center bg-white rounded-lg border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 hover:cursor-pointer">
+            <img src={props.pfpUrl} className="ml-4 w-10 h-auto rounded-full" alt="profile pic" />
+            <div className="flex flex-col justify-between p-4 leading-normal">
+                <span className="mb-2 text-2xl font-bold tracking-tight dark:text-sky-400 text-black">{props.name} (@{props.username})</span>
+                <span className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{tweetTypeQuote}:</span>
+                <p className="mb-3 font-normal text-gray-700 dark:text-white">{props.text}</p>
+                <span className="flex items-center text-blue-600 dark:text-gray-400 font-semibold">
+                    {props.date}
+                </span>
+                <span className="flex items-center text-blue-400 dark:text-gray-500 font-semibold">
+                    {props.placeName}
+                </span>
+            </div>
+            
         </div>
+        </>
     )
 }
 

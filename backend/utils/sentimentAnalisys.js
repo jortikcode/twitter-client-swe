@@ -10,6 +10,7 @@ export const removeTweetsNotSupported = (req, res, next) => {
       payload.users.splice(index, 1);
       payload.creationDates.splice(index, 1);
       payload.types.splice(index, 1);
+      payload.places.splice(index, 1);
       continue;
     }
     index++;
@@ -30,7 +31,11 @@ const sentimentAnalysis = (req, res, next) => {
     });
   }
   req.payload["sentimentAnalysis"] = result;
-  res.status(200).json(req.payload);
+  res.status(200).json({
+    ...req.payload,
+    nextToken: req.nextToken,
+    previousToken: req.previousToken
+  });
 };
 
 export { sentimentAnalysis };
