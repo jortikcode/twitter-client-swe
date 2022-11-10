@@ -37,6 +37,22 @@ const SearchFilters = ({ register, errors }) => {
                     })} />
                     { (errors.endDate && <p className="text-center dark:text-red-300 text-red-600"> { errors.endDate.message } </p>) } 
                 </div>
+                <div className="flex gap-4 items-center">
+                    <label className="text-center text-lg dark:text-white" htmlFor="maxResults"> Numero di risultati </label>
+                    <input name="maxResults" id="maxResults" className="border w-20 border-black rounded dark:border-0 p-3" type="number"
+                    {...register("maxResults", {
+                        min: {
+                            message: "Minimo 10 tweets",
+                            value: "10"
+                        },
+                        max: {
+                            message: "Massimo 100 tweets",
+                            value: "100"
+                        },
+                        required: filtersEnabled ? "Numero mancante" : true
+                    })} />
+                    { (errors.maxResults && <p className="text-center dark:text-red-300 text-red-600"> { errors.maxResults.message } </p>) } 
+                </div>
                 
                 { (dateError && <p className="text-center dark:text-red-300 text-red-600"> {dateError} </p>) }
             </>)}
