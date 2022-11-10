@@ -71,20 +71,37 @@ const SearchForm = () => {
 
     // Oggetti utile per la manipolazione del form con lo hook useForm
     const { 
-        register, 
+        setValue,
+        register,
+        watch, 
         handleSubmit, 
         formState: { errors } } = useForm({
             defaultValues: {
                 startDate: oneWeekAgoDefaultFormat,
                 endDate: todayDefaultFormat,
-                maxResults: 10
+                maxResults: 10,
+                noIntervalSearch: false
             }
         });
+
+    /* watch permette di tenere il valore di specifici input */
+    const noIntervalSearch = watch("noIntervalSearch", false);
+
     // Stato per tenere traccia del tipo della ricerca: per utente o per parola chiave
     const [ type, setType ] = useState("username");
     // Il dispatch viene utilizzato per riuscire a manipolare lo stato centralizzato di redux
     const dispatch = useDispatch();
-    const { textTweets, users, noMatch, creationDates, types, places, sentiments, isLoading, nextToken, previousToken } = useSelector(state => state.tweets);
+    const { textTweets, 
+            users, 
+            noMatch, 
+            creationDates, 
+            types, 
+            places, 
+            sentiments, 
+            isLoading, 
+            nextToken, 
+            previousToken } = useSelector(state => state.tweets);
+
     const { filtersEnabled } = useSelector(state => state.form);
 
     // Funzione di submit del form
@@ -119,7 +136,7 @@ const SearchForm = () => {
             dataToAction["username"] = data.username;
 
             // E' stato settato un intervallo temporale dall'utente
-            if ((data.startDate !== oneWeekAgo || data.endDate !== today || data.username) && filtersEnabled){
+            if ((data.startDate !== oneWeekAgo || data.endDate !== today || data.username) && filtersEnabled && !noIntervalSearch){
                 // La data di fine deve essere "shiftata" di 24 ore in avanti
                 let shiftedEndDate = Date.parse(data.endDate);
                 shiftedEndDate = new Date(shiftedEndDate + ONE_DAY_MILLISECONDS);
@@ -147,18 +164,16 @@ const SearchForm = () => {
                     <div className="flex md:flex-row flex-col justify-center items-center md:space-x-3 space-x-0 md:space-y-0 space-y-3">
                         <button type="button" className="p-2 bg-sky-400 rounded-full ml-3" onClick={(e) => {
                             const newType = type === "username" ? "keyword" : "username";
+                            if (newType === "keyword")
+                                setValue("noIntervalSearch", false)
                             setType(newType);
                         }}>
-                            {type === "username" ? (
+                            {(
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207">
-                                </path>
-                            </svg>) : (
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14">
-                                </path>
-                            </svg>
-                            )}
+                                {type === "username" 
+                                ? (<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>)
+                                : (<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>) }
+                            </svg>)}
                         </button>
                         {type === "keyword" ? (
                         <input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="query" id="query" type="text" placeholder="#hashtag, keyword" {...register("query", {
@@ -178,7 +193,7 @@ const SearchForm = () => {
                     { errors.username && <p className="text-center dark:text-red-300 text-red-600"> { errors.username.message } </p> }
 
                 </div>
-                <SearchFilters register={register} errors={errors} />
+                <SearchFilters type={type} setValue={setValue} register={register} errors={errors} noIntervalSearch={noIntervalSearch} />
                 <button className="text-3xl dark:text-white bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit"> Cerca </button>       
             </form>
 
