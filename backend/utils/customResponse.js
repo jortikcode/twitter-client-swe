@@ -5,7 +5,7 @@ const QUOTED = "QUOTED";
 const NOTYPE = "NOTYPE";
 
 // Funzione che ritorna il tipo del tweet passato come argomento
-const getType = (tweet) => {
+export const getType = (tweet) => {
   if (tweet?.referenced_tweets)
     switch (tweet.referenced_tweets[0]?.type) {
       case "replied_to":
@@ -21,9 +21,10 @@ const getType = (tweet) => {
 };
 
 // Ritorna il testo (campo text) del retweet in allRetweets con id che vale retweetId
-const getRetweetText = (retweetId, allRetweets) => {
+export const getRetweetText = (retweetId, allRetweets) => {
   for (const retweet_extended of allRetweets)
-    if (retweetId === retweet_extended.id) return {text: retweet_extended?.text, lang: retweet_extended?.lang};
+    if (retweetId === retweet_extended.id)
+      return { text: retweet_extended?.text, lang: retweet_extended?.lang };
   throw new Error("Retweet text not found");
 };
 
@@ -34,7 +35,7 @@ const getRetweetText = (retweetId, allRetweets) => {
     }
     degli autori con id in authorsId
     */
-const getAuthours = (authorsId, allAuthors) => {
+export const getAuthours = (authorsId, allAuthors) => {
   let authors_info = [];
   for (const author_id of authorsId) {
     authors_info.push(
@@ -46,7 +47,7 @@ const getAuthours = (authorsId, allAuthors) => {
   return authors_info;
 };
 
-const searchSuccess = (
+export const searchSuccess = (
   textTweets = [],
   creationDates = [],
   users = [],
@@ -60,7 +61,7 @@ const searchSuccess = (
       creationDates,
       users,
       types,
-      places
+      places,
     },
   };
 };
@@ -72,40 +73,33 @@ const searchSuccess = (
     index: int
   } 
   dove index e' l'indice del tweet le cui coordinate sono position */
-const getGeo = (placesID, allPlaces) => {
-  let placesInfo = []
+export const getGeo = (placesID, allPlaces) => {
+  let placesInfo = [];
   let index = 0;
-  for (const placeId of placesID){
-    if (! placeId)
-      continue;
+  for (const placeId of placesID) {
+    if (!placeId) continue;
     const place = allPlaces.find((extended_place) => {
       return extended_place.id === placeId;
-    })
-    const placeCoords = place?.geo?.bbox; 
+    });
+    const placeCoords = place?.geo?.bbox;
     const placeName = place?.name;
     if (placeCoords)
       // Poiche' le coordinate di twitter sono 2 (dovrebbe essere un'area di un rettangolo), ne prendiamo la media
       placesInfo.push({
-        position: [(placeCoords[1] + placeCoords[3]) / 2, (placeCoords[0] + placeCoords[2]) / 2],
+        position: [
+          (placeCoords[1] + placeCoords[3]) / 2,
+          (placeCoords[0] + placeCoords[2]) / 2,
+        ],
         name: placeName,
-        index
+        index,
       });
     index++;
   }
   return placesInfo;
 };
 
-const searchFail = () => {
+export const searchFail = () => {
   return {
     type: "SEARCH_FAIL",
   };
-};
-
-export default {
-  searchFail,
-  searchSuccess,
-  getAuthours,
-  getRetweetText,
-  getType,
-  getGeo,
 };
