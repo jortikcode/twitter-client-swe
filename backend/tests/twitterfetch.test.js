@@ -1,5 +1,6 @@
 import app from "../index.js";
 import request from "supertest";
+import { oneWeekTimestamp } from "../utils/constants.js";
 
 describe("GET /api/search", () => {
   describe("given a query", () => {
@@ -7,7 +8,7 @@ describe("GET /api/search", () => {
       const response = await request(app).get("/api/search?query=test");
       expect(response.statusCode).toBe(200);
     });
-    test("should respond with a json object containg textTweets, creationDates, users, types, places, sentimentAnalysis", async () => {
+    test("should respond with a json object containing textTweets, creationDates, users, types, places, sentimentAnalysis", async () => {
       const response = await request(app).get("/api/search?query=test");
       expect(response.body.textTweets).toBeDefined();
       expect(response.body.creationDates).toBeDefined();
@@ -16,7 +17,36 @@ describe("GET /api/search", () => {
       expect(response.body.places).toBeDefined();
       expect(response.body.sentimentAnalysis).toBeDefined();
     });
+    test("should respond a json object with ten elements without a max parameter", async () => {
+      const response = await request(app).get("/api/search?query=test");
+      expect(response.body.textTweets.length).toBeLessThanOrEqual(10); 
+    });
+    test("should respond with json object with up to max_results element when max_results is set", async () => {
+      const max_results = 11;
+      const response = await request(app).get(`/api/search?query=test&max_results=${max_results}`);
+      expect(response.body.textTweets.length).toBeLessThanOrEqual(max_results); 
+    });
+    test("should support search by hashtag", async () => {
+      const response = await request(app).get(`/api/search?query=%23newyork`);
+      expect(response.status).toBe(200);
+    });
+    test("should support search by quotation of user", async () => {
+      const response = await request(app).get(`/api/search?query=%40elonmusk`);
+      expect(response.status).toBe(200);
+    });
+    test("should respond with json object of tweets in the last week", async () => {
+      const response = await request(app).get(`/api/search?query=%40elonmusk`);
+      const now = Date.now();
+      const oneWeekAgo = now - oneWeekTimestamp;
+      // Per ogni data che si trova in creationDates, bisogna verificare che si trovi nell'arco dell'ultima settimana
+      for (const date of response.body.creationDates){
+        const dateTimestamp = new Date(date).getTime();
+        expect(dateTimestamp).toBeLessThanOrEqual(now);
+        expect(dateTimestamp).toBeGreaterThanOrEqual(oneWeekAgo);
+      }
+    });
   });
+
   describe("without a query param", () => {
     test("should respond with a 400 status code", async () => {
       const response = await request(app).get("/api/search");
