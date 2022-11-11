@@ -89,7 +89,7 @@ const SearchForm = () => {
         }else{
             dispatch(clearTweets());
             // Spinner di caricamento visibile
-            dispatch(loadingAction(true));
+            dispatch(loadingAction());
             // Se si tratta di una keyword search di un hashtag/utente allora bisogna cambiare la query
             data.query = transformQuery(data.query);
             dispatch(dateErrorAction(""));

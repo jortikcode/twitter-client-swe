@@ -1,10 +1,12 @@
-import { searchAction } from "../actions/customActions";
+import { loadingAction, clearTweets, searchAction } from "../actions/customActions";
 import { useDispatch } from 'react-redux'
 
 
 const PageManager = ({nextToken, previousToken, data}) => {
     const dispatch = useDispatch();
     const newPage = (token) => {
+        dispatch(clearTweets());
+        dispatch(loadingAction());
         dispatch(searchAction({...data, token: token}));
     }
 
