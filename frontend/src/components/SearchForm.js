@@ -5,6 +5,7 @@ import Tweet from './Tweet';
 import SearchFilters from './SearchFilters'
 import Map from './Map'
 import { useState } from 'react';
+import PageManager from './PageManager';
 
 // Ritorna la data in formato ISO
 function formatISO(date){
@@ -74,6 +75,14 @@ const SearchForm = () => {
         formState: { errors } } = useForm();
     // Stato per tenere traccia del tipo della ricerca: per utente o per parola chiave
     const [ type, setType ] = useState("username");
+    const [storedData, setStoredData] = useState({
+        type: "",
+        query: "",
+        username: "",
+        startDate: "",
+        endDate: ""
+    });
+
     // Il dispatch viene utilizzato per riuscire a manipolare lo stato centralizzato di redux
     const dispatch = useDispatch();
     const { textTweets, users, noMatch, creationDates, types, places, sentiments, isLoading, nextToken, previousToken } = useSelector(state => state.tweets);
@@ -113,6 +122,7 @@ const SearchForm = () => {
                     shiftedEndDate = shiftedEndDate.getTime() > now ? new Date(now) : shiftedEndDate;
                     data.endDate = formatISO(shiftedEndDate);
                 }
+                setStoredData(data);
                 // E' stato settato un intervallo temporale dall'utente
                 dispatch(searchAction({
                     type,
@@ -121,13 +131,15 @@ const SearchForm = () => {
                     startDate: secondsGranularity(data.startDate),
                     endDate: secondsGranularity(data.endDate)
                 }));                
-            }else
+            }else{
+                setStoredData({...data, type: type});
                 // Non e' stato settato alcun intervallo temporale
                 dispatch(searchAction({
                     type,
                     query: data.query,
                     username: data.username
                 }));
+            }
         }
         
     }
@@ -207,6 +219,9 @@ const SearchForm = () => {
                 <p className="pt-5 pb-5 dark:text-yellow-300">Nessun risultato trovato</p>
             ))}
         </div>
+
+        <PageManager data={storedData} nextToken={nextToken} previousToken={previousToken} />
+
         <div className="w-full md:p-8 p-3 dark:bg-gray-900">
         {places.length > 0 && (
                 <Map 
