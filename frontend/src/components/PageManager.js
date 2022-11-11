@@ -9,7 +9,7 @@ const PageManager = ({nextToken, previousToken, data}) => {
     }
 
     return (      
-    <div className="flex justify-center">
+    <div className="flex justify-center dark:bg-gray-900">
         {previousToken &&
         <button 
         onClick={e => newPage(previousToken)}
