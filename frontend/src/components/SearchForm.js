@@ -225,7 +225,7 @@ const SearchForm = () => {
         </div>
       
 
-        <div className="w-full md:p-8 p-3 dark:bg-gray-900">
+       <div className="w-full md:p-8 p-3 dark:bg-gray-900">
         {  ((sentiments.length > 0) && (<PieChart sentAnalysis = {sentiments} />)) }
         </div>  
     </>

@@ -17,34 +17,23 @@ const PieChart = (props) => {
   }
   const series = sentimentsArrayCalculator();
   const options = {
-    series: series,
-    options: {
-      chart: {
-        width: 350,
-        type: 'pie',
-        foreColor: '#000'
-      },
+      series : series,
+      labels: ["", "", ""],
       colors: ['#F80000', '#B9B6B6', '#40E802'],
-      labels: ['Negativo', 'Neutro', 'Positivo'],
-      responsive: [{
-        breakpoint: 480,
-        options: {
-          chart: {
-            width: 200
-          
-          },
-          legend: {
-            position: 'bottom'
-          },
-        }
-      }]
-    }
-  };
+      chart: {
+        width: '800'
+      }
+    
+    }	
+    
+      
+    
+  
   return (
-    <div className="chart">
+    <div className="flex justify-center w-full">
       <ReactApexChart options={options} series={series} type="pie" />
     </div>
   );
-}
+  }
   
 export default PieChart
