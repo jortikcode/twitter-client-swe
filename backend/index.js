@@ -19,7 +19,7 @@ app.use("/api", api);
 Express verifica le route in ordine di dichiarazione, quindi le route /api non verranno inglobate
 poiche' dichiarate prima */
 app.get("/*", (req, res) => {
-  res.sendFile(join("build", "index.html"));
+  res.sendFile(join(__dirname, "build", "index.html"));
 });
 
 export default app;
