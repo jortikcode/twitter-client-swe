@@ -1,5 +1,5 @@
 import { default as sentiment } from "multilang-sentiment";
-import { languages } from './constants.js'
+import { languages } from '../utils/constants.js'
 
 export const removeTweetsNotSupported = (req, res, next) => {
   let payload = req.payload;
