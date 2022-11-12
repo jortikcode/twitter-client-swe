@@ -51,7 +51,7 @@ export function tweets(state = initialState, data){
         case LOADING:
             return {
                 ...state,
-                isLoading: data.payload.isLoading
+                isLoading: true
             }
         case CLEAR_TWEETS:
             return {

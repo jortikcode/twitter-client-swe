@@ -2,10 +2,14 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "App.js",
+  "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon App.js"
+    "start": "nodemon server.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest"
+  },
+  "jest": {
+    "testTimeout": 150000
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -14,5 +18,9 @@
     "multilang-sentiment": "^2.0.0",
     "nodemon": "^2.0.20",
     "twitter-api-sdk": "^1.2.1"
+  },
+  "devDependencies": {
+    "jest": "^29.3.1",
+    "supertest": "^6.3.1"
   }
 }

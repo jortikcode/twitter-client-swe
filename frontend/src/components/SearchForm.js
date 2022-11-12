@@ -1,88 +1,76 @@
 import { useForm } from 'react-hook-form'
 import { useSelector, useDispatch } from 'react-redux'
-import { searchAction, dateErrorAction, loadingAction, clearTweets } from '../actions/customActions'
+import { 
+    searchAction, 
+    dateErrorAction, 
+    loadingAction,
+    clearTweets } from '../actions/customActions'
+import { 
+    formatISO,
+    isValidDateRange,
+    transformQuery,
+    getDateInterval,
+    configureDates,
+    isIntervalSetted} from '../utils/form'
 import Tweet from './Tweet';
 import SearchFilters from './SearchFilters'
 import Map from './Map'
 import { useState } from 'react';
 import PieChart from './PieChart'
+import PageManager from './PageManager';
 
-
-
-
-
-
-// Ritorna la data in formato ISO
-function formatISO(date){
-    return date.toISOString();
-}
-
-function secondsGranularity(isoDate){
-    const isoSecondsGranularity = `${isoDate.substring(0, isoDate.length - 7)}00.000Z`;
-    return isoSecondsGranularity;
-}
-
-// Ritorna la data in formato YYYY-MM-DD, l'argomento e' una data in formato ISO 
-function formatYYYYMMDD(isoDate){
-    return isoDate.split('T')[0];
-}
-
-function isValidDateRange(startDateString, endDateString, todayString, oneWeekAgoString){
-    const startDate = new Date(startDateString);
-    const endDate = new Date(endDateString);
-    const today = new Date(todayString);
-    const oneWeekAgo = new Date(oneWeekAgoString);
-    let response = {
-        msg: "Valid",
-        isValid: true
-    };
-    if (startDate > endDate)
-        response = {
-            msg: "La data di inizio e' oltre la data di fine dell'intervallo",
-            isValid: false
-        }
-    else if (endDate > today)
-        response = {
-            msg: "La data di fine e' oltre la data odierna, non e' possibile cercare tweet del futuro!",
-            isValid: false
-        }   
-    else if (startDate < oneWeekAgo)
-        response = {
-            msg: "La data di inizio dell'intervallo e' oltre una settimana fa, puoi cercare tweet solo all'interno dell'ultima settimana",
-            isValid: false
-        }
-    return response;
-}
 
 const SearchForm = () => {
-    // Espressioni regolari per la ricerca tramite hashtag (@hashtag) o nome utente (@username)
-    const hashtagSearchRegex = new RegExp("^(#)[a-zA-Z0-9]+$");
-    const userSearchRegex = new RegExp("^(@)[a-zA-Z0-9]+$");
-
-    // Millisecondi di una settimana: 6 * 24 * 60 * 60 * 1000
-    const ONE_WEEK_MILLISECONDS = 6 * 24 * 60 * 60 * 1000;
-    // Millisecondi di un giorno: 24 * 60 * 60 * 1000
-    const ONE_DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
-
     // Timestamp di adesso shiftato di error millisecondi indietro
     const error = 60 * 1000;
     const now = new Date(Date.now() - error);
-    // Data in formato ISO di oggi
-    let today = new Date(formatYYYYMMDD(formatISO(new Date(Date.now()))));
-    // Data in formato ISO di una settimana fa
-    let oneWeekAgo = formatISO(new Date(today - ONE_WEEK_MILLISECONDS));
-    today = formatISO(today);
+    // Setup delle date
+    const { today, 
+        oneWeekAgo, 
+        todayDefaultFormat, 
+        oneWeekAgoDefaultFormat } = configureDates(now);
 
     // Oggetti utile per la manipolazione del form con lo hook useForm
     const { 
-        register, 
+        setValue,
+        register,
+        watch, 
         handleSubmit, 
-        formState: { errors } } = useForm();
+        formState: { errors } } = useForm({
+            defaultValues: {
+                startDate: oneWeekAgoDefaultFormat,
+                endDate: todayDefaultFormat,
+                maxResults: 10,
+                noIntervalSearch: false
+            }
+        });
+
+    /* watch permette di tenere il valore di specifici input */
+    const noIntervalSearch = watch("noIntervalSearch", false);
+
     // Stato per tenere traccia del tipo della ricerca: per utente o per parola chiave
     const [ type, setType ] = useState("username");
+    const [storedData, setStoredData] = useState({
+        type: "",
+        query: "",
+        username: "",
+        startDate: "",
+        endDate: ""
+    });
+
     // Il dispatch viene utilizzato per riuscire a manipolare lo stato centralizzato di redux
     const dispatch = useDispatch();
-    const { textTweets, users, noMatch, creationDates, types, places, sentiments, isLoading, nextToken, previousToken } = useSelector(state => state.tweets);
+    const { textTweets, 
+            users, 
+            noMatch, 
+            creationDates, 
+            types, 
+            places, 
+            sentiments, 
+            isLoading, 
+            nextToken, 
+            previousToken } = useSelector(state => state.tweets);
+
     const { filtersEnabled } = useSelector(state => state.form);
 
     // Funzione di submit del form
@@ -102,38 +90,28 @@ const SearchForm = () => {
         }else{
             dispatch(clearTweets());
             // Spinner di caricamento visibile
-            dispatch(loadingAction(true));
-            // Se si tratta di una ricerca di un hashtag/utente allora bisogna cambiare la query
-            if (hashtagSearchRegex.test(data.query))
-                data.query = "%23"+data.query.split('#')[1];
-            else if (userSearchRegex.test(data.query))
-                data.query = "%40"+data.query.split('@')[1];
+            dispatch(loadingAction());
+            // Se si tratta di una keyword search di un hashtag/utente allora bisogna cambiare la query
+            data.query = transformQuery(data.query);
             dispatch(dateErrorAction(""));
+            
+            // Dati da mandare per la ricerca
+            let dataToAction = {};
+            dataToAction["type"] = type;
+            dataToAction["query"] = data.query;
+            dataToAction["username"] = data.username;
+
+            // E' stato settato un intervallo temporale dall'utente
+            if (isIntervalSetted(data, filtersEnabled, noIntervalSearch, oneWeekAgo, today))
+                dataToAction = getDateInterval(data, dataToAction, now);
+
+            if (data.maxResults !== 10 && filtersEnabled)
+                dataToAction["maxResults"] = data.maxResults;
+
+            // Si aggiornano i dati della ricerca corrente
+            setStoredData(dataToAction);
             // Si attiva l'azione per la ricerca e si aggiorna lo stato centralizzato
-            if ((data.startDate !== oneWeekAgo || data.endDate !== today || data.username) && filtersEnabled){
-                // Se la data di inizio e la data di fine coincidono, la data di fine deve essere "shiftata" di 24 ore in avanti
-                if (data.endDate === data.startDate){
-                    let shiftedEndDate = Date.parse(data.endDate);
-                    shiftedEndDate = new Date(shiftedEndDate + ONE_DAY_MILLISECONDS);
-                    // Bisogna evitare che la data shiftata vada oltre il giorno odierno 
-                    shiftedEndDate = shiftedEndDate.getTime() > now ? new Date(now) : shiftedEndDate;
-                    data.endDate = formatISO(shiftedEndDate);
-                }
-                // E' stato settato un intervallo temporale dall'utente
-                dispatch(searchAction({
-                    type,
-                    query: data.query,
-                    username: data.username,
-                    startDate: secondsGranularity(data.startDate),
-                    endDate: secondsGranularity(data.endDate)
-                }));                
-            }else
-                // Non e' stato settato alcun intervallo temporale
-                dispatch(searchAction({
-                    type,
-                    query: data.query,
-                    username: data.username
-                }));
+            dispatch(searchAction(dataToAction));
         }
         
     }
@@ -144,35 +122,39 @@ const SearchForm = () => {
             <form className="flex w-full flex-col justify-center items-center gap-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-col gap-4">
                     <label className="text-center text-3xl dark:text-sky-400 text-black" htmlFor="query"> Cosa vorresti cercare? </label>
-                    <div className="flex md:flex-row flex-col justify-center items-center">
-                        <label className="text-center dark:text-white" htmlFor="type">
-                            Scegli il tipo di ricerca:
-                        </label>
-                        <select className="ml-3" value={type} onChange={(e) => {
-                            setType(e.target.value);
+                    <div className="flex md:flex-row flex-col justify-center items-center md:space-x-3 space-x-0 md:space-y-0 space-y-3">
+                        <button type="button" className="p-2 bg-sky-400 rounded-full ml-3" onClick={(e) => {
+                            const newType = type === "username" ? "keyword" : "username";
+                            if (newType === "keyword")
+                                setValue("noIntervalSearch", false)
+                            setType(newType);
                         }}>
-                            <option className="dark:text-white" value="username">Per utente</option>
-                            <option className="dark:text-white" value="keyword">Per parola chiave</option>
-                        </select>
+                            {(
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                {type === "username" 
+                                ? (<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>)
+                                : (<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>) }
+                            </svg>)}
+                        </button>
+                        {type === "keyword" ? (
+                        <input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="query" id="query" type="text" placeholder="#hashtag, keyword" {...register("query", {
+                            required: "Testo mancante",
+                            pattern: {
+                                message: "Keyword non valido",
+                                value: /^([#@])?[a-zA-Z0-9_]+$/}
+                        })} />) : 
+                        (<input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="username" id="username" type="text" placeholder="username senza @" {...register("username", {
+                            required: "Testo mancante",
+                            pattern: {
+                                message: "Username non valido",
+                                value: /^[a-zA-Z0-9_]+$/}
+                        })} />)}
                     </div>
-                    {type === "keyword" ? (
-                    <input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="query" id="query" type="text" placeholder="#hashtag, keyword" {...register("query", {
-                        required: "Testo mancante",
-                        pattern: {
-                            message: "Keyword non valido",
-                            value: /^([#@])?[a-zA-Z0-9_]+$/}
-                    })} />) : 
-                    (<input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="username" id="username" type="text" placeholder="username without @" {...register("username", {
-                        required: "Testo mancante",
-                        pattern: {
-                            message: "Username non valido",
-                            value: /^([#@])?[a-zA-Z0-9_]+$/}
-                    })} />)}
                     { errors.query && <p className="text-center dark:text-red-300 text-red-600"> { errors.query.message } </p> }
                     { errors.username && <p className="text-center dark:text-red-300 text-red-600"> { errors.username.message } </p> }
 
                 </div>
-                <SearchFilters register={register} errors={errors} />
+                <SearchFilters type={type} setValue={setValue} register={register} errors={errors} noIntervalSearch={noIntervalSearch} />
                 <button className="text-3xl dark:text-white bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit"> Cerca </button>       
             </form>
 
@@ -213,6 +195,9 @@ const SearchForm = () => {
                 <p className="pt-5 pb-5 dark:text-yellow-300">Nessun risultato trovato</p>
             ))}
         </div>
+
+        <PageManager data={storedData} nextToken={nextToken} previousToken={previousToken} />
+
         <div className="w-full md:p-8 p-3 dark:bg-gray-900">
         {places.length > 0 && (
                 <Map 
