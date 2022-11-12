@@ -16,6 +16,7 @@ import Tweet from './Tweet';
 import SearchFilters from './SearchFilters'
 import Map from './Map'
 import { useState } from 'react';
+import PieChart from './PieChart'
 import PageManager from './PageManager';
 
 
@@ -207,8 +208,14 @@ const SearchForm = () => {
                 tweetPlaces = {places} />
             )}
         </div>
+      
+
+       <div className="w-full justify-center flex md:p-8 p-3 dark:bg-gray-900">
+        {  ((sentiments.length > 0) && (<PieChart sentAnalysis = {sentiments} />)) }
+        </div>  
     </>
     );
 }
+
 
 export default SearchForm;
