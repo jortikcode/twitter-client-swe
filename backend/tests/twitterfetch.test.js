@@ -8,7 +8,6 @@ function previusISODate(days) {
   const date = new Date();
   const previous = new Date(date.getTime());
   previous.setDate(date.getDate() - days);
-  console.log(previous.toISOString());
   return previous.toISOString();
 }
 
@@ -40,19 +39,19 @@ describe("GET /api/search", () => {
     });
     test("should support search with a valid start time", async () => {
       const response = await request(app).get(
-        `/api/search?quey=test&start_time=${previusISODate(2)}`
+        `/api/search?query=test&start_time=${previusISODate(2)}`
       );
       expect(response.statusCode).toBe(200);
     });
     test("should support search with a valid end time", async () => {
       const response = await request(app).get(
-        `/api/search?quey=test&end_time=${previusISODate(2)}`
+        `/api/search?query=test&end_time=${previusISODate(2)}`
       );
       expect(response.statusCode).toBe(200);
     });
     test("should support search with a valid start time and end time", async () => {
       const response = await request(app).get(
-        `/api/search?quey=test&start_time=${previusISODate(
+        `/api/search?query=test&start_time=${previusISODate(
           4
         )}&end_time=${previusISODate(2)}`
       );
