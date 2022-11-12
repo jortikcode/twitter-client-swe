@@ -2,6 +2,16 @@ import app from "../index.js";
 import request from "supertest";
 import { oneWeekTimestamp } from "../utils/constants.js";
 
+/* Prende in input il numero di giorni da sottrarre
+ * Ritorna una stringa di una data in formato ISO*/
+function previusISODate(days) {
+  const date = new Date();
+  const previous = new Date(date.getTime());
+  previous.setDate(date.getDate() - days);
+  console.log(previous.toISOString());
+  return previous.toISOString();
+}
+
 describe("GET /api/search", () => {
   describe("given a query", () => {
     test("should respond with a 200 status code", async () => {
@@ -19,13 +29,36 @@ describe("GET /api/search", () => {
     });
     test("should respond a json object with ten elements without a max parameter", async () => {
       const response = await request(app).get("/api/search?query=test");
-      expect(response.body.textTweets.length).toBeLessThanOrEqual(10); 
+      expect(response.body.textTweets.length).toBeLessThanOrEqual(10);
     });
     test("should respond with json object with up to max_results element when max_results is set", async () => {
       const max_results = 11;
-      const response = await request(app).get(`/api/search?query=test&max_results=${max_results}`);
-      expect(response.body.textTweets.length).toBeLessThanOrEqual(max_results); 
+      const response = await request(app).get(
+        `/api/search?query=test&max_results=${max_results}`
+      );
+      expect(response.body.textTweets.length).toBeLessThanOrEqual(max_results);
     });
+    test("should support search with a valid start time", async () => {
+      const response = await request(app).get(
+        `/api/search?quey=test&start_time=${previusISODate(2)}`
+      );
+      expect(response.statusCode).toBe(200);
+    });
+    test("should support search with a valid end time", async () => {
+      const response = await request(app).get(
+        `/api/search?quey=test&end_time=${previusISODate(2)}`
+      );
+      expect(response.statusCode).toBe(200);
+    });
+    test("should support search with a valid start time and end time", async () => {
+      const response = await request(app).get(
+        `/api/search?quey=test&start_time=${previusISODate(
+          4
+        )}&end_time=${previusISODate(2)}`
+      );
+      expect(response.statusCode).toBe(200);
+    });
+
     test("should support search by hashtag", async () => {
       const response = await request(app).get(`/api/search?query=%23newyork`);
       expect(response.status).toBe(200);
@@ -39,7 +72,7 @@ describe("GET /api/search", () => {
       const now = Date.now();
       const oneWeekAgo = now - oneWeekTimestamp;
       // Per ogni data che si trova in creationDates, bisogna verificare che si trovi nell'arco dell'ultima settimana
-      for (const date of response.body.creationDates){
+      for (const date of response.body.creationDates) {
         const dateTimestamp = new Date(date).getTime();
         expect(dateTimestamp).toBeLessThanOrEqual(now);
         expect(dateTimestamp).toBeGreaterThanOrEqual(oneWeekAgo);
@@ -81,6 +114,24 @@ describe("GET /api/search", () => {
     test("should respond with a json object containg error", async () => {
       const response = await request(app).get(
         "/api/search?query=test&end_time=foo"
+      );
+      expect(response.error).toBeDefined();
+    });
+  });
+  describe("with a start_time > end_time", () => {
+    test("should respond with a 400 status code", async () => {
+      const response = await request(app).get(
+        `/api/search?query=test&start_time=${previusISODate(
+          1
+        )}&end_time=${previusISODate(3)}`
+      );
+      expect(response.statusCode).toBe(400);
+    });
+    test("should respond with a json object containg error", async () => {
+      const response = await request(app).get(
+        `/api/search?query=test&start_time=${previusISODate(
+          1
+        )}&end_time=${previusISODate(3)}`
       );
       expect(response.error).toBeDefined();
     });

@@ -11,6 +11,7 @@ const app = express();
 app.use(cors());
 app.use(json());
 app.use(urlencoded({ extended: false }));
+app.use(express.static(join(__dirname, "build")));
 
 app.use("/api", api);
 
@@ -18,7 +19,7 @@ app.use("/api", api);
 Express verifica le route in ordine di dichiarazione, quindi le route /api non verranno inglobate
 poiche' dichiarate prima */
 app.get("/*", (req, res) => {
-  res.sendFile(join(__dirname, "build", "index.html"));
+  res.sendFile(join("build", "index.html"));
 });
 
 export default app;
