@@ -8,7 +8,7 @@ const PieChart = (props) => {
 
       if (x.score < 0)
         sentArray[0] = sentArray[0] + 1
-      else if (x.score == 0)
+      else if (x.score === 0)
         sentArray[1] = sentArray[1] + 1
       else if (x.score > 0)
         sentArray[2] = sentArray[2] + 1
