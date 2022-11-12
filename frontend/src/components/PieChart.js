@@ -27,7 +27,7 @@ const PieChart = (props) => {
         useSeriesColors: true
       }
     },
-    colors: ["#ff7373", "#bada55", "#f0f8ff"],
+    colors: ["#ff7373", "#bada55", "#333333"],
     responsive: [{
       breakpoint: 768,
       options: {
@@ -39,8 +39,12 @@ const PieChart = (props) => {
   };
   
   return (
-    <div className="w-80 md:w-[32rem] dark:border-r-indigo-50 dark:border-8">
-      <ReactApexChart options={options} series={series} type="pie" className="bg-gray-900 rounded-lg p-3" />
+    <div className="w-80 md:w-[32rem] dark:border-r-indigo-50">
+      <ReactApexChart 
+      options={options} 
+      series={series} 
+      type="pie" 
+      className="bg-gray-500 rounded-lg p-3" />
     </div>
   );
   }
