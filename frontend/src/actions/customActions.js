@@ -34,8 +34,9 @@ export const filtersAction = (filtersEnabled) => {
 export const searchAction = (data) => async (dispatch) => {
     let url = "/api/";
     url += `${data.type === "keyword" ? `search?query=${data.query}` : `tweets?username=${data.username}`}`;
-    url += `${data.maxResults && data.maxResults < 100 ? `&max_results=${data.maxResults}` : ``}`;
-    url += `${data.startDate ? `&start_time=${ `${data.startDate}`}&end_time=${data.endDate}` : ``}`;
+    url += `${data.maxResults && data.maxResults < 100 && !data.token ? `&max_results=${data.maxResults}` : ``}`;
+    url += `${data.startDate ? `&start_time=${data.startDate}&end_time=${data.endDate}` : ``}`;
+    url += `${data.token ? `&pagination_token=${data.token}` : ``}`;
     // Richiesta fetch alla API
     await fetch(url)
     .then(res => res.json())

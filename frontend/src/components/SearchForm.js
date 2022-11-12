@@ -1,73 +1,33 @@
 import { useForm } from 'react-hook-form'
 import { useSelector, useDispatch } from 'react-redux'
-import { searchAction, dateErrorAction, loadingAction, clearTweets } from '../actions/customActions'
+import { 
+    searchAction, 
+    dateErrorAction, 
+    loadingAction,
+    clearTweets } from '../actions/customActions'
+import { 
+    formatISO,
+    isValidDateRange,
+    transformQuery,
+    getDateInterval,
+    configureDates,
+    isIntervalSetted} from '../utils/form'
 import Tweet from './Tweet';
 import SearchFilters from './SearchFilters'
 import Map from './Map'
 import { useState } from 'react';
+import PageManager from './PageManager';
 
-// Ritorna la data in formato ISO
-function formatISO(date){
-    return date.toISOString();
-}
-
-function secondsGranularity(isoDate){
-    const isoSecondsGranularity = `${isoDate.substring(0, isoDate.length - 7)}00.000Z`;
-    return isoSecondsGranularity;
-}
-
-// Ritorna la data in formato YYYY-MM-DD, l'argomento e' una data in formato ISO 
-function formatYYYYMMDD(isoDate){
-    return isoDate.split('T')[0];
-}
-
-function isValidDateRange(startDateString, endDateString, todayString, oneWeekAgoString){
-    const startDate = new Date(startDateString);
-    const endDate = new Date(endDateString);
-    const today = new Date(todayString);
-    const oneWeekAgo = new Date(oneWeekAgoString);
-    let response = {
-        msg: "Valid",
-        isValid: true
-    };
-    if (startDate > endDate)
-        response = {
-            msg: "La data di inizio e' oltre la data di fine dell'intervallo",
-            isValid: false
-        }
-    else if (endDate > today)
-        response = {
-            msg: "La data di fine e' oltre la data odierna, non e' possibile cercare tweet del futuro!",
-            isValid: false
-        }   
-    else if (startDate < oneWeekAgo)
-        response = {
-            msg: "La data di inizio dell'intervallo e' oltre una settimana fa, puoi cercare tweet solo all'interno dell'ultima settimana",
-            isValid: false
-        }
-    return response;
-}
 
 const SearchForm = () => {
-    // Espressioni regolari per la ricerca tramite hashtag (@hashtag) o nome utente (@username)
-    const hashtagSearchRegex = new RegExp("^(#)[a-zA-Z0-9]+$");
-    const userSearchRegex = new RegExp("^(@)[a-zA-Z0-9]+$");
-
-    // Millisecondi di una settimana: 6 * 24 * 60 * 60 * 1000
-    const ONE_WEEK_MILLISECONDS = 6 * 24 * 60 * 60 * 1000;
-    // Millisecondi di un giorno: 24 * 60 * 60 * 1000
-    const ONE_DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
-
     // Timestamp di adesso shiftato di error millisecondi indietro
     const error = 60 * 1000;
     const now = new Date(Date.now() - error);
-    // Data in formato ISO di oggi
-    const todayDefaultFormat = formatYYYYMMDD(formatISO(new Date(Date.now())));
-    let today = new Date(todayDefaultFormat);
-    // Data in formato ISO di una settimana fa
-    let oneWeekAgo = formatISO(new Date(today - ONE_WEEK_MILLISECONDS));
-    const oneWeekAgoDefaultFormat = formatYYYYMMDD(oneWeekAgo);
-    today = formatISO(today);
+    // Setup delle date
+    const { today, 
+        oneWeekAgo, 
+        todayDefaultFormat, 
+        oneWeekAgoDefaultFormat } = configureDates(now);
 
     // Oggetti utile per la manipolazione del form con lo hook useForm
     const { 
@@ -89,6 +49,14 @@ const SearchForm = () => {
 
     // Stato per tenere traccia del tipo della ricerca: per utente o per parola chiave
     const [ type, setType ] = useState("username");
+    const [storedData, setStoredData] = useState({
+        type: "",
+        query: "",
+        username: "",
+        startDate: "",
+        endDate: ""
+    });
+
     // Il dispatch viene utilizzato per riuscire a manipolare lo stato centralizzato di redux
     const dispatch = useDispatch();
     const { textTweets, 
@@ -121,12 +89,9 @@ const SearchForm = () => {
         }else{
             dispatch(clearTweets());
             // Spinner di caricamento visibile
-            dispatch(loadingAction(true));
-            // Se si tratta di una ricerca di un hashtag/utente allora bisogna cambiare la query
-            if (hashtagSearchRegex.test(data.query))
-                data.query = "%23"+data.query.split('#')[1];
-            else if (userSearchRegex.test(data.query))
-                data.query = "%40"+data.query.split('@')[1];
+            dispatch(loadingAction());
+            // Se si tratta di una keyword search di un hashtag/utente allora bisogna cambiare la query
+            data.query = transformQuery(data.query);
             dispatch(dateErrorAction(""));
             
             // Dati da mandare per la ricerca
@@ -136,19 +101,14 @@ const SearchForm = () => {
             dataToAction["username"] = data.username;
 
             // E' stato settato un intervallo temporale dall'utente
-            if ((data.startDate !== oneWeekAgo || data.endDate !== today || data.username) && filtersEnabled && !noIntervalSearch){
-                // La data di fine deve essere "shiftata" di 24 ore in avanti
-                let shiftedEndDate = Date.parse(data.endDate);
-                shiftedEndDate = new Date(shiftedEndDate + ONE_DAY_MILLISECONDS);
-                // Bisogna evitare che la data shiftata vada oltre il giorno odierno 
-                shiftedEndDate = shiftedEndDate.getTime() > now ? new Date(now) : shiftedEndDate;
-                data.endDate = formatISO(shiftedEndDate);
-                
-                dataToAction["startDate"] = secondsGranularity(data.startDate); 
-                dataToAction["endDate"] = secondsGranularity(data.endDate);             
-            }
+            if (isIntervalSetted(data, filtersEnabled, noIntervalSearch, oneWeekAgo, today))
+                dataToAction = getDateInterval(data, dataToAction, now);
+
             if (data.maxResults !== 10 && filtersEnabled)
                 dataToAction["maxResults"] = data.maxResults;
+
+            // Si aggiornano i dati della ricerca corrente
+            setStoredData(dataToAction);
             // Si attiva l'azione per la ricerca e si aggiorna lo stato centralizzato
             dispatch(searchAction(dataToAction));
         }
@@ -234,6 +194,9 @@ const SearchForm = () => {
                 <p className="pt-5 pb-5 dark:text-yellow-300">Nessun risultato trovato</p>
             ))}
         </div>
+
+        <PageManager data={storedData} nextToken={nextToken} previousToken={previousToken} />
+
         <div className="w-full md:p-8 p-3 dark:bg-gray-900">
         {places.length > 0 && (
                 <Map 
