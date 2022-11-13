@@ -23,7 +23,11 @@ function preprocessDates(creationDates) {
 function BarChart({creationDates}) {
     const { darkMode } = useSelector(state => state.theme)
 
-    const processedDates = preprocessDates(creationDates)
+    const processedDates = preprocessDates(creationDates);
+    const series = [{
+        name: "Tweets",
+        data: Object.values(processedDates)
+    }]
     const options = {
         xaxis: {
             categories: Object.keys(processedDates),
@@ -38,18 +42,19 @@ function BarChart({creationDates}) {
         },
         markers: {
             size: 5,
-        }
+        },
+        labels: series
     }
-    const series = [{
-        data: Object.values(processedDates)
-    }]
+    
 
     return (
+    <div className="w-80 md:w-[32rem]">
         <Chart
             options={options}
             series={series}
             type="bar"
         />
+    </div>
     )
 }
 
