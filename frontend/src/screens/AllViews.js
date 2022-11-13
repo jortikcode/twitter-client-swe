@@ -1,6 +1,7 @@
 import TweetList from "../components/TweetList";
 import Map from "../components/Map";
 import PieChart from "../components/PieChart";
+import BarChart from "../components/BarChart";
 import { useSelector } from 'react-redux'
 
 const AllViews = () => {
@@ -23,6 +24,7 @@ const AllViews = () => {
                 places={places}
                 /> 
                 <PieChart sentAnalysis = {sentiments} />
+                <BarChart creationDates = {creationDates} />
                 { places.length > 0 &&
                 (
                 <div className="w-full md:p-8 p-3 dark:bg-gray-900">
