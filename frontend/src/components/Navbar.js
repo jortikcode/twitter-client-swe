@@ -14,7 +14,7 @@ function Navbar() {
 						<Link to='/' className="text-lg font-semibold dark:text-sky-400 hover:text-cyan-500 duration-500">Home</Link>
 					</li>
 					<li className="mx-4 mt-4 md:my-0">
-						<Link to='/search' className="text-lg font-semibold dark:text-sky-400 hover:text-cyan-500 duration-500">Ricerca</Link>
+						<Link to='/search/all' className="text-lg font-semibold dark:text-sky-400 hover:text-cyan-500 duration-500">Ricerca</Link>
 					</li>
 					<li className="mx-4 mt-4 md:my-0">
 						<TogglerColor />
