@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { Tabs } from 'flowbite-react'
 
 const TabManager = () => {
   return (
