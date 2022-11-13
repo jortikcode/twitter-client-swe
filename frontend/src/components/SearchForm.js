@@ -18,6 +18,7 @@ import Map from './Map'
 import { useState } from 'react';
 import PieChart from './PieChart'
 import PageManager from './PageManager';
+import BarChart from './BarChart';
 
 
 const SearchForm = () => {
@@ -210,8 +211,12 @@ const SearchForm = () => {
         </div>
       
 
-       <div className="w-full justify-center flex md:p-8 p-3 dark:bg-gray-900">
-        {  ((sentiments.length > 0) && (<PieChart sentAnalysis = {sentiments} />)) }
+        <div className="w-full justify-center flex md:p-8 p-3 dark:bg-gray-900">
+            {  ((sentiments.length > 0) && (<PieChart sentAnalysis = {sentiments} />)) }
+        </div>
+
+        <div className="w-full justify-center flex md:p-8 p-3 dark:bg-gray-900">
+            {  ((creationDates.length > 0) && (<BarChart creationDates = {creationDates} />)) }
         </div>  
     </>
     );
