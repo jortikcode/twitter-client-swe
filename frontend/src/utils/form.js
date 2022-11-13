@@ -1,5 +1,6 @@
 import {
     ONE_DAY_MILLISECONDS,
+    ONE_HOUR_MILLISECONDS,
     ONE_WEEK_MILLISECONDS
 } from './constants'
 
@@ -28,7 +29,7 @@ export function getDateInterval(data, dataToAction, now){
     // La data di fine deve essere "shiftata" di 24 ore in avanti
     let shiftedEndDate = Date.parse(data.endDate);
 
-    shiftedEndDate = new Date(shiftedEndDate + ONE_DAY_MILLISECONDS);
+    shiftedEndDate = new Date(shiftedEndDate + ONE_DAY_MILLISECONDS - ONE_HOUR_MILLISECONDS);
     // Bisogna evitare che la data shiftata vada oltre il giorno odierno 
     shiftedEndDate = shiftedEndDate.getTime() > now ? new Date(now) : shiftedEndDate;
     data.endDate = formatISO(shiftedEndDate); 
