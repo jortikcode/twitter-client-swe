@@ -4,9 +4,10 @@ import { useSelector } from 'react-redux'
 
 function preprocessDates(creationDates) {
     const dateAmounts = {}
-    creationDates.sort()
+    const creationDatesCopy = [...creationDates]
+    creationDatesCopy.sort()
 
-    for (const date of creationDates) {
+    for (const date of creationDatesCopy) {
         const dateObj = new Date(date)
         const dateLabel = 
             `${dateObj.getDate()}/${1 + dateObj.getMonth()}/${dateObj.getFullYear()}`
