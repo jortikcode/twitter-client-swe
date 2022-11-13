@@ -41,7 +41,7 @@ export const searchAction = (data) => async (dispatch) => {
     await fetch(url)
     .then(res => res.json())
     .then(json => {
-        if (json?.no_matches)
+        if (json?.no_matches || json.error)
             // Nessun risultato e' stato trovato
             dispatch(noMatches());
         else{

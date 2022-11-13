@@ -12,12 +12,11 @@ import {
     getDateInterval,
     configureDates,
     isIntervalSetted} from '../utils/form'
-import Tweet from './Tweet';
 import SearchFilters from './SearchFilters'
-import Map from './Map'
 import { useState } from 'react';
-import PieChart from './PieChart'
 import PageManager from './PageManager';
+import TabManager from './TabManager';
+import { Outlet } from 'react-router-dom'
 
 
 const SearchForm = () => {
@@ -60,13 +59,8 @@ const SearchForm = () => {
 
     // Il dispatch viene utilizzato per riuscire a manipolare lo stato centralizzato di redux
     const dispatch = useDispatch();
-    const { textTweets, 
-            users, 
-            noMatch, 
-            creationDates, 
-            types, 
-            places, 
-            sentiments, 
+    const { noMatch, 
+            textTweets,
             isLoading, 
             nextToken, 
             previousToken } = useSelector(state => state.tweets);
@@ -137,13 +131,13 @@ const SearchForm = () => {
                             </svg>)}
                         </button>
                         {type === "keyword" ? (
-                        <input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="query" id="query" type="text" placeholder="#hashtag, keyword" {...register("query", {
+                        <input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="query" id="query" type="text" placeholder="#hashtag, keyword. @utente" {...register("query", {
                             required: "Testo mancante",
                             pattern: {
                                 message: "Keyword non valido",
                                 value: /^([#@])?[a-zA-Z0-9_]+$/}
                         })} />) : 
-                        (<input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="username" id="username" type="text" placeholder="username senza @" {...register("username", {
+                        (<input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="username" id="username" type="text" placeholder="utente senza @" {...register("username", {
                             required: "Testo mancante",
                             pattern: {
                                 message: "Username non valido",
@@ -158,6 +152,22 @@ const SearchForm = () => {
                 <button className="text-3xl dark:text-white bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit"> Cerca </button>       
             </form>
 
+            {((noMatch) ? (
+                <p className="pt-5 pb-5 dark:text-yellow-300">Nessun risultato trovato</p>
+            ) : 
+            (textTweets.length === 0 && !isLoading ? 
+                <p className="pt-5 pb-5 dark:text-yellow-300">Effettua una ricerca</p>
+              :
+            (!isLoading) ?
+                <p className="pt-5 pb-5 dark:text-green-400">Ricerca effettuata! Seleziona la visualizzazione </p>
+              :
+                ""
+              ))}
+
+            <div className="pt-8">
+                <TabManager />
+            </div>
+
             { (isLoading)  && (     
             <div className="pt-5" role="status">
                 <svg className="inline mr-2 w-10 h-10 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -168,51 +178,11 @@ const SearchForm = () => {
             </div>
             )}
 
-            { ((textTweets.length > 0) && (
-                <div className="pt-8 flex gap-y-10 flex-col justify-center items-center md:w-4/6 w-4/5 dark:text-white">
-                    {textTweets.map((tweet, index) =>
-                    {
-                        let placeName = "";
-                        if (places.find(place_info => place_info.index === index))
-                            for (const place_info of places){
-                                if (place_info.index === index){
-                                    placeName = place_info.name;
-                                    break;
-                                }
-                            }
-                        return (<Tweet
-                            placeName={placeName}
-                            key={index}
-                            name={users[index].name} 
-                            username={users[index].username} 
-                            pfpUrl={users[index].pfpUrl}
-                            type={types[index]}
-                            date={new Date(creationDates[index]).toDateString()}
-                            text={tweet.text} />)})}
-                </div> 
-            )) || 
-            ((noMatch) && (
-                <p className="pt-5 pb-5 dark:text-yellow-300">Nessun risultato trovato</p>
-            ))}
+            <div className="pt-3">
+                <PageManager data={storedData} nextToken={nextToken} previousToken={previousToken} />
+            </div>
+            <Outlet />
         </div>
-
-        <PageManager data={storedData} nextToken={nextToken} previousToken={previousToken} />
-
-        <div className="w-full md:p-8 p-3 dark:bg-gray-900">
-        {places.length > 0 && (
-                <Map 
-                textTweets = {textTweets} 
-                users = {users}
-                types = {types}
-                dates = {creationDates}
-                tweetPlaces = {places} />
-            )}
-        </div>
-      
-
-       <div className="w-full justify-center flex md:p-8 p-3 dark:bg-gray-900">
-        {  ((sentiments.length > 0) && (<PieChart sentAnalysis = {sentiments} />)) }
-        </div>  
     </>
     );
 }
