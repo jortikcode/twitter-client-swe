@@ -1,5 +1,6 @@
 import React from 'react'
 import Chart from "react-apexcharts"
+import { useSelector } from 'react-redux'
 
 function preprocessDates(creationDates) {
     const dateAmounts = {}
@@ -20,10 +21,17 @@ function preprocessDates(creationDates) {
 }
 
 function BarChart({creationDates}) {
+    const { darkMode } = useSelector(state => state.theme)
+
     const processedDates = preprocessDates(creationDates)
     const options = {
         xaxis: {
-            categories: Object.keys(processedDates)
+            categories: Object.keys(processedDates),
+            labels: {
+                style: {
+                    colors: darkMode ? 'white' : undefined
+                }
+            }
         },
         stroke: {
             curve: 'smooth',
