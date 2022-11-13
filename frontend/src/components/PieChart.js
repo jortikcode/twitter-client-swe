@@ -44,7 +44,7 @@ const PieChart = (props) => {
       options={options} 
       series={series} 
       type="pie" 
-      className="bg-gray-500 rounded-lg p-3" />
+      className="rounded-lg p-3" />
     </div>
   );
   }
