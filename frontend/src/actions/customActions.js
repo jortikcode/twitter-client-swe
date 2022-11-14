@@ -51,6 +51,7 @@ export const searchAction = (data) => async (dispatch) => {
                 json.creationDates,
                 json.users,
                 json.sentimentAnalysis,
+                json.searchSentimentAnalysis,
                 json.types,
                 json.places,
                 json.nextToken,
@@ -78,7 +79,7 @@ export const loadingAction = (isLoading) => {
     }
 }
 
-function searchSuccess(textTweets = [], creationDates = [], users = [], sentiments = [], types = [], places = [], nextToken = "", previousToken = ""){
+function searchSuccess(textTweets = [], creationDates = [], users = [], sentiments = [], searchSentiment = {}, types = [], places = [], nextToken = "", previousToken = ""){
     return ({
         type: SEARCH_SUCCESS,
         payload: {
@@ -86,6 +87,7 @@ function searchSuccess(textTweets = [], creationDates = [], users = [], sentimen
             creationDates,
             users,
             sentiments,
+            searchSentiment,
             types,
             places,
             nextToken,
