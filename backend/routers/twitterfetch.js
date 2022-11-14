@@ -1,6 +1,6 @@
 import Express from "express";
 const router = Express.Router();
-import { tweetSentimentAnalysis } from "../middleware/sentimentAnalisys.js";
+import { tweetSentimentAnalysis, searchSentimentAnalysis } from "../middleware/sentimentAnalisys.js";
 import {
   searchRecent,
   prepareDataInput,
@@ -16,6 +16,7 @@ router.get(
   searchRecent,
   prepareResponse,
   profilePicUrl,
+  searchSentimentAnalysis,
   tweetSentimentAnalysis
 );
 
@@ -28,6 +29,7 @@ router.get(
   searchUser,
   prepareResponse,
   profilePicUrl,
+  searchSentimentAnalysis,
   tweetSentimentAnalysis
 );
 
