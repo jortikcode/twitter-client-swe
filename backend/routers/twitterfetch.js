@@ -1,9 +1,6 @@
 import Express from "express";
 const router = Express.Router();
-import {
-  sentimentAnalysis,
-  removeTweetsNotSupported,
-} from "../middleware/sentimentAnalisys.js";
+import { tweetSentimentAnalysis } from "../middleware/sentimentAnalisys.js";
 import {
   searchRecent,
   prepareDataInput,
@@ -19,8 +16,7 @@ router.get(
   searchRecent,
   prepareResponse,
   profilePicUrl,
-  removeTweetsNotSupported,
-  sentimentAnalysis
+  tweetSentimentAnalysis
 );
 
 /* GET /api/tweets?username=string&start_time=string&end_time=string&max_results=int
@@ -32,8 +28,7 @@ router.get(
   searchUser,
   prepareResponse,
   profilePicUrl,
-  removeTweetsNotSupported,
-  sentimentAnalysis
+  tweetSentimentAnalysis
 );
 
 export default router;
