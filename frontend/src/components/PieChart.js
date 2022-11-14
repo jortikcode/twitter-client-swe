@@ -15,7 +15,7 @@ const PieChart = (props) => {
     }
     return sentArray
   }
-  const series = sentimentsArrayCalculator();
+  const series = props.sentiments || sentimentsArrayCalculator();
   const options = {
     chart: {
       width: "100%",
@@ -40,6 +40,9 @@ const PieChart = (props) => {
   
   return (
     <div className="w-80 md:w-[32rem] dark:border-r-indigo-50">
+      <span className="font-bold dark:text-white text-lg">
+        {props.title}
+      </span>
       <ReactApexChart 
       options={options} 
       series={series} 
