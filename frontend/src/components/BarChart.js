@@ -21,7 +21,7 @@ function preprocessDates(creationDates) {
     return dateAmounts
 }
 
-function BarChart({creationDates}) {
+function BarChart({creationDates, title}) {
     const { darkMode } = useSelector(state => state.theme)
 
     const processedDates = preprocessDates(creationDates);
@@ -50,6 +50,9 @@ function BarChart({creationDates}) {
 
     return (
     <div className="w-80 md:w-[32rem]">
+        <span className="font-bold dark:text-white text-lg">
+            {title}
+        </span>
         <Chart
             options={options}
             series={series}
