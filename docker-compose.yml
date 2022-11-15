@@ -1,7 +1,5 @@
 services:
   frontend:
-    env_file:
-      - .env
     build: ./frontend
     image: uniboswe-frontend
     ports:
@@ -11,8 +9,6 @@ services:
     entrypoint:
       npm start
   backend:
-    env_file:
-      - .env
     build: ./backend
     image: uniboswe-backend
     ports:
