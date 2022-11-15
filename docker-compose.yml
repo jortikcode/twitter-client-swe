@@ -1,0 +1,19 @@
+services:
+  frontend:
+    build: ./frontend
+    image: uniboswe-frontend
+    ports:
+        - 3000:3000
+    depends_on:
+      - backend
+    entrypoint:
+      npm start
+  backend:
+    build: ./backend
+    image: uniboswe-backend
+    ports:
+      - 8000:8000
+    entrypoint:
+      node server.js
+networks:
+  host:

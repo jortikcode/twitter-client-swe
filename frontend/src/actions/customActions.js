@@ -8,6 +8,9 @@ import {
     CLEAR_TWEETS
 } from './constants'
 
+const baseUrl = process.env.REACT_APP_BASE_API_URL;
+const apiUrl = baseUrl + "/api/";
+
 export const themeAction = (darkMode) => {
     return ({
         type: TOGGLE_COLOR_MODE,
@@ -32,7 +35,7 @@ export const filtersAction = (filtersEnabled) => {
 
 // Azione in cui viene fatta la chiamata alla API /search passandone la parola chiave
 export const searchAction = (data) => async (dispatch) => {
-    let url = "/api/";
+    let url = apiUrl;
     url += `${data.type === "keyword" ? `search?query=${data.query}` : `tweets?username=${data.username}`}`;
     url += `${data.maxResults && data.maxResults < 100 && !data.token ? `&max_results=${data.maxResults}` : ``}`;
     url += `${data.startDate ? `&start_time=${data.startDate}&end_time=${data.endDate}` : ``}`;
