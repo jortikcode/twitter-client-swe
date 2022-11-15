@@ -5,7 +5,7 @@ ENV DEPENDENCIES=/backend-dependencies
 WORKDIR ${DEPENDENCIES}
 COPY package.json .
 RUN npm install
-# copy all of our frontend app files to docker client's current directory & build the application
+# copy all of our backend app files to docker client's current directory & build the application
 WORKDIR /backend
 COPY . .
 RUN mv ${DEPENDENCIES}/node_modules .
