@@ -9,4 +9,4 @@ RUN npm install && npm install -g serve
 # copy all of our frontend app files to docker client's current directory & build the application
 WORKDIR /frontend
 COPY . .
-RUN mv ${DEPENDENCIES}/node_modules .
+RUN mv ${DEPENDENCIES}/node_modules . && npm run build

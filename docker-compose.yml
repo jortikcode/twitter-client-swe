@@ -7,7 +7,7 @@ services:
     depends_on:
       - backend
     entrypoint:
-      npm start
+      serve -s build
   backend:
     build: ./backend
     image: uniboswe-backend
