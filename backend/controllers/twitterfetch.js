@@ -8,8 +8,12 @@ import {
 } from "../utils/customResponse.js";
 import { oneWeekTimestamp } from "../utils/constants.js";
 import isIsoDate from "../utils/dateCheck.js";
+import path, { dirname, join } from "path";
 import dotenv from "dotenv";
-dotenv.config();
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+dotenv.config({path: path.join(__dirname, "..", ".env")});
 
 /* Definisco il client in application mode */
 const client = new Client(process.env.bearertoken);
