@@ -1,15 +1,7 @@
-import { 
-    SEARCH_FAIL,
-    NO_MATCHES} from "./constants";
-import { 
-    searchFail,
+import {
     noMatches } from "./customActions"
 
 describe("customActions testing", () => {
-    it("searchFail()", () => {
-        const action = searchFail();
-        expect(action.type).toEqual(SEARCH_FAIL);
-    });
 
     it("noMathes()", () => {
         const action = noMatches();
