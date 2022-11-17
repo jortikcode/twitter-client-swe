@@ -7,7 +7,7 @@ image: node:latest
 frontend_test: 
   stage: test
   only:
-    - master
+    - main
   script:
     - cd frontend
     - npm install
@@ -15,7 +15,7 @@ frontend_test:
 backend_test:
   stage: test
   only:
-    - master
+    - main
   script:
     - cd backend
     - npm install
@@ -24,7 +24,7 @@ backend_test:
 frontend_build:
   stage: build
   only:
-    - master
+    - main
   script:
     - cd frontend
     - npm run build
@@ -32,7 +32,7 @@ frontend_build:
 frontend_deploy:
   stage: deploy
   only:
-    - master
+    - main
   before_script:
     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
@@ -49,7 +49,7 @@ frontend_deploy:
 backend_deploy:
   stage: deploy
   only:
-    - master
+    - main
   before_script:
     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
