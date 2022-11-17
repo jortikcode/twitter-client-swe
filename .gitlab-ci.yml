@@ -40,6 +40,8 @@ frontend_deploy:
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" | base64 -d >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
     - which rsync || ( apt-get update -y && apt-get install rsync -y )
   script:
     - cd frontend
@@ -57,6 +59,8 @@ backend_deploy:
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" | base64 -d >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
     - which rsync || ( apt-get update -y && apt-get install rsync -y )
   script:
     - cd backend && npm install
