@@ -27,6 +27,7 @@ frontend_build:
     - main
   script:
     - cd frontend
+    - npm install
     - npm run build
 
 frontend_deploy:
@@ -42,7 +43,6 @@ frontend_deploy:
   script:
     - cd frontend
     - npm install
-    - git branch
     - npm run build
     - rsync -av build $UNIBO_USER@lucia.cs.unibo.it:/home/web/site212222/html/twitter-app
 
