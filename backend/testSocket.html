@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Test stream</h1>
+    <button id="start">startStream</button>
+    <button id="stop">startStream</button>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        /* Per generare un socket */
+        const socket = io();
+
+        const buttonStart = document.getElementById("start");
+        buttonStart.addEventListener("click", function (e) {
+            startStream(socket)
+        })
+        function startStream(socket) {
+            alert("bottone cliccato");
+            /* Per richiedere l'ascolto sullo stream */
+            socket.emit("startStream", {})
+        }
+        /* Per ricevere messaggi dallo stream */
+        socket.on('tweets', function (tweet) {
+            console.log(tweet);
+        })
+        const buttonStop = document.getElementById("stop");
+        buttonStop.addEventListener("click", function (e) {
+            stopStream(socket);
+        });
+        function stopStream(socket) {
+            /* Per smettere di ascoltare lo stream */
+            socket.emit("stopStream", {});
+        }
+        socket.on()
+    </script>
+</body>
+
+</html>
