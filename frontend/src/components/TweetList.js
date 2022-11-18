@@ -1,5 +1,5 @@
 import Tweet from "./Tweet";
-const TweetList = ({ textTweets, places, users, types, creationDates }) => {
+const TweetList = ({ sentiments, textTweets, places, users, types, creationDates }) => {
     return (
         <>
         { ((textTweets.length > 0) && (
@@ -14,14 +14,16 @@ const TweetList = ({ textTweets, places, users, types, creationDates }) => {
                                 break;
                             }
                         }
+                    const creationDate = new Date(creationDates[index]);
                     return (<Tweet
+                        sentiment={sentiments ? sentiments[index] : []}
                         placeName={placeName}
                         key={index}
                         name={users[index].name} 
                         username={users[index].username} 
                         pfpUrl={users[index].pfpUrl}
                         type={types[index]}
-                        date={new Date(creationDates[index]).toDateString()}
+                        date={`il ${creationDate.toLocaleDateString()} alle ${creationDate.toLocaleTimeString()}`}
                         text={tweet.text} />)})}
             </div> 
         )) }
