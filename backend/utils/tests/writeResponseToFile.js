@@ -42,8 +42,8 @@ fetch(apiUrlToSave)
 })
 .then(JSONStringResponse => {
     const buffer = `export const mock${fileIdentifier} = ` + JSONStringResponse;
-    fs.writeFile(`mock${fileIdentifier}.txt`, buffer, (err) => {
+    fs.writeFile(`mock${fileIdentifier}.js`, buffer, (err) => {
         if (err) throw err;
-        console.log(`Il file di mock e' stato salvato in:\n ${path.join(__dirname, `mock${fileIdentifier}.txt`)}`);
+        console.log(`Il file di mock e' stato salvato in:\n ${path.join(__dirname, `mock${fileIdentifier}.js`)}`);
     })
 })
