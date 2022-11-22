@@ -46,7 +46,7 @@ export const usernameTweetsFill = () => {
 export const keywordFill = () => {
     fireEvent.input(screen.getByPlaceholderText(keywordPlaceholder), {
         target: {
-            value: "#meloni"
+            value: "meloni"
         }});
 }
 
