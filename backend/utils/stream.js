@@ -50,8 +50,9 @@ export const startStream = async () => {
   await deleteAllRules();
   const stream = client.tweets.searchStream();
   for await (const tweet of stream) {
-    for (const listener in app.locals.listeners) {
-      sendTweet(app.locals.listeners[listener], tweet.data);
+    const rule = tweet.matching_rules[0].tag;
+    for (let i = 0; i < app.locals.listeners[rule]?.length; i += 1) {
+      sendTweet(app.locals.listeners[rule][i], tweet.data);
     }
   }
 };
@@ -62,7 +63,7 @@ const sendTweet = (socket, tweet) => {
 };
 
 /* Chiamata alle api di twitter di getRules */
-export const getRules = async () => {
+const getRules = async () => {
   try {
     const response = await client.tweets.getRules();
     return response;

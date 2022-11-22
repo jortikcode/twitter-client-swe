@@ -10,30 +10,77 @@
 
 <body>
     <h1>Test stream</h1>
-    <button id="test">startStream</button>
+    <button id="startGhigliottina">startGhigliottina</button>
+    <button id="stopGhigliottina">stopGhigliottina</button>
+    <br>
+    <button id="startS1">startS1</button>
+    <button id="startS2">startS2</button>
+    <button id="startS3">startS3</button>
+    <button id="stopS1">stopS1</button>
+    <button id="stopS2">stopS2</button>
+    <button id="stopS3">stopS3</button>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        /* Per generare un socket */
+        /* ATTENZIONE: è possibile avere un massimo di 5 regole (limiti di twitter),
+         * una regola è formata dalla query e dal tag.
+         */
+
+        /* Per generare un socket,
+         * serve per stabilire la connessione con il backend.
+         */
         const socket = io();
 
-        const button = document.getElementById("test");
-        button.addEventListener("click", function (e) {
-            startStream(socket)
+        /* Esempio ghigliottina */
+        const buttonStartG = document.getElementById("startGhigliottina");
+        buttonStartG.addEventListener("click", function (e) {
+            socket.emit("startGhigliottina");
+
         })
-        function startStream(socket) {
-            alert("bottone cliccato");
+
+        const buttonStopG = document.getElementById("stopGhigliottina");
+        buttonStopG.addEventListener("click", function (e) {
+            socket.emit("stopGhigliottina");
+        })
+
+        /* Esempi generici */
+        const buttonStartS1 = document.getElementById("startS1");
+        buttonStartS1.addEventListener("click", function (e) {
+            startStream(socket, "#influencer", "s1");
+        })
+        const buttonStartS2 = document.getElementById("startS2");
+        buttonStartS2.addEventListener("click", function (e) {
+            startStream(socket, "#vegan", "s2");
+        })
+        const buttonStartS3 = document.getElementById("startS3");
+        buttonStartS3.addEventListener("click", function (e) {
+            startStream(socket, "#fitness", "s3");
+        })
+        function startStream(socket, q, tag) {
+            console.log("bottone cliccato");
             /* Per richiedere l'ascolto sullo stream */
-            socket.emit("startStream", {})
+            socket.emit("startStream", q, tag);
         }
+        const buttonStopS1 = document.getElementById("stopS1");
+        buttonStopS1.addEventListener("click", function (e) {
+            stopStream(socket, "s1");
+        });
+        const buttonStopS2 = document.getElementById("stopS2");
+        buttonStopS2.addEventListener("click", function (e) {
+            stopStream(socket, "s2");
+        });
+        const buttonStopS3 = document.getElementById("stopS3");
+        buttonStopS3.addEventListener("click", function (e) {
+            stopStream(socket, "s3");
+        });
+        function stopStream(socket, tag) {
+            /* Per smettere di ascoltare lo stream */
+            socket.emit("stopStream", tag);
+        }
+
         /* Per ricevere messaggi dallo stream */
         socket.on('tweets', function (tweet) {
             console.log(tweet);
         })
-        function stopStream(socket) {
-            /* Per smettere di ascoltare lo stream */
-            socket.emit("stopStream", {});
-        }
-        socket.on()
     </script>
 </body>
 

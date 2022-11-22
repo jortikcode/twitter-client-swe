@@ -3,9 +3,12 @@ import app from "./index.js";
 import {
   startStream,
   addOrDeleteRules,
-  getRules,
   generateAddRule,
+  generateDeleteRule,
 } from "./utils/stream.js";
+import { Mutex } from "async-mutex";
+
+const mutex = new Mutex();
 
 const port = 8000;
 const server = app.listen(port);
@@ -26,26 +29,65 @@ startStream();
 /* associa un oggetto al socket id e rimane in ascolto per iniziare lo stream */
 io.on("connection", (socket) => {
   console.log("client connesso");
-  socket.on("startStream", async (value, tag) => {
-    /* controllo se è già presente una regola con il tag passato  */
-    if (!tag in activeRules) {
-      const rule = await addOrDeleteRules(
-        generateAddRule(value, tag)
-      );
-      activeRules[rule.data[0].tag] = rule.data[0].id;
-    }
-    app.locals.listeners[socket.id] = socket;
+  socket.on("startGenericStream", async (value, tag) => {
+    await start(socket, value, tag);
   });
-  socket.on("stopStream", () => {
-    if (socket.id in app.locals.listeners) {
-      delete app.locals.listeners[socket.id];
-    }
+  socket.on("stopGenericStream", async (tag) => {
+    await stop(tag, socket);
   });
-  socket.on("disconnect", () => {
-    if (socket.id in app.locals.listeners) {
-      delete app.locals.listeners[socket.id];
-    }
+  socket.on("startGhigliottina", async () => {
+    await start(socket, "#leredita", "ghigliottina");
+  });
+  socket.on("stopGhigliottina", async () => {
+    await stop("ghigliottina", socket);
+  });
+  socket.on("disconnect", async () => {
+    await removeFromAllLists(socket);
     socket.disconnect();
-    console.log("Client disconnected");
+    console.log("client disconnesso");
   });
 });
+
+/* Funzione generica per iniziare l'ascolto su uno stream */
+const start = async (socket, value, tag) => {
+  /* prendo la mutua esclusione per la variabile activeRules */
+  let release = await mutex.acquire();
+  /* controllo se è già presente una regola con il tag passato  */
+  if (!(tag in activeRules)) {
+    const rule = await addOrDeleteRules(generateAddRule(value, tag));
+    app.locals.listeners[tag] = new Array();
+    activeRules[tag] = rule.data[0].id;
+  }
+  if (!app.locals.listeners[tag].includes(socket)) {
+    app.locals.listeners[tag].push(socket);
+  }
+  /* rilascio la mutua esclusione */
+  release();
+};
+
+/* Funzione generica per fermare l'ascolto di uno stream */
+const stop = async (tag, socket) => {
+  await removeItem(tag, socket);
+};
+
+/* rimuove uno specifico socket da una lista */
+const removeItem = async (tag, socket) => {
+  if (tag in app.locals.listeners) {
+    const index = app.locals.listeners[tag].indexOf(socket);
+    if (index > -1) {
+      app.locals.listeners[tag].splice(index, 1);
+    }
+    if (app.locals.listeners[tag].length == 0) {
+      delete app.locals.listeners[tag];
+      await addOrDeleteRules(generateDeleteRule([activeRules[tag]]));
+      delete activeRules[tag];
+    }
+  }
+};
+
+/* rimuove un socket da tutte le liste in ascolto */
+const removeFromAllLists = async (socket) => {
+  for (const tag in app.locals.listeners) {
+    await removeItem(tag, socket);
+  }
+};
