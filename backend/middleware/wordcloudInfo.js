@@ -10,6 +10,11 @@ const defaultLang = "english";
 export const getWordcloudInfo = (req, res, next) => {
   const tweets = req.payload.textTweets;
   const len = req.payload.textTweets.length;
+  
+  if (len === 0){
+    req.payload.wordcloudInfo = [];
+    next();
+  }
 
   let words = [];
 
