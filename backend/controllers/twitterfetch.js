@@ -103,6 +103,11 @@ export const prepareDataInput = (req, res, next) => {
         throw "Date non valide, la data di inizio è dopo della data di fine";
       }
     }
+    if (params.max_results) {
+      if (params.max_results > 100) {
+        throw "Al massimo 100 tweets";
+      }
+    }
     params["tweet.fields"] = [
       "attachments",
       "author_id",
