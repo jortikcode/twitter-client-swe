@@ -53,7 +53,6 @@ export const getWordcloudInfo = (req, res, next) => {
 
   // Ordinamento dell'array e rimozione delle keyword con valori non significativi
   wordcloudInfoArray = wordcloudInfoArray.sort((a,b) => b.value - a.value).slice(0, maxWordsPerWordcloud);
-  console.log(wordcloudInfoArray, wordcloudInfoArray.length);
   req.payload.wordcloudInfo = wordcloudInfoArray;
   next();
 }
