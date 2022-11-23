@@ -60,8 +60,8 @@ const SearchFilters = ({ register, errors, type, noIntervalSearch, setValue }) =
                             value: "10"
                         },
                         max: {
-                            message: "Massimo 99 tweets",
-                            value: "99"
+                            message: "Massimo 100 tweets",
+                            value: "100"
                         },
                         required: filtersEnabled ? "Numero mancante" : true
                     })} />

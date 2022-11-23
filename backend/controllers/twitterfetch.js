@@ -104,8 +104,8 @@ export const prepareDataInput = (req, res, next) => {
       }
     }
     if (params.max_results) {
-      if (params.max_results >= 100) {
-        throw "Al massimo 99 tweets";
+      if (params.max_results > 100) {
+        throw "Al massimo 100 tweets";
       }
     }
     params["tweet.fields"] = [
