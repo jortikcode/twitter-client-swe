@@ -57,6 +57,7 @@ export const searchAction = (data) => async (dispatch) => {
                 json.searchSentimentAnalysis,
                 json.types,
                 json.places,
+                json.wordcloudInfo,
                 json.nextToken,
                 json.previousToken
                 ));
@@ -82,7 +83,7 @@ export const loadingAction = (isLoading) => {
     }
 }
 
-function searchSuccess(textTweets = [], creationDates = [], users = [], sentiments = [], searchSentiment = {}, types = [], places = [], nextToken = "", previousToken = ""){
+function searchSuccess(textTweets = [], creationDates = [], users = [], sentiments = [], searchSentiment = {}, types = [], places = [], wordcloudInfo = [], nextToken = "", previousToken = ""){
     return ({
         type: SEARCH_SUCCESS,
         payload: {
@@ -93,6 +94,7 @@ function searchSuccess(textTweets = [], creationDates = [], users = [], sentimen
             searchSentiment,
             types,
             places,
+            wordcloudInfo,  
             nextToken,
             previousToken
         }
