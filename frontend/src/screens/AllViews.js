@@ -3,6 +3,7 @@ import Map from "../components/Map";
 import PieChart from "../components/PieChart";
 import BarChart from "../components/BarChart";
 import { useSelector } from 'react-redux'
+import Wordcloud from "../components/Wordcloud.js";
 
 const AllViews = () => {
     const { 
@@ -38,6 +39,7 @@ const AllViews = () => {
                     tweetPlaces = {places} />
                 </div>)
                 }
+                <Wordcloud />
             </>)}
         </div>
     );
