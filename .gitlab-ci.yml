@@ -14,11 +14,11 @@ frontend_test:
     - npm install
     - npm run test -- --coverage
     - |
-      which sonar-scanner || (curl -sL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip \
+      which sonar-scanner || curl -sL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip \
       -o sonarscanner.zip && \
       unzip sonarscanner.zip -d ~/scanner_folder && \
       echo "export PATH=\"$PATH:~/scanner_folder/sonar-scanner-4.7.0.2747-linux/bin\"" >> ~/.profile && \
-      source ~/.profile)
+      source ~/.profile
     - cd .. && ls && sonar-scanner -Dsonar.login=$SONAR_TOKEN -Dsonar.host.url=$SONAR_HOST_URL
 
 backend_test:
@@ -31,11 +31,11 @@ backend_test:
     - npm install
     - npm run test -- --coverage
     - |
-      which sonar-scanner || (curl -sL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip \
+      which sonar-scanner || curl -sL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip \
       -o sonarscanner.zip && \
       unzip sonarscanner.zip -d ~/scanner_folder && \
       echo "export PATH=\"$PATH:~/scanner_folder/sonar-scanner-4.7.0.2747-linux/bin\"" >> ~/.profile && \
-      source ~/.profile)
+      source ~/.profile
     - cd .. && ls && sonar-scanner -Dsonar.login=$SONAR_TOKEN -Dsonar.host.url=$SONAR_HOST_URL
 
 frontend_build:
