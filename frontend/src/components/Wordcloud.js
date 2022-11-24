@@ -2,38 +2,33 @@ import React from "react";
 import WordCloud from "react-d3-cloud";
 import { useSelector } from "react-redux";
 
-function Wordcloud() {
-    const [wordcloudInfo] = useSelector(state => state.tweets)
-    //dati di prova
-    /* const data = [
-         { text: "Hey", value: 1000 },
-         { text: "lol", value: 200 },
-         { text: "first impression", value: 1000 },
-         { text: "very cool", value: 1000000 },
-         { text: "duck", value: 10 },
-         { text: "very cool", value: 1000 },
-         { text: "very cool", value: 1000 },
-         { text: "very cool", value: 1000 },
-         { text: "very cool", value: 1000 },
-         { text: "very cool", value: 1000 },
-         { text: "very cool", value: 1000 },
-     ];*/
 
-    const data = wordcloudInfo
+function Wordcloud({ title }) {
+    const { wordcloudInfo } = useSelector(state => state.tweets)
 
+    // Fattore di scala per il valore delle parole da passare alla wordcloud
+    const WORDCLOUD_SCALE_FACTOR = 300;
 
-    //TODO: cambiare fontsize per adattarla ai valori dei dati ritornati da backend
+    // Copia dell'array delle informazioni per la wordcloud 
+    let wordcloudInfoCopy = JSON.parse(JSON.stringify(wordcloudInfo));
+    // Riscaliamo i valori dell'array delle info
+    wordcloudInfoCopy = wordcloudInfoCopy.map(singleWordInfo => {
+    singleWordInfo.value *= WORDCLOUD_SCALE_FACTOR;
+    return singleWordInfo;
+    })
+
     const fontSizeMapper = (word) => Math.log2(word.value) * 5;
-
-
     return (
-        <div style={{ margin: "250px" }}>
+        <div className="w-80 md:w-[32rem]">
+            <span className="font-bold dark:text-white text-lg">
+                {title}
+            </span>
             <WordCloud
-                data={data}
+                data={wordcloudInfoCopy}
                 fontSizeMapper={fontSizeMapper}
-                width={500}
-                height={500}
+                spiral="archimedean"
                 padding={3}
+                fontWeight="bold"
                 font="impact"
             />
         </div>
