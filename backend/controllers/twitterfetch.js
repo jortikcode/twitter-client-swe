@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-dotenv.config({ path: join(__dirname, ".env") });
+dotenv.config({ path: join(__dirname,"..", ".env") });
 
 /* Definisco il client in application mode */
 const client = new Client(process.env.bearertoken);

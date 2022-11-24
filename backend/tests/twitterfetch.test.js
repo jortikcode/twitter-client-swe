@@ -1,4 +1,4 @@
-import app from "../index.js";
+import { app } from "../index.js";
 import request from "supertest";
 import { oneWeekTimestamp } from "../utils/constants.js";
 
