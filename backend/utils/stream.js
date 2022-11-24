@@ -1,4 +1,7 @@
 import { Client } from "twitter-api-sdk";
+import { addFields } from "./queryFields.js";
+import { doSentiment } from "./doSA.js";
+import { preparePayload } from "./customResponse.js";
 import app from "../index.js";
 import dotenv from "dotenv";
 dotenv.config();
@@ -48,11 +51,16 @@ const deleteAllRules = async () => {
 export const startStream = async () => {
   console.log("Start stream");
   await deleteAllRules();
-  const stream = client.tweets.searchStream();
-  for await (const tweet of stream) {
+  const stream = client.tweets.searchStream(addFields());
+  for await (let tweet of stream) {
     const rule = tweet.matching_rules[0].tag;
+    tweet.data = [tweet.data];
+    const payload = preparePayload(tweet);
+    const { tweetSentiment, searchSentiment } = doSentiment(payload.textTweets);
+    payload["tweetSentiment"] = tweetSentiment;
+    payload["searchSentiment"] = searchSentiment;
     for (let i = 0; i < app.locals.listeners[rule]?.length; i += 1) {
-      sendTweet(app.locals.listeners[rule][i], tweet.data);
+      sendTweet(app.locals.listeners[rule][i], payload);
     }
   }
 };

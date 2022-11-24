@@ -4,6 +4,37 @@ const RETWEET = "RETWEET";
 const QUOTED = "QUOTED";
 const NOTYPE = "NOTYPE";
 
+export function preparePayload(response) {
+  // Array contenente gli id degli autori dei tweet ricevuti dalla richiesta
+  let authorsId = [];
+  // Array contenete i tipi dei tweet: TWEET, RETWEET, REPLY
+  let types = [];
+  // Array contenente i place id dei tweet
+  let placesId = [];
+  const { payload } = searchSuccess(
+    response.data.map((tweet, index) => {
+      authorsId.push(tweet.author_id);
+      placesId.push(tweet.geo?.place_id);
+      types.push(getType(tweet));
+      if (types[index] === "RETWEET") {
+        // Si tratta di un retweet, e' necessario accedere al testo completo in un altro modo
+        return getRetweetText(
+          tweet.referenced_tweets[0].id,
+          response.includes.tweets
+        );
+      }
+      return { text: tweet.text, lang: tweet.lang };
+    }),
+    response.data.map((tweet) => {
+      return new Date(tweet.created_at);
+    }),
+    getAuthours(authorsId, response.includes.users),
+    types,
+    getGeo(placesId, response.includes.places)
+  );
+  return payload;
+}
+
 // Funzione che ritorna il tipo del tweet passato come argomento
 export const getType = (tweet) => {
   if (tweet?.referenced_tweets)
@@ -36,13 +67,14 @@ export const getRetweetText = (retweetId, allRetweets) => {
     degli autori con id in authorsId
     */
 export const getAuthours = (authorsId, allAuthors) => {
-  let authors_info = [];
+  const authors_info = [];
   for (const author_id of authorsId) {
-    authors_info.push(
-      allAuthors.find((extended_author) => {
-        return extended_author.id === author_id;
-      })
-    );
+    let author = allAuthors.find((extended_author) => {
+      return extended_author.id === author_id;
+    });
+    author = { ...author, pfpUrl: author.profile_image_url };
+    delete author.profile_image_url;
+    authors_info.push(author);
   }
   return authors_info;
 };
