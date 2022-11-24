@@ -12,7 +12,15 @@ frontend_test:
   script:
     - cd frontend
     - npm install
-    - npm run test
+    - npm run test -- --coverage
+    - |
+      which sonar-scanner || curl -sL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip \
+      -o sonarscanner.zip && \
+      unzip sonarscanner.zip -d ~/scanner_folder && \
+      echo "export PATH=\"$PATH:~/scanner_folder/sonar-scanner-4.7.0.2747-linux/bin\"" >> ~/.profile && \
+      source ~/.profile
+    - cd .. && sonar-scanner -Dsonar.login=$SONAR_TOKEN -Dsonar.host.url=$SONAR_HOST_URL
+
 backend_test:
   stage: test
   only:
@@ -21,7 +29,14 @@ backend_test:
   script:
     - cd backend
     - npm install
-    - npm run test
+    - npm run test -- --coverage
+    - |
+      which sonar-scanner || curl -sL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip \
+      -o sonarscanner.zip && \
+      unzip sonarscanner.zip -d ~/scanner_folder && \
+      echo "export PATH=\"$PATH:~/scanner_folder/sonar-scanner-4.7.0.2747-linux/bin\"" >> ~/.profile && \
+      source ~/.profile
+    - cd .. && sonar-scanner -Dsonar.login=$SONAR_TOKEN -Dsonar.host.url=$SONAR_HOST_URL
 
 frontend_build:
   stage: build
@@ -45,7 +60,6 @@ frontend_deploy:
     - chmod 700 ~/.ssh
     - ssh-keyscan lucia.cs.unibo.it >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-
     - which rsync || ( apt-get update -y && apt-get install rsync -y )
   script:
     - cd frontend
@@ -65,8 +79,6 @@ backend_deploy:
     - chmod 700 ~/.ssh
     - ssh-keyscan lucia.cs.unibo.it >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    # - echo "$SSH_KNOWN_HOSTS" | base64 -d >> ~/.ssh/known_hosts
-    # - chmod 644 ~/.ssh/known_hosts
     - which rsync || ( apt-get update -y && apt-get install rsync -y )
   script:
     - cd backend && npm install
