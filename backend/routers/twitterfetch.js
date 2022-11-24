@@ -1,14 +1,14 @@
 import Express from "express";
 const router = Express.Router();
-import { tweetSentimentAnalysis, searchSentimentAnalysis } from "../middleware/sentimentAnalisys.js";
+import { sentimentAnalysis } from "../middleware/sentimentAnalisys.js";
 import { getWordcloudInfo } from "../middleware/wordcloudInfo.js";
 import {
   searchRecent,
   prepareDataInput,
   prepareResponse,
-  profilePicUrl,
   getUserID,
   searchUser,
+  sendData,
 } from "../controllers/twitterfetch.js";
 
 router.get(
@@ -16,10 +16,9 @@ router.get(
   prepareDataInput,
   searchRecent,
   prepareResponse,
-  profilePicUrl,
+  sentimentAnalysis,
   getWordcloudInfo,
-  searchSentimentAnalysis,
-  tweetSentimentAnalysis
+  sendData
 );
 
 /* GET /api/tweets?username=string&start_time=string&end_time=string&max_results=int
@@ -30,10 +29,9 @@ router.get(
   getUserID,
   searchUser,
   prepareResponse,
-  profilePicUrl,
+  sentimentAnalysis,
   getWordcloudInfo,
-  searchSentimentAnalysis,
-  tweetSentimentAnalysis
+  sendData
 );
 
 export default router;
