@@ -2,9 +2,14 @@ import { Client } from "twitter-api-sdk";
 import { addFields } from "./queryFields.js";
 import { doSentiment } from "./doSA.js";
 import { preparePayload } from "./customResponse.js";
-import app from "../index.js";
+import { app } from "../index.js";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 import dotenv from "dotenv";
-dotenv.config();
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+dotenv.config({ path: join(__dirname, "..", ".env") });
 
 /* Definisco il client in application mode */
 const client = new Client(process.env.bearertoken);

@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import app from "./index.js";
+import { app } from "./index.js";
 import {
   startStream,
   addOrDeleteRules,
