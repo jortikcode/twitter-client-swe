@@ -1,9 +1,12 @@
 import Tweet from "./Tweet";
-const TweetList = ({ textTweets, places, users, types, creationDates }) => {
+import { useSelector } from "react-redux";
+
+const TweetList = () => {
+    const { textTweets, places, users, types, creationDates } = useSelector(state => state.tweets);
     return (
         <>
         { ((textTweets.length > 0) && (
-            <div className="pt-8 flex gap-y-10 flex-col justify-center items-center md:w-4/6 w-4/5 dark:text-white">
+            <div data-testid="tweetListContainer" className="pt-8 flex gap-y-10 flex-col justify-center items-center md:w-4/6 w-4/5 dark:text-white">
                 {textTweets.map((tweet, index) =>
                 {
                     let placeName = "";

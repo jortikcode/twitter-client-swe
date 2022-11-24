@@ -1,6 +1,7 @@
 import Express from "express";
 const router = Express.Router();
 import { sentimentAnalysis } from "../middleware/sentimentAnalisys.js";
+import { getWordcloudInfo } from "../middleware/wordcloudInfo.js";
 import {
   searchRecent,
   prepareDataInput,
@@ -16,6 +17,7 @@ router.get(
   searchRecent,
   prepareResponse,
   sentimentAnalysis,
+  getWordcloudInfo,
   sendData
 );
 
@@ -28,6 +30,7 @@ router.get(
   searchUser,
   prepareResponse,
   sentimentAnalysis,
+  getWordcloudInfo,
   sendData
 );
 

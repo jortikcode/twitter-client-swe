@@ -3,7 +3,10 @@ import { preparePayload } from "../utils/customResponse.js";
 import { checkDates } from "../utils/dateCheck.js";
 import { addFields } from "../utils/queryFields.js";
 import dotenv from "dotenv";
-dotenv.config();
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+dotenv.config({path: path.join(__dirname, "..", ".env")});
 
 /* Definisco il client in application mode */
 const client = new Client(process.env.bearertoken);

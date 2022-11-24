@@ -1,0 +1,73 @@
+stages:
+  - test
+  - build
+  - deploy
+image: node:latest
+
+frontend_test: 
+  stage: test
+  only:
+    - main
+    - merge_requests
+  script:
+    - cd frontend
+    - npm install
+    - npm run test
+backend_test:
+  stage: test
+  only:
+    - main
+    - merge_requests
+  script:
+    - cd backend
+    - npm install
+    - npm run test
+
+frontend_build:
+  stage: build
+  only:
+    - main
+    - merge_requests
+  script:
+    - cd frontend
+    - npm install
+    - npm run build
+
+frontend_deploy:
+  stage: deploy
+  only:
+    - main
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan lucia.cs.unibo.it >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+    - which rsync || ( apt-get update -y && apt-get install rsync -y )
+  script:
+    - cd frontend
+    - npm install
+    - npm run build
+    - rsync -av build $UNIBO_USER@lucia.cs.unibo.it:/home/web/site212236/html/twitter-app
+
+backend_deploy:
+  stage: deploy
+  only:
+    - main
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan lucia.cs.unibo.it >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    # - echo "$SSH_KNOWN_HOSTS" | base64 -d >> ~/.ssh/known_hosts
+    # - chmod 644 ~/.ssh/known_hosts
+    - which rsync || ( apt-get update -y && apt-get install rsync -y )
+  script:
+    - cd backend && npm install
+    - rsync -av * .env .dockerignore node_modules $UNIBO_USER@lucia.cs.unibo.it:/home/web/site212236/html/twitter-app
