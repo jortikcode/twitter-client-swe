@@ -10,6 +10,7 @@ frontend_test:
     - main
     - merge_requests
   script:
+    - echo $SONAR_HOST_URL
     - cd frontend
     - npm install
     - npm run test -- --coverage
