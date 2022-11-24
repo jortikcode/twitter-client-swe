@@ -3,7 +3,7 @@ import Map from "../components/Map";
 import PieChart from "../components/PieChart";
 import BarChart from "../components/BarChart";
 import { useSelector } from 'react-redux'
-import Wordcloud from "../components/Wordcloud.js";
+import Wordcloud from "../components/Wordcloud";
 
 const AllViews = () => {
     const { 
@@ -28,6 +28,7 @@ const AllViews = () => {
                 <PieChart title="Analisi dei tweet" sentAnalysis = {sentiments} />
                 <PieChart title="Analisi delle parole dei risultati" sentiments = {[searchSentiment.negatives, searchSentiment.positives, searchSentiment.neutrals]} />
                 <BarChart title="Tweet nel tempo" creationDates = {creationDates} />
+                <Wordcloud title="Wordcloud della ricerca" />
                 { places.length > 0 &&
                 (
                 <div className="w-full md:p-8 p-3 dark:bg-gray-900">
@@ -39,7 +40,7 @@ const AllViews = () => {
                     tweetPlaces = {places} />
                 </div>)
                 }
-                <Wordcloud />
+                
             </>)}
         </div>
     );
