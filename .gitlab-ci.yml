@@ -10,7 +10,6 @@ frontend_test:
     - main
     - merge_requests
   script:
-    - echo $SONAR_HOST_URL
     - cd frontend
     - npm install
     - npm run test -- --coverage
@@ -20,7 +19,7 @@ frontend_test:
       unzip sonarscanner.zip -d ~/scanner_folder && \
       echo "export PATH=\"$PATH:~/scanner_folder/sonar-scanner-4.7.0.2747-linux/bin\"" >> ~/.profile && \
       source ~/.profile
-    - cd .. && ls && sonar-scanner -Dsonar.login=$SONAR_TOKEN -Dsonar.host.url=$SONAR_HOST_URL
+    - cd .. && sonar-scanner -Dsonar.login=$SONAR_TOKEN -Dsonar.host.url=$SONAR_HOST_URL
 
 backend_test:
   stage: test
@@ -37,7 +36,7 @@ backend_test:
       unzip sonarscanner.zip -d ~/scanner_folder && \
       echo "export PATH=\"$PATH:~/scanner_folder/sonar-scanner-4.7.0.2747-linux/bin\"" >> ~/.profile && \
       source ~/.profile
-    - cd .. && ls && sonar-scanner -Dsonar.login=$SONAR_TOKEN -Dsonar.host.url=$SONAR_HOST_URL
+    - cd .. && sonar-scanner -Dsonar.login=$SONAR_TOKEN -Dsonar.host.url=$SONAR_HOST_URL
 
 frontend_build:
   stage: build
@@ -61,7 +60,6 @@ frontend_deploy:
     - chmod 700 ~/.ssh
     - ssh-keyscan lucia.cs.unibo.it >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-
     - which rsync || ( apt-get update -y && apt-get install rsync -y )
   script:
     - cd frontend
