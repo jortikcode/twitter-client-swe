@@ -1,5 +1,16 @@
 {
   "name": "frontend",
+  "jest": {
+    "collectCoverageFrom": [
+      "**/*.{js,jsx,ts,tsx}",
+      "!tailwind.config.js",
+      "!<rootDir>/node_modules/**",
+      "!src/utils/tests/**",
+      "!src/mocks/**",
+      "!src/index.js",
+      "!src/reportWebVitals.js"
+    ]
+  },
   "version": "0.1.0",
   "private": true,
   "dependencies": {
