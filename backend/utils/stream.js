@@ -5,11 +5,16 @@ import { preparePayload } from "./customResponse.js";
 import { app } from "../index.js";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import { argv } from 'node:process';
 import dotenv from "dotenv";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-
-dotenv.config({ path: join(__dirname, "..", ".env") });
+if (argv.length > 2)
+  // Production enviroment variables
+  dotenv.config({ path: join(__dirname, "..", ".env.production.tokens") });
+else
+  // Development enviroment variables
+  dotenv.config({ path: join(__dirname, "..", ".env.development.tokens") });
 
 /* Definisco il client in application mode */
 const client = new Client(process.env.bearertoken);
