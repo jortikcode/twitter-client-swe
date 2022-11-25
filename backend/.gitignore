@@ -9,6 +9,3 @@
 
 # coverage
 /coverage
-
-# env
-.env
