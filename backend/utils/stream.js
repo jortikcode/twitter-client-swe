@@ -5,11 +5,19 @@ import { preparePayload } from "./customResponse.js";
 import { app } from "../index.js";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import { argv } from "node:process";
 import dotenv from "dotenv";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-dotenv.config({ path: join(__dirname, "..", ".env") });
+if (argv.length > 2) {
+  // Development enviroment variables
+  dotenv.config({ path: join(__dirname, "..", ".env.development.tokens") });
+}
+// Production enviroment variables
+else {
+  dotenv.config({ path: join(__dirname, "..", ".env.production.tokens") });
+}
 
 /* Definisco il client in application mode */
 const client = new Client(process.env.bearertoken);
@@ -54,19 +62,25 @@ const deleteAllRules = async () => {
 
 /* Chiamata alle api v2 di twitter per avviare lo stream */
 export const startStream = async () => {
-  console.log("Start stream");
-  await deleteAllRules();
-  const stream = client.tweets.searchStream(addFields());
-  for await (let tweet of stream) {
-    const rule = tweet.matching_rules[0].tag;
-    tweet.data = [tweet.data];
-    const payload = preparePayload(tweet);
-    const { tweetSentiment, searchSentiment } = doSentiment(payload.textTweets);
-    payload["tweetSentiment"] = tweetSentiment;
-    payload["searchSentiment"] = searchSentiment;
-    for (let i = 0; i < app.locals.listeners[rule]?.length; i += 1) {
-      sendTweet(app.locals.listeners[rule][i], payload);
+  try {
+    console.log("Start stream");
+    await deleteAllRules();
+    const stream = client.tweets.searchStream(addFields());
+    for await (let tweet of stream) {
+      const rule = tweet.matching_rules[0].tag;
+      tweet.data = [tweet.data];
+      const payload = preparePayload(tweet);
+      const { tweetSentiment, searchSentiment } = doSentiment(
+        payload.textTweets
+      );
+      payload["tweetSentiment"] = tweetSentiment;
+      payload["searchSentiment"] = searchSentiment;
+      for (let i = 0; i < app.locals.listeners[rule]?.length; i += 1) {
+        sendTweet(app.locals.listeners[rule][i], payload);
+      }
     }
+  } catch (error) {
+    console.log(error);
   }
 };
 
@@ -84,7 +98,8 @@ const getRules = async () => {
     throw new Error("Twitter server error");
   }
 };
-
+/* Probabilmente : in_reply_to_tweet_id:{id-del-tweet-fatto-in-precedenza} */
+/* tweet-specifico-generato-da-me forse: conversation_id:{id-del-tweet-fatto-in-precedenza} is:reply */
 /* Chiamata alle api di twitter di addOrDeleteRules */
 export const addOrDeleteRules = async (rules) => {
   try {

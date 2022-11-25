@@ -23,12 +23,11 @@ app.locals.listeners = new Array();
 
 const activeRules = new Array();
 
-/* faccio partire lo stream perchè rimarrà in idle fino a quando non si aggiungono regole */
-startStream();
-
 /* associa un oggetto al socket id e rimane in ascolto per iniziare lo stream */
 io.on("connection", (socket) => {
   console.log("client connesso");
+  /* faccio partire lo stream perchè rimarrà in idle fino a quando non si aggiungono regole */
+  startStream();
   socket.on("startGenericStream", async (value, tag) => {
     await start(socket, value, tag);
   });
