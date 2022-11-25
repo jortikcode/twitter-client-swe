@@ -10,12 +10,12 @@ import dotenv from "dotenv";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 if (argv.length > 2)
-  // Production enviroment variables
-  dotenv.config({ path: join(__dirname, "..", ".env.production.tokens") });
-else
   // Development enviroment variables
   dotenv.config({ path: join(__dirname, "..", ".env.development.tokens") });
-
+else
+  // Production enviroment variables
+  dotenv.config({ path: join(__dirname, "..", ".env.production.tokens") });
+console.log(process.env);
 /* Definisco il client in application mode */
 const client = new Client(process.env.bearertoken);
 
