@@ -3,3 +3,9 @@
 
 # production
 /build
+
+# test utils
+/utils/tests/node_modules
+
+# coverage
+/coverage

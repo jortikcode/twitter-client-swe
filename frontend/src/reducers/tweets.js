@@ -14,6 +14,7 @@ const initialState = {
     searchSentiment: {},
     types: [],
     places: [],
+    wordcloudInfo: [],
     isLoading: false,
     nextToken: "",
     previousToken: ""
@@ -32,6 +33,7 @@ export function tweets(state = initialState, data){
                 searchSentiment: data.payload.searchSentiment,
                 types: data.payload.types,
                 places: data.payload.places,
+                wordcloudInfo: data.payload.wordcloudInfo,
                 isLoading: false,
                 nextToken: data.payload.nextToken,
                 previousToken: data.payload.previousToken
@@ -47,6 +49,7 @@ export function tweets(state = initialState, data){
                 searchSentiment: {},
                 types: [],
                 places: [],
+                wordcloudInfo: [],
                 isLoading: false,
                 nextToken: "",
                 previousToken: ""

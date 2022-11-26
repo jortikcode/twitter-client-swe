@@ -105,6 +105,25 @@ export const languages = [
   "zu",
 ];
 
+// Dizionario che mappa i codici ISO 639-1 al nome esteso delle lingue supportate dalla libreria keyword-extractor 
+export const extractorSupportedLanguages = {
+  "en": "english",
+  "es": "spanish",
+  "pl": "polish",
+  "de": "german",
+  "fr": "french",
+  "it": "italian",
+  "ro": "romanian",
+  "ru": "russian",
+  "pt": "portuguese",
+  "sv": "swedish",
+  "ar": "arabic",
+  "fa": "persian"
+}
+
+// Massimo numero di parole ammesse nel diagramma a wordcloud
+export const maxWordsPerWordcloud = 40;
+
 export const oneWeekTimestamp = 604800000;
 
 /* Tweet sentiment constants */
