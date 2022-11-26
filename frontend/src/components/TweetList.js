@@ -1,8 +1,11 @@
 import Tweet from "./Tweet";
 import { useSelector } from "react-redux";
 
-const TweetList = () => {
-    const { textTweets, places, users, types, creationDates, sentiments } = useSelector(state => state.tweets);
+const TweetList = (props) => {
+    let { textTweets, places, users, types, creationDates, sentiments } = useSelector(state => state.tweets);
+    if (props.textTweets)
+        ({ textTweets, places, users, types, creationDates, sentiments } = props);
+
     return (
         <>
         { ((textTweets.length > 0) && (

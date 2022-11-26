@@ -7,7 +7,7 @@ import { NEGATIVE_SENTIMENT,
          NO_SENTIMENT } from '../utils/constants'
 import TweetList from './TweetList'
 
-const getSelectedSetiment = (label) => {
+const getSelectedSentiment = (label) => {
   switch (label){
     case "Positivi":
       return POSITIVE_SENTIMENT;
@@ -76,7 +76,7 @@ const PieChart = (props) => {
           if (selectedSentiment !== NO_SENTIMENT){
             setSelectedSentiment(NO_SENTIMENT);
           }else{  
-            setSelectedSentiment(getSelectedSetiment(config.w.config.labels[config.dataPointIndex]));
+            setSelectedSentiment(getSelectedSentiment(config.w.config.labels[config.dataPointIndex]));
           }
         }
       }

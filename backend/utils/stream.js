@@ -15,7 +15,6 @@ if (argv.length > 2)
 else
   // Production enviroment variables
   dotenv.config({ path: join(__dirname, "..", ".env.production.tokens") });
-console.log(process.env);
 /* Definisco il client in application mode */
 const client = new Client(process.env.bearertoken);
 
