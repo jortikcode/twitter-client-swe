@@ -1,8 +1,11 @@
 import Tweet from "./Tweet";
 import { useSelector } from "react-redux";
 
-const TweetList = () => {
-    const { textTweets, places, users, types, creationDates } = useSelector(state => state.tweets);
+const TweetList = (props) => {
+    let { textTweets, places, users, types, creationDates, sentiments } = useSelector(state => state.tweets);
+    if (props.textTweets)
+        ({ textTweets, places, users, types, creationDates, sentiments } = props);
+
     return (
         <>
         { ((textTweets.length > 0) && (
@@ -17,14 +20,16 @@ const TweetList = () => {
                                 break;
                             }
                         }
+                    const creationDate = new Date(creationDates[index]);
                     return (<Tweet
+                        sentiment={sentiments ? sentiments[index] : []}
                         placeName={placeName}
                         key={index}
                         name={users[index].name} 
                         username={users[index].username} 
                         pfpUrl={users[index].pfpUrl}
                         type={types[index]}
-                        date={new Date(creationDates[index]).toDateString()}
+                        date={`il ${creationDate.toLocaleDateString()} alle ${creationDate.toLocaleTimeString()}`}
                         text={tweet.text} />)})}
             </div> 
         )) }

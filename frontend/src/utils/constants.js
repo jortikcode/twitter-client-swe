@@ -1,9 +1,15 @@
-/* Costanti per reduxs */
+/* Costanti per redux */
 export const TWEET = "TWEET";
 export const REPLY = "REPLYTO";
 export const RETWEET = "RETWEET";
 export const QUOTED = "QUOTED";
 export const NOTYPE = "NOTYPE";
+
+/* Sentimenti dei tweet */
+export const POSITIVE_SENTIMENT = "POSITIVE_SENTIMENT";
+export const NEGATIVE_SENTIMENT = "NEGATIVE_SENTIMENT";
+export const NEUTRAL_SENTIMENT = "NEUTRAL_SENTIMENT";
+export const NO_SENTIMENT = "NO_SENTIMENT";
 
 /* Costanti per le date */
 // Millisecondi di una settimana: 6 * 24 * 60 * 60 * 1000

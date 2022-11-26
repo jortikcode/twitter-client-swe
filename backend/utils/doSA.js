@@ -1,5 +1,9 @@
 import { default as sentiment } from "multilang-sentiment";
-import { languages } from "../utils/constants.js";
+import { languages,
+  NEGATIVE_SENTIMENT, 
+  NEUTRAL_SENTIMENT, 
+  POSITIVE_SENTIMENT, 
+  TRESHOLD_SCORE } from "../utils/constants.js";
 
 // Lingua predefinita: la lingua del tweet non e' supportata da multilang-sentiment, essa viene forzata ad essere "en"
 const defaultLang = "en";
@@ -23,10 +27,17 @@ export function doSentiment(tweets) {
         lang = tweets[i].lang;
       }
       let partial = sentiment(tweets[i].text, lang);
+      // Push delle info di sentiment nell'array dei sentimenti dei tweet
+      const sentiment_type = partial.score > TRESHOLD_SCORE ? POSITIVE_SENTIMENT
+      : partial.score < TRESHOLD_SCORE ? NEGATIVE_SENTIMENT
+      : NEUTRAL_SENTIMENT; 
 
       tweetSentiment.push({
         score: partial.score,
         comparative: partial.comparative,
+        sentiment: sentiment_type,
+        positiveWords: partial.positive,
+        negativeWords: partial.negative
       });
 
       searchSentiment.comparative += partial.comparative;
