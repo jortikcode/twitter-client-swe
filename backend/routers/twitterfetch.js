@@ -44,8 +44,6 @@ router.get(
   prepareDataInput,
   searchRecent,
   prepareResponse,
-  sentimentAnalysis,
-  getWordcloudInfo,
   sendData
 )
 
