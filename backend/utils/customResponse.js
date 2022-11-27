@@ -23,7 +23,7 @@ export function preparePayload(response) {
           response.includes.tweets
         );
       }
-      return { text: tweet.text, lang: tweet.lang };
+      return { text: tweet.text, lang: tweet.lang, conversationId: tweet.conversation_id };
     }),
     response.data.map((tweet) => {
       return new Date(tweet.created_at);
