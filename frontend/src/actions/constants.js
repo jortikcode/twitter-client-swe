@@ -6,3 +6,5 @@ export const TOGGLE_FILTERS = 'TOGGLE_FILTERS';
 export const DATE_ERROR = 'DATE_ERROR';
 export const LOADING = 'LOADING';
 export const CLEAR_TWEETS = 'CLEAR_TWEETS';
+export const UPDATE_CHAMPIONS = 'UPDATE_CHAMPIONS';
+export const CLEAR_SCOREBOARD = 'CLEAR_SCOREBOARD';

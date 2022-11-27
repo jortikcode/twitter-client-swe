@@ -5,7 +5,9 @@ import {
     TOGGLE_FILTERS,
     DATE_ERROR,
     LOADING,
-    CLEAR_TWEETS
+    CLEAR_TWEETS,
+    CLEAR_SCOREBOARD,
+    UPDATE_CHAMPIONS
 } from './constants'
 
 const baseUrl = process.env.REACT_APP_BASE_API_URL;
@@ -60,29 +62,30 @@ export const solutionsAction = () => async (dispatch) => {
 }
 
 // Azione in cui viene fatta la chiamata alla API ghigliottina/champions?conversation_id=id
-export const championsAction = (conversation_id) => async (dispatch) => {
+export const championsAction = (conversation_id, date) => async (dispatch) => {
     const url = apiUrl + `ghigliottina/champions?conversation_id=${conversation_id}`;
     await fetch(url)
     .then(res => res.json())
     .then(json => {
         if (json?.no_matches || json.error)
             // Nessun risultato e' stato trovato
-            dispatch(noMatches());
+            dispatch(clearScoreboard());
         else{
-            dispatch(searchSuccess(
-                json.textTweets,
-                json.creationDates,
-                json.users,
-                [],
-                {},
-                json.types,
-                [],
-                [],
-                "",
-                ""
-            ));
+            dispatch({
+                type: UPDATE_CHAMPIONS,
+                payload: {
+                    championsString: json.championsString,
+                    date: date
+                }
+            });
         }
     });    
+}
+
+export const clearScoreboard = () => {
+    return {
+        type: CLEAR_SCOREBOARD
+    }
 }
 
 // Azione in cui viene fatta la chiamata alla API /search passandone la parola chiave
