@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom'
 import { clearTweets, loadingAction, solutionsAction } from '../actions/customActions';
+import Scoreboard from '../components/Scoreboard';
 import TweetList from '../components/TweetList';
 
 const Ghigliottina = () => {
@@ -17,13 +18,13 @@ const Ghigliottina = () => {
     return (
         <div className="flex flex-col w-full min-h-screen h-auto p-5 items-center dark:bg-gray-900 gap-y-6" >
             <button 
-            className="md:text-xl text-lg dark:text-white bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
+            className="md:text-xl text-lg dark:text-white bg-sky-500 hover:bg-sky-700 text-white py-2 px-4 rounded"
             type="submit"
             onClick={e => navigationHandler("/search/all")}> 
             Scopri cosa dicono su #leredita 
             </button> 
             <button 
-            className="md:text-3xl text-lg dark:text-white bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+            className="md:text-3xl text-lg dark:text-white bg-sky-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded"
             type="submit"
             onClick={e => {
                 dispatch(loadingAction(true));
@@ -31,6 +32,9 @@ const Ghigliottina = () => {
             }}> 
             La ghigliottina
             </button>
+            <article className="flex justify-center items-center">
+                <p className="text-2xl dark:text-white">Cliccando sui tweet scopri chi sono stati i campioni!</p>
+            </article>
             { (isLoading)  && (     
             <div className="pt-5" role="status">
                 <svg className="inline mr-2 w-10 h-10 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -40,7 +44,8 @@ const Ghigliottina = () => {
                 <span className="sr-only">Loading...</span>
             </div>
             )}
-            { (textTweets.length > 0) && <TweetList /> }
+            <Scoreboard />
+            { (textTweets.length > 0) && <TweetList watching={true} /> }
         </div>
     );
 };

@@ -1,10 +1,20 @@
 import Tweet from "./Tweet";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { championsAction, clearScoreboard, loadingAction } from "../actions/customActions";
 
 const TweetList = (props) => {
+    const dispatch = useDispatch();
     let { textTweets, places, users, types, creationDates, sentiments } = useSelector(state => state.tweets);
     if (props.textTweets)
         ({ textTweets, places, users, types, creationDates, sentiments } = props);
+
+    const scoreboardHandler = (conversationId, date) => {
+        if (props.watching){
+            dispatch(loadingAction(true));
+            dispatch(clearScoreboard());
+            dispatch(championsAction(conversationId, date));
+        }
+    }
 
     return (
         <>
@@ -21,16 +31,15 @@ const TweetList = (props) => {
                             }
                         }
                     const creationDate = new Date(creationDates[index]);
-                    return (<Tweet
+                    return (<div onClick={e => scoreboardHandler(tweet.conversationId, creationDates[index])} key={index}><Tweet
                         sentiment={sentiments ? sentiments[index] : []}
                         placeName={placeName}
-                        key={index}
                         name={users[index].name} 
                         username={users[index].username} 
                         pfpUrl={users[index].pfpUrl}
                         type={types[index]}
                         date={`il ${creationDate.toLocaleDateString()} alle ${creationDate.toLocaleTimeString()}`}
-                        text={tweet.text} />)})}
+                        text={tweet.text} /></div>)})}
             </div> 
         )) }
         </>
