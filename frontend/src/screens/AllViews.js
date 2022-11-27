@@ -21,7 +21,7 @@ const AllViews = () => {
             <>
                 <TweetList /> 
                 {sentiments.length > 0 && <PieChart title="Analisi dei tweet" sentAnalysis = {sentiments} />}
-                {searchSentiment !== undefined && <PieChart title="Analisi delle parole dei risultati" sentiments = {[searchSentiment.negatives, searchSentiment.positives, searchSentiment.neutrals]} />}
+                {sentiments.length > 0 && <PieChart title="Analisi delle parole dei risultati" sentiments = {[searchSentiment.negatives, searchSentiment.positives, searchSentiment.neutrals]} />}
                 {creationDates.length > 0 && <BarChart title="Tweet nel tempo" creationDates = {creationDates} />}
                 {wordcloudInfo.length > 0 && <Wordcloud title="Wordcloud della ricerca" /> }
                 { places.length > 0 &&

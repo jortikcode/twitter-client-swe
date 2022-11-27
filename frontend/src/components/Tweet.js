@@ -6,9 +6,9 @@ import { NEGATIVE_SENTIMENT,
 const Tweet = (props) => {
     const tweetTypeQuote = getPrefix(props.type);
     const sentimentSpan = (
-        props.sentiment.sentiment === NEGATIVE_SENTIMENT ? (<span className="text-red-800 dark:text-red-400"> Male </span>) :
-        props.sentiment.sentiment === POSITIVE_SENTIMENT ? (<span className="text-green-800 dark:text-green-400"> Buono </span> ) :
-        props.sentiment.sentiment === NEUTRAL_SENTIMENT ? (<span className="text-gray-800 dark:text-gray-400"> Neutro </span> ) : ""
+        props.sentiment?.sentiment === NEGATIVE_SENTIMENT ? (<span className="text-red-800 dark:text-red-400"> Male </span>) :
+        props.sentiment?.sentiment === POSITIVE_SENTIMENT ? (<span className="text-green-800 dark:text-green-400"> Buono </span> ) :
+        props.sentiment?.sentiment === NEUTRAL_SENTIMENT ? (<span className="text-gray-800 dark:text-gray-400"> Neutro </span> ) : ""
     );
     return (
         <>
@@ -23,11 +23,11 @@ const Tweet = (props) => {
                 </span>
                 <span className="flex items-center font-semibold text-green-800 dark:text-green-200">
                     {props.sentiment?.positiveWords?.length > 0 &&
-                     props.sentiment.positiveWords.map((word, index) => index < (props.sentiment.positiveWords.length - 1) ? `${word}, ` : word)}
+                     props.sentiment?.positiveWords.map((word, index) => index < (props.sentiment.positiveWords.length - 1) ? `${word}, ` : word)}
                 </span>
                 <span className="flex items-center font-semibold text-red-800 dark:text-red-400">
                     {props.sentiment?.negativeWords?.length > 0 && 
-                     props.sentiment.negativeWords.map((word, index) => index < (props.sentiment.negativeWords.length - 1) ? `${word}, ` : word)}
+                     props.sentiment?.negativeWords.map((word, index) => index < (props.sentiment.negativeWords.length - 1) ? `${word}, ` : word)}
                 </span>
                 <span className="flex items-center text-blue-600 dark:text-gray-400 font-semibold">
                     {props.date}
