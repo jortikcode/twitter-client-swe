@@ -74,14 +74,11 @@ export const processChampions = async(req, res, next) => {
   let champions = [];
   champions = textTweets.map((tweet, index) => {
     if (index === (textTweets.length - 1))
-      return tweet;
-    const champion = tweet.text.split(/campioni #leredita - [0-9]*\n\n/i)[1];
-    return {
-      ...tweet,
-      text: champion
-    };
+      return tweet.text;
+    return tweet.text.split(/campioni #leredita - [0-9]*\n\n/i)[1];
   });
-  req.payload.textTweets = (champions.reverse());
+  champions.reverse();
+  req.payload.champions = (champions.join('\n'));
   next();
 }
 
@@ -134,6 +131,10 @@ export const prepareResponse = (req, res, next) => {
 
 /* Middleware finale per mandare i dati in risposta */
 export const sendData = (req, res) => {
+  if (req.payload.champions)
+    req.payload = {
+      championsString: req.payload.champions
+    }
   res.status(200).json({
     ...req.payload,
     nextToken: req.nextToken,
