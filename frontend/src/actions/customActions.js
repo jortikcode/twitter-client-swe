@@ -33,6 +33,58 @@ export const filtersAction = (filtersEnabled) => {
     });
 }
 
+// Azione in cui viene fatta la chiamata alla API ghigliottina/solutions per ricevere i tweet con le soluzioni della ghigliottina
+export const solutionsAction = () => async (dispatch) => {
+    const url = apiUrl + 'ghigliottina/solutions';
+    await fetch(url)
+    .then(res => res.json())
+    .then(json => {
+        if (json?.no_matches || json.error)
+            // Nessun risultato e' stato trovato
+            dispatch(noMatches());
+        else{
+            dispatch(searchSuccess(
+                json.textTweets,
+                json.creationDates,
+                json.users,
+                [],
+                [],
+                json.types,
+                [],
+                [],
+                "",
+                ""
+            ));
+        }
+    });
+}
+
+// Azione in cui viene fatta la chiamata alla API ghigliottina/champions?conversation_id=id
+export const championsAction = (conversation_id) => async (dispatch) => {
+    const url = apiUrl + `ghigliottina/champions?conversation_id=${conversation_id}`;
+    await fetch(url)
+    .then(res => res.json())
+    .then(json => {
+        if (json?.no_matches || json.error)
+            // Nessun risultato e' stato trovato
+            dispatch(noMatches());
+        else{
+            dispatch(searchSuccess(
+                json.textTweets,
+                json.creationDates,
+                json.users,
+                [],
+                [],
+                json.types,
+                [],
+                [],
+                "",
+                ""
+            ));
+        }
+    });    
+}
+
 // Azione in cui viene fatta la chiamata alla API /search passandone la parola chiave
 export const searchAction = (data) => async (dispatch) => {
     let url = apiUrl;
