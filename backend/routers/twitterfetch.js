@@ -9,6 +9,9 @@ import {
   getUserID,
   searchUser,
   sendData,
+  getWinnerWordTweets,
+  getChampionTweets,
+  processChampions,
 } from "../controllers/twitterfetch.js";
 
 router.get(
@@ -33,5 +36,26 @@ router.get(
   getWordcloudInfo,
   sendData
 );
+
+/* GET /api/ghigliottina/solutions */
+router.get(
+  "/ghigliottina/solutions",
+  getWinnerWordTweets,
+  prepareDataInput,
+  searchRecent,
+  prepareResponse,
+  sendData
+)
+
+/* GET /api/ghigliottina/champions?conversation_id=id */
+router.get(
+  "/ghigliottina/champions",
+  getChampionTweets,
+  prepareDataInput,
+  searchRecent,
+  prepareResponse,
+  processChampions,
+  sendData
+)
 
 export default router;

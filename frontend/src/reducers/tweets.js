@@ -2,7 +2,9 @@ import {
     CLEAR_TWEETS,
     LOADING,
     NO_MATCHES,
-    SEARCH_SUCCESS
+    SEARCH_SUCCESS,
+    CLEAR_SCOREBOARD,
+    UPDATE_CHAMPIONS
 } from "../actions/constants";
 
 const initialState = {
@@ -15,9 +17,11 @@ const initialState = {
     types: [],
     places: [],
     wordcloudInfo: [],
+    championsString: "",
     isLoading: false,
     nextToken: "",
-    previousToken: ""
+    previousToken: "",
+    ghigliottinaDate: ""
 };
 
 export function tweets(state = initialState, data){
@@ -35,6 +39,7 @@ export function tweets(state = initialState, data){
                 places: data.payload.places,
                 wordcloudInfo: data.payload.wordcloudInfo,
                 isLoading: false,
+                championsString: "",
                 nextToken: data.payload.nextToken,
                 previousToken: data.payload.previousToken
             });
@@ -51,8 +56,23 @@ export function tweets(state = initialState, data){
                 places: [],
                 wordcloudInfo: [],
                 isLoading: false,
+                championsString: "",
                 nextToken: "",
-                previousToken: ""
+                previousToken: "",
+                ghigliottinaDate: ""
+            })
+        case UPDATE_CHAMPIONS:
+            return ({
+                ...state,
+                isLoading: false,
+                championsString: data.payload.championsString,
+                ghigliottinaDate: data.payload.date
+            })
+        case CLEAR_SCOREBOARD:
+            return ({
+                ...state,
+                championsString: "",
+                ghigliottinaDate: ""
             })
         case LOADING:
             return {
