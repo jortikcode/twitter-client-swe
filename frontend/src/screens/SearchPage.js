@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { clearTweets } from "../actions/customActions";
+import { clearTweets } from "../actions/tweets";
 import SearchForm from "../components/SearchForm";
 const SearchPage = () => {
     const dispatch = useDispatch();

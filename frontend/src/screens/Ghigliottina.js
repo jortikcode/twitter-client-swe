@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom'
-import { clearTweets, loadingAction, solutionsAction } from '../actions/customActions';
+import { clearTweets, loadingAction, solutionsAction } from '../actions/tweets';
 import Scoreboard from '../components/Scoreboard';
 import TweetList from '../components/TweetList';
 

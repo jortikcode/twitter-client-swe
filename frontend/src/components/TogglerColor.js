@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
-import { themeAction } from '../actions/customActions';
+import { themeAction } from '../actions/tweets';
 
 // Componente toggler della color mode
 const TogglerColor = (props) => {

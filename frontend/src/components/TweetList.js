@@ -1,6 +1,6 @@
 import Tweet from "./Tweet";
 import { useDispatch, useSelector } from "react-redux";
-import { championsAction, clearScoreboard, loadingAction } from "../actions/customActions";
+import { championsAction, clearScoreboard, loadingAction } from "../actions/tweets";
 
 const TweetList = (props) => {
     const dispatch = useDispatch();

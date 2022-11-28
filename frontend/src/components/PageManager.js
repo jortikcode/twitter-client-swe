@@ -1,4 +1,4 @@
-import { loadingAction, clearTweets, searchAction } from "../actions/customActions";
+import { loadingAction, clearTweets, searchAction } from "../actions/tweets";
 import { useDispatch } from 'react-redux'
 
 
