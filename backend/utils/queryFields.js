@@ -17,6 +17,7 @@ export function addFields(params = {}) {
     "lang",
     "text",
     "created_at",
+    "conversation_id"
   ];
   params["media.fields"] = ["preview_image_url", "type", "url"];
   params["place.fields"] = [

@@ -21,7 +21,11 @@ if (!server) {
 }
 console.log(`app listening on port ${port}!`);
 /* IOStream */
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: '*'
+  }
+});
 
 app.locals.listeners = new Array();
 

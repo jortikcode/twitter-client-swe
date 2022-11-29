@@ -6,6 +6,8 @@ import AllViews from './screens/AllViews';
 import MapView from './screens/MapView';
 import ChartsView from './screens/ChartsView';
 import TweetsView from './screens/TweetsView';
+import Ghigliottina from './screens/Ghigliottina';
+import StreamPage from './screens/StreamPage';
 
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
             <Route path='/search/charts' element={<ChartsView />} />
             <Route path='/search/tweets' element={<TweetsView />} />
           </Route>
+          <Route path='/ghigliottina' element={<Ghigliottina />} />
+          <Route path='/stream' element={<StreamPage />} />
         </Routes>
       </BrowserRouter>
     </div>

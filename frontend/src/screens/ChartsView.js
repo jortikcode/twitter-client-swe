@@ -4,7 +4,7 @@ import Wordcloud from "../components/Wordcloud";
 import { useSelector } from 'react-redux'
 
 const ChartsView = () => {
-    const { sentiments, creationDates, searchSentiment } = useSelector(state => state.tweets);
+    const { sentiments, creationDates, searchSentiment, wordcloudInfo } = useSelector(state => state.tweets);
     return (
         <>
             <div className="flex w-full flex-col dark:bg-gray-900 items-center gap-y-8">
@@ -22,7 +22,7 @@ const ChartsView = () => {
                     (<BarChart title="Tweet nel tempo" creationDates = {creationDates} />) }
             </div>
             <div className="pt-4 w-full justify-center flex dark:bg-gray-900 items-center">
-                {creationDates.length > 0 && 
+                {wordcloudInfo.length > 0 && 
                     (<Wordcloud title="Wordcloud della ricerca" />) }
             </div> 
 

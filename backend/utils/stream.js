@@ -82,6 +82,7 @@ stream.on(
     const { tweetSentiment, searchSentiment } = doSentiment(payload.textTweets);
     payload["tweetSentiment"] = tweetSentiment;
     payload["searchSentiment"] = searchSentiment;
+    payload["wordcloudInfo"] = doWordcloudInfo(payload.textTweets);
     for (let i = 0; i < app.locals.listeners[rule]?.length; i += 1) {
       sendTweet(app.locals.listeners[rule][i], payload);
     }

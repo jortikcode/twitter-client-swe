@@ -4,7 +4,7 @@ import {
     searchAction, 
     dateErrorAction, 
     loadingAction,
-    clearTweets } from '../actions/customActions'
+    clearTweets } from '../actions/tweets'
 import { 
     formatISO,
     isValidDateRange,

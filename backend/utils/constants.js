@@ -125,3 +125,9 @@ export const extractorSupportedLanguages = {
 export const maxWordsPerWordcloud = 40;
 
 export const oneWeekTimestamp = 604800000;
+
+/* Tweet sentiment constants */
+export const POSITIVE_SENTIMENT = "POSITIVE_SENTIMENT";
+export const NEGATIVE_SENTIMENT = "NEGATIVE_SENTIMENT";
+export const NEUTRAL_SENTIMENT = "NEUTRAL_SENTIMENT";
+export const TRESHOLD_SCORE = 0;

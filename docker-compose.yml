@@ -7,13 +7,13 @@ services:
     depends_on:
       - backend
     entrypoint:
-      serve -s build
+      npm start
   backend:
     build: ./backend
     image: uniboswe-backend
     ports:
       - 8000:8000
     entrypoint:
-      node server.js
+      node server.js DEVELOPMENT
 networks:
   host:
