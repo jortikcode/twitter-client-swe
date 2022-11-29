@@ -15,10 +15,6 @@ app.use(express.static(join(__dirname, "build")));
 
 app.use("/api", api);
 
-app.get("/chess", (req, res) => {
-  res.sendFile(join(__dirname, "..", "sample", "socketUsage.html"));
-});
-
 /* La route /* e' generica, fa match con ogni richiesta.
 Express verifica le route in ordine di dichiarazione, quindi le route /api non verranno inglobate
 poiche' dichiarate prima */
