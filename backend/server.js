@@ -1,12 +1,16 @@
+/* global process */
 import { Server } from "socket.io";
 import { app } from "./index.js";
 import {
   startStream,
+  stopStream,
   addOrDeleteRules,
   generateAddRule,
   generateDeleteRule,
 } from "./utils/stream.js";
 import { Mutex } from "async-mutex";
+import uniqid from "uniqid";
+import { chessTweet } from "./utils/chess.js";
 
 const mutex = new Mutex();
 
@@ -27,12 +31,18 @@ app.locals.listeners = new Array();
 
 const activeRules = new Array();
 
-/* faccio partire lo stream perchè rimarrà in idle fino a quando non si aggiungono regole */
-startStream();
+let connectCounter = 0;
 
 /* associa un oggetto al socket id e rimane in ascolto per iniziare lo stream */
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
   console.log("client connesso");
+  let release = await mutex.acquire();
+  if (connectCounter == 0) {
+    /* faccio partire lo stream perchè rimarrà in idle fino a quando non si aggiungono regole */
+    startStream();
+  }
+  connectCounter += 1;
+  release();
   socket.on("startGenericStream", async (value, tag) => {
     await start(socket, value, tag);
   });
@@ -45,9 +55,28 @@ io.on("connection", (socket) => {
   socket.on("stopGhigliottina", async () => {
     await stop("ghigliottina", socket);
   });
+  socket.on("startChess", async (username) => {
+    let release = await mutex.acquire();
+    if (activeRules.length < 5) {
+      const gameID = uniqid();
+      const tweetID = await chessTweet(username);
+      await addOrDeleteRules(
+        generateAddRule(`in_reply_to_tweet_id:${tweetID}`, gameID)
+      );
+    } else {
+      socket.emit("tweets", "sono già presenti 5 regole");
+    }
+    release();
+  });
   socket.on("disconnect", async () => {
+    let release = await mutex.acquire();
     await removeFromAllLists(socket);
     socket.disconnect();
+    connectCounter -= 1;
+    if (connectCounter == 0) {
+      stopStream();
+    }
+    release();
     console.log("client disconnesso");
   });
 });

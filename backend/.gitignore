@@ -9,3 +9,9 @@
 
 # coverage
 /coverage
+
+# env
+.env
+
+# eslint
+.eslintrc.cjs

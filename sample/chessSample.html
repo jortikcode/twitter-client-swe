@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Test chess</h1>
+    <input type="text" id="username" name="username" placeholder="username">
+    <button id="start">Inizia la partita</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        /* ATTENZIONE: è possibile avere un massimo di 5 regole (limiti di twitter),
+         * una regola è formata dalla query e dal tag.
+         */
+
+        /* Per generare un socket,
+         * serve per stabilire la connessione con il backend.
+         */
+        const socket = io();
+
+        const buttonStart = document.getElementById("start");
+        buttonStart.addEventListener("click", function (e) {
+            let username = document.getElementById("username").value;
+            if (username != "") {
+                socket.emit("startChess", username)
+            }
+        });
+
+        /* Per ricevere messaggi dallo stream */
+        socket.on('tweets', function (tweet) {
+            console.log(tweet);
+        })
+    </script>
+</body>
+
+</html>

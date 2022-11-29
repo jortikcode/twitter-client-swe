@@ -58,7 +58,7 @@
         function startStream(socket, q, tag) {
             console.log("bottone cliccato");
             /* Per richiedere l'ascolto sullo stream */
-            socket.emit("startStream", q, tag);
+            socket.emit("startGenericStream", q, tag);
         }
         const buttonStopS1 = document.getElementById("stopS1");
         buttonStopS1.addEventListener("click", function (e) {
