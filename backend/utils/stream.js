@@ -2,6 +2,7 @@ import { ETwitterStreamEvent } from "twitter-api-v2";
 import { app } from "../index.js";
 import { addFields } from "./queryFields.js";
 import { doSentiment } from "./doSA.js";
+import { doWordcloudInfo } from "./doWordcloudInfo.js"
 import { preparePayload } from "./customResponse.js";
 import { roClient } from "./twitterClient.js";
 
@@ -76,6 +77,7 @@ stream.on(
   /* quando ricevo dati */
   ETwitterStreamEvent.Data,
   (tweet) => {
+    
     const rule = tweet.matching_rules[0].tag;
     tweet.data = [tweet.data];
     const payload = preparePayload(tweet);
