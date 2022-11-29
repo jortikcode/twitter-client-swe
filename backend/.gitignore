@@ -12,3 +12,6 @@
 
 # env
 .env
+
+# eslint
+.eslintrc.cjs

@@ -1,24 +1,9 @@
-import { Client } from "twitter-api-sdk";
+import { roClient } from "../utils/twitterClient.js";
 import { preparePayload } from "../utils/customResponse.js";
 import { checkDates } from "../utils/dateCheck.js";
 import { addFields } from "../utils/queryFields.js";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
-import dotenv from "dotenv";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-if (process.argv.length > 2) {
-  // Development enviroment variables
-  dotenv.config({ path: join(__dirname, "..", ".env.development.tokens") });
-}
-// Production enviroment variables
-else {
-  dotenv.config({ path: join(__dirname, "..", ".env.production.tokens") });
-}
-
-/* Definisco il client in application mode */
-const client = new Client(process.env.bearertoken);
+const client = roClient.v2;
 
 export const searchUser = async (req, res, next) => {
   try {
@@ -27,7 +12,7 @@ export const searchUser = async (req, res, next) => {
      non sono validi per la richiesta */
     let params = req.params;
     delete params.username;
-    req.response = await client.tweets.usersIdTweets(id, params);
+    req.response = await client.user(id, params);
     if (req.response.meta.result_count == 0)
       // Non sono stati trovati risultati
       return res.status(200).json({ no_matches: true });
@@ -39,8 +24,9 @@ export const searchUser = async (req, res, next) => {
 
 export const searchRecent = async (req, res, next) => {
   try {
-    const params = req.params;
-    req.response = await client.tweets.tweetsRecentSearch(params);
+    const { query: query, ...params } = req.params;
+    const response = await client.search(query, params);
+    req.response = response._realData;
     if (req.response.meta.result_count == 0)
       // Non sono stati trovati risultati
       res.status(404).json({ no_matches: true });
@@ -57,13 +43,13 @@ export const getUserID = async (req, res, next) => {
   try {
     const { username } = req.query;
     if (!username) {
-      throw "Username mancante";
+      throw new Error("Username mancante");
     }
     // Username dell'utente di cui ci interessano i tweets
     //Interrogazione della API all'URL https://api.twitter.com/2/users/by/username/:username
-    const response = await client.users.findUserByUsername(username);
+    const response = await client.userByUsername(username);
     if (response?.errors) {
-      throw "Nessun utente trovato";
+      throw new Error("Nessun utente trovato");
     }
     // id dell'utente risultante dalla richiesta
     const { id } = response.data;
@@ -79,7 +65,7 @@ export const prepareDataInput = (req, res, next) => {
   try {
     let params = req.query;
     if (!params.query && !params.username) {
-      throw "Paramentri per la richiesta mancanti";
+      throw new Error("Paramentri per la richiesta mancanti");
     }
     checkDates(params.start_time, params.end_time);
     params = addFields(params);

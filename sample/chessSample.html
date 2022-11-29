@@ -27,8 +27,9 @@
         const buttonStart = document.getElementById("start");
         buttonStart.addEventListener("click", function (e) {
             let username = document.getElementById("username").value;
-            console.log(username);
-            //socket.emit("startChess", username)
+            if (username != "") {
+                socket.emit("startChess", username)
+            }
         });
 
         /* Per ricevere messaggi dallo stream */
