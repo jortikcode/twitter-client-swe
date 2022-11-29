@@ -78,7 +78,6 @@ export const startStream = async () => {
 
 /* Invia un messaggio tramite un socket */
 const sendTweet = (socket, tweet) => {
-  console.log(tweet);
   socket.emit("tweets", tweet);
 };
 

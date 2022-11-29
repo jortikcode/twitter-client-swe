@@ -37,7 +37,6 @@ function preprocessDates(creationDates, byMinute = false) {
         }
         dateAmounts[dateLabel] += 1;
     }
-    console.log(dateAmounts)
 
     return dateAmounts
 }
