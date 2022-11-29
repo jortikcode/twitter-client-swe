@@ -12,7 +12,7 @@ frontend_test:
   script:
     - cd frontend
     - npm install
-    - npm run test -- --coverage --watchAll=false
+    - npm run test -- --coverage
     - |
       which sonar-scanner || curl -sL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip \
       -o sonarscanner.zip && \
