@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { filtersAction } from "../actions/customActions";
+import { filtersAction } from "../actions/tweets";
 
 
 const SearchFilters = ({ register, errors, type, noIntervalSearch, setValue }) => {

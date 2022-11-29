@@ -20,6 +20,9 @@ function Navbar() {
 						<Link to='/ghigliottina' className="text-lg font-semibold dark:text-sky-400 hover:text-cyan-500 duration-500">Ghigliottina</Link>
 					</li>
 					<li className="mx-4 mt-4 md:my-0">
+						<Link to='/stream' className="text-lg font-semibold dark:text-sky-400 hover:text-cyan-500 duration-500">Stream</Link>
+					</li>
+					<li className="mx-4 mt-4 md:my-0">
 						<TogglerColor />
 					</li>
 				</ul>

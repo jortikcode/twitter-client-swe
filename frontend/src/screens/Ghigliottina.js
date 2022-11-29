@@ -1,12 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom'
-import { clearTweets, loadingAction, solutionsAction } from '../actions/customActions';
+import { clearTweets, loadingAction, solutionsAction } from '../actions/tweets';
 import Scoreboard from '../components/Scoreboard';
 import TweetList from '../components/TweetList';
 
 const Ghigliottina = () => {
     const navigate = useNavigate();
+    const [ ghigliottina, setGhigliottina ] = useState(false);
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(clearTweets());
@@ -28,9 +29,10 @@ const Ghigliottina = () => {
             type="submit"
             onClick={e => {
                 dispatch(loadingAction(true));
-                dispatch(solutionsAction())
+                dispatch(solutionsAction());
+                setGhigliottina(!ghigliottina);
             }}> 
-            La ghigliottina
+            { ghigliottina ? "Finisci ghigliottina" : "Avvia ghigliottina" }
             </button>
             <article className="flex justify-center items-center">
                 <p className="text-2xl dark:text-white">Cliccando sui tweet scopri chi sono stati i campioni!</p>
@@ -45,7 +47,7 @@ const Ghigliottina = () => {
             </div>
             )}
             <Scoreboard />
-            { (textTweets.length > 0) && <TweetList watching={true} /> }
+            { (textTweets.length > 0 && ghigliottina) && <TweetList watching={true} /> }
         </div>
     );
 };
