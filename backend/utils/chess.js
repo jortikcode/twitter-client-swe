@@ -1,9 +1,14 @@
 import { rwClient } from "./twitterClient.js";
 
 /* funzione per far rispettare la struttura di un tweet */
-const createMsg = (text) => {
+const createMsg = (text, validMoves) => {
   const msg = {
     text: text,
+
+    poll: {
+      options: validMoves,
+      duration_minutes: 1,
+    },
   };
   return msg;
 };
@@ -16,16 +21,24 @@ const createMsg = (text) => {
  */
 
 /* funzione per iniziare una partita a scacchi */
-export const chessTweet = async (username = "anonimo") => {
+export const chessTweet = async (username, gameAscii, validMoves) => {
   try {
     const tweetText = createMsg(
-      `Partita iniziata da ${username}, se vuoi sfidarlo rispondi a questo tweet con la mossa che vuoi fare, sarà fatta la mossa scelta di più`
+      `${gameAscii}\nPartita iniziata da ${username}, se vuoi sfidarlo vota la prossima mossa:`,
+      validMoves
     );
     const { data: createdTweet } = await rwClient.v2.tweet(tweetText);
     return createdTweet.id;
   } catch (error) {
     console.log(error);
   }
+};
+
+export const nextMove = async (tweetID) => {
+  const tweet = await rwClient.v2.singleTweet(tweetID, {
+    "poll.fields": ["voting_status"],
+  });
+  console.log(JSON.stringify(tweet));
 };
 
 /* Probabilmente : in_reply_to_tweet_id:{id-del-tweet-fatto-in-precedenza} */

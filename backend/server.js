@@ -9,8 +9,7 @@ import {
   generateDeleteRule,
 } from "./utils/stream.js";
 import { Mutex } from "async-mutex";
-import uniqid from "uniqid";
-import { chessTweet } from "./utils/chess.js";
+import { chessTweet, nextMove } from "./utils/chess.js";
 
 const mutex = new Mutex();
 
@@ -23,8 +22,8 @@ console.log(`app listening on port ${port}!`);
 /* IOStream */
 const io = new Server(server, {
   cors: {
-    origin: '*'
-  }
+    origin: "*",
+  },
 });
 
 app.locals.listeners = new Array();
@@ -55,18 +54,9 @@ io.on("connection", async (socket) => {
   socket.on("stopGhigliottina", async () => {
     await stop("ghigliottina", socket);
   });
-  socket.on("startChess", async (username) => {
-    let release = await mutex.acquire();
-    if (activeRules.length < 5) {
-      const gameID = uniqid();
-      const tweetID = await chessTweet(username);
-      await addOrDeleteRules(
-        generateAddRule(`in_reply_to_tweet_id:${tweetID}`, gameID)
-      );
-    } else {
-      socket.emit("tweets", "sono già presenti 5 regole");
-    }
-    release();
+  socket.on("chess", async (username, gameAscii, validMoves) => {
+    const tweetID = await chessTweet(username, gameAscii, validMoves);
+    setTimeout(nextMove(tweetID), 60000)
   });
   socket.on("disconnect", async () => {
     let release = await mutex.acquire();
