@@ -11,13 +11,13 @@ export const startStreamAction = (socket, tag) => dispatch => {
     if (tag === "#leredita")
         socket.emit("startGhigliottina");
     else
-        socket.emit("startGenericStream", tag, "genericTag");
+        socket.emit("startGenericStream", tag, tag);
 }
 
 export const endStreamAction = (socket, tag) => dispatch => {
     // Evento per smettere di ascoltare lo stream
     if (tag !== "#leredita")
-        socket.emit("stopGenericStream", "genericTag");
+        socket.emit("stopGenericStream", tag);
     else 
         socket.emit("stopGhigliottina");
 }
