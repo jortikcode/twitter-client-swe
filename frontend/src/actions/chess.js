@@ -4,7 +4,6 @@ export const startGameAction = (socket, boardAscii, validMoves, firstMove = true
     // Handler delle mosse del poll "in entrata" dallo stream
     if (firstMove)
         socket.on('tweets', (move) => {
-            console.log(move);
             if (move === "fin")
                 dispatch(makePollMove());
             else

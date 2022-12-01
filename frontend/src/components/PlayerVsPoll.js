@@ -60,7 +60,6 @@ export default function PlayVsPoll() {
   function makePollMove() {
     const possibleMoves = game.moves();
     const boardFEN = game.fen();
-    console.log(boardFEN.replaceAll("\n", "^"));
     // exit if the game is over
     if (game.game_over() || game.in_draw() || possibleMoves.length === 0) return;
     if (!socket){
