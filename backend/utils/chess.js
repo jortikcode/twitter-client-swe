@@ -1,4 +1,19 @@
 import { rwClient } from "./twitterClient.js";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const MAX_LENGTH = 280;
+
+if (process.argv.length > 2) {
+  // Development enviroment variables
+  dotenv.config({ path: join(__dirname, "..", ".env.development.tokens") });
+}
+// Production enviroment variables
+else {
+  dotenv.config({ path: join(__dirname, "..", ".env.production.tokens") });
+}
 
 /* funzione per far rispettare la struttura di un tweet */
 const createMsg = (text) => {
@@ -9,12 +24,12 @@ const createMsg = (text) => {
 };
 
 /* funzione per iniziare una partita a scacchi se username è presente, oppure proseguirla se username manca */
-export const chessTweet = async (gameAscii, validMoves, username) => {
+export const chessTweet = async (gameFEN, validMoves, username) => {
   try {
     const msg = username
-      ? `${gameAscii}\nPartita iniziata da ${username}, se vuoi sfidarlo vota la prossima mossa:\n${validMoves}`
+      ? `La board: \n${process.env.boardurl}?fen=${gameFEN}\nPartita di ${username}, se vuoi sfidarlo vota la prossima mossa:\n${validMoves}`
       : `${gameAscii}\nMosse valide:\n${validMoves}`;
-    const tweetText = createMsg(msg);
+    const tweetText = createMsg(msg.substring(0, MAX_LENGTH - 1));
     const { data: createdTweet } = await rwClient.v2.tweet(tweetText);
     return createdTweet.id;
   } catch (error) {
