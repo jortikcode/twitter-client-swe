@@ -4,7 +4,7 @@ import {
     searchAction, 
     dateErrorAction, 
     loadingAction,
-    clearTweets } from '../actions/customActions'
+    clearTweets } from '../actions/tweets'
 import { 
     formatISO,
     isValidDateRange,
@@ -117,7 +117,7 @@ const SearchForm = () => {
                 <div className="flex flex-col gap-4">
                     <label className="text-center text-3xl dark:text-sky-400 text-black" htmlFor="query"> Cosa vorresti cercare? </label>
                     <div className="flex md:flex-row flex-col justify-center items-center md:space-x-3 space-x-0 md:space-y-0 space-y-3">
-                        <button type="button" className="p-2 bg-sky-400 rounded-full ml-3" onClick={(e) => {
+                        <button data-testid="typeSearchToggle" type="button" className="p-2 bg-sky-400 rounded-full ml-3" onClick={(e) => {
                             const newType = type === "username" ? "keyword" : "username";
                             if (newType === "keyword")
                                 setValue("noIntervalSearch", false)

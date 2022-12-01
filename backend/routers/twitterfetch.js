@@ -1,13 +1,17 @@
 import Express from "express";
 const router = Express.Router();
-import { tweetSentimentAnalysis, searchSentimentAnalysis } from "../middleware/sentimentAnalisys.js";
+import { sentimentAnalysis } from "../middleware/sentimentAnalisys.js";
+import { getWordcloudInfo } from "../middleware/wordcloudInfo.js";
 import {
   searchRecent,
   prepareDataInput,
   prepareResponse,
-  profilePicUrl,
   getUserID,
   searchUser,
+  sendData,
+  getWinnerWordTweets,
+  getChampionTweets,
+  processChampions,
 } from "../controllers/twitterfetch.js";
 
 router.get(
@@ -15,9 +19,9 @@ router.get(
   prepareDataInput,
   searchRecent,
   prepareResponse,
-  profilePicUrl,
-  searchSentimentAnalysis,
-  tweetSentimentAnalysis
+  sentimentAnalysis,
+  getWordcloudInfo,
+  sendData
 );
 
 /* GET /api/tweets?username=string&start_time=string&end_time=string&max_results=int
@@ -28,9 +32,30 @@ router.get(
   getUserID,
   searchUser,
   prepareResponse,
-  profilePicUrl,
-  searchSentimentAnalysis,
-  tweetSentimentAnalysis
+  sentimentAnalysis,
+  getWordcloudInfo,
+  sendData
 );
+
+/* GET /api/ghigliottina/solutions */
+router.get(
+  "/ghigliottina/solutions",
+  getWinnerWordTweets,
+  prepareDataInput,
+  searchRecent,
+  prepareResponse,
+  sendData
+)
+
+/* GET /api/ghigliottina/champions?conversation_id=id */
+router.get(
+  "/ghigliottina/champions",
+  getChampionTweets,
+  prepareDataInput,
+  searchRecent,
+  prepareResponse,
+  processChampions,
+  sendData
+)
 
 export default router;
