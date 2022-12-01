@@ -21,12 +21,15 @@ export function chess(state = initialState, data){
                 }
             }
         case CLEAR_GAME:
-            return initialState;
+            return {
+                votedMoves: {},
+                winnerMove: ""
+            };
         case MAKE_POLL_MOVE:
             // Si sceglie la mossa con piu' voti
             return {
-                ...initialState,
-                winnerMove: Object.keys(state.votedMoves).reduce((move1, move2) => state.votedMoves[move1] > state.votedMoves[move2] ? move1 : move2)
+                winnerMove: Object.keys(state.votedMoves).reduce((move1, move2) => state.votedMoves[move1] > state.votedMoves[move2] ? move1 : move2),
+                votedMoves: {}
             }
         default:
             return initialState;

@@ -60,16 +60,16 @@ export default function PlayVsPoll() {
 
   function makePollMove() {
     const possibleMoves = game.moves();
-    const boardAscii = game.ascii();
-    console.log(boardAscii.replaceAll("\n", "^"));
+    const boardFEN = game.fen();
+    console.log(boardFEN.replaceAll("\n", "^"));
     // exit if the game is over
     if (game.game_over() || game.in_draw() || possibleMoves.length === 0) return;
     if (!socket){
       const newSocket = io(process.env.REACT_APP_BASE_API_URL);
       setSocket(newSocket)
-      dispatch(startGameAction(newSocket, boardAscii, possibleMoves, username));
+      dispatch(startGameAction(newSocket, boardFEN, possibleMoves, username));
     }else
-      dispatch(startGameAction(socket, boardAscii, possibleMoves, username));
+      dispatch(startGameAction(socket, boardFEN, possibleMoves, username));
   }
 
   function onDrop(sourceSquare, targetSquare) {
