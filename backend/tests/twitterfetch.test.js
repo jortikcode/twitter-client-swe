@@ -1,15 +1,8 @@
+/* global describe test expect */
 import { app } from "../index.js";
 import request from "supertest";
 import { oneWeekTimestamp } from "../utils/constants.js";
-
-/* Prende in input il numero di giorni da sottrarre
- * Ritorna una stringa di una data in formato ISO*/
-function previusISODate(days) {
-  const date = new Date();
-  const previous = new Date(date.getTime());
-  previous.setDate(date.getDate() - days);
-  return previous.toISOString();
-}
+import { previusISODate } from "./testUtils.js";
 
 describe("GET /api/search", () => {
   describe("given a query", () => {
