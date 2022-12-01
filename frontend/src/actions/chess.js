@@ -1,20 +1,22 @@
 import { UPDATE_HISTORY, CLEAR_GAME, MAKE_POLL_MOVE } from "./constants";
 
-export const startGameAction = (socket, boardAscii, validMoves, username = false) => dispatch => {
-    dispatch(clearGame());
+export const startGameAction = (socket, boardAscii, validMoves, firstMove = true, username = false) => dispatch => {
     // Handler delle mosse del poll "in entrata" dallo stream
-    socket.on('tweets', (move) => {
-        if (move === "fin")
-            dispatch(makePollMove());
-        else
-            dispatch(updateHistory(move))
-    })
+    if (firstMove)
+        socket.on('tweets', (move) => {
+            console.log(move);
+            if (move === "fin")
+                dispatch(makePollMove());
+            else
+                dispatch(updateHistory(move))
+        });
     // Evento per iniziare la partita
     socket.emit("chess", boardAscii, validMoves, username);
 }
 
-export const endGameAction = (socket) => dispatch => {   
-    socket.disconnect();
+export const endGameAction = (socket) => dispatch => {
+    if (socket)
+        socket.disconnect();
     dispatch(clearGame())
 }
 

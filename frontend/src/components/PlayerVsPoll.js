@@ -28,7 +28,6 @@ export default function PlayVsPoll() {
     window.addEventListener("resize", handleResize);
     handleResize();
     return () => {
-      dispatch(clearGame());
       window.removeEventListener("resize", handleResize)
     };
   }, [dispatch]);
@@ -37,7 +36,6 @@ export default function PlayVsPoll() {
     return () => {
       if (socket){
         dispatch(endGameAction(socket));
-        socket.disconnect();
         setSocket(undefined);
       }
     };
@@ -48,7 +46,8 @@ export default function PlayVsPoll() {
       safeGameMutate((game) => {
         game.move(winnerMove);
       });
-  }, [winnerMove]);
+      dispatch(clearGame());
+  }, [winnerMove, dispatch]);
 
   function safeGameMutate(modify) {
     setGame((g) => {
@@ -67,9 +66,9 @@ export default function PlayVsPoll() {
     if (!socket){
       const newSocket = io(process.env.REACT_APP_BASE_API_URL);
       setSocket(newSocket)
-      dispatch(startGameAction(newSocket, boardFEN, possibleMoves, username));
+      dispatch(startGameAction(newSocket, boardFEN, possibleMoves, true, username));
     }else
-      dispatch(startGameAction(socket, boardFEN, possibleMoves, username));
+      dispatch(startGameAction(socket, boardFEN, possibleMoves, false, username));
   }
 
   function onDrop(sourceSquare, targetSquare) {
@@ -107,6 +106,7 @@ export default function PlayVsPoll() {
         className="rc-button md:text-xl text-lg dark:text-white bg-sky-500 hover:bg-sky-700 text-white py-2 px-4 rounded mt-5"
         onClick={() => {
           dispatch(endGameAction(socket));
+          setSocket(undefined);
           safeGameMutate((game) => {
             game.reset();
           });

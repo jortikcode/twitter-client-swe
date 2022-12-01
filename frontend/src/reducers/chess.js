@@ -13,26 +13,27 @@ export function chess(state = initialState, data){
     const info = data.payload;
     switch(data.type){
         case UPDATE_HISTORY:
+            let value = state.votedMoves[info.move];
             return {
                 ...state,
                 votedMoves: {
                     ...state.votedMoves,
-                    [info.move]: ++state.votedMoves[info.move] || 1
+                    [info.move]: ++value || 1
                 }
             }
         case CLEAR_GAME:
             return {
-                votedMoves: {},
-                winnerMove: ""
+                ...initialState
             };
         case MAKE_POLL_MOVE:
-            // Si sceglie la mossa con piu' voti
+            const winnerMove = Object.keys(state.votedMoves).reduce((move1, move2) => {return move2}, Object.keys(state.votedMoves)[0]);
+            console.log(winnerMove);
             return {
-                winnerMove: Object.keys(state.votedMoves).reduce((move1, move2) => state.votedMoves[move1] > state.votedMoves[move2] ? move1 : move2),
-                votedMoves: {}
+                ...initialState,
+                winnerMove
             }
         default:
-            return initialState;
+            return {...initialState};
     }
 }
 
