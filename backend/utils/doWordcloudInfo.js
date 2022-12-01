@@ -8,6 +8,9 @@ import keyword_extractor from "keyword-extractor";
 const defaultLang = "english";
 
 export function doWordcloudInfo(tweets) {
+  if (!tweets) {
+    throw new Error("Fornire dei tweet per fare la word cloud");
+  }
   const len = tweets.length;
 
   if (len === 0) {
