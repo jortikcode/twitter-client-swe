@@ -58,9 +58,9 @@ io.on("connection", async (socket) => {
   socket.on("stopGhigliottina", async () => {
     await stop("ghigliottina", socket);
   });
-  socket.on("chess", async (gameAscii, validMoves, username) => {
+  socket.on("chess", async (gameFEN, validMoves, username) => {
     /* creo il tweet per la proposta della sfida */
-    const tweetID = await chessTweet(gameAscii, validMoves, username);
+    const tweetID = await chessTweet(gameFEN, validMoves, username);
     /* genero un tag unico */
     const tag = `chessRoomID ${uniqid()}`;
     /* creo la regola per rimanere in ascolto dei reply sotto al tweet postato in precedenza */
@@ -68,7 +68,7 @@ io.on("connection", async (socket) => {
     /* creo questa variabile globale per controllare se qualcuno risponde più volte */
     app.locals.moves[tag] = [];
     /* aspetto 1 minuto */
-    await sleep(60000);
+    await sleep(10000);
     /* smetto di ascoltare i reply */
     await stop(tag, socket);
     /* se non ha risposto nessuno mando una mossa casuale tra quelle possibili */
