@@ -63,25 +63,33 @@ io.on("connection", async (socket) => {
     const tweetID = await chessTweet(gameFEN, validMoves, username);
     /* genero un tag unico */
     const tag = `chessRoomID ${uniqid()}`;
-    /* creo la regola per rimanere in ascolto dei reply sotto al tweet postato in precedenza */
-    await start(socket, `in_reply_to_tweet_id:${tweetID}`, tag);
-    /* creo questa variabile globale per controllare se qualcuno risponde più volte */
-    app.locals.moves[tag] = [];
-    /* aspetto 1 minuto */
-    await sleep(10000);
-    /* smetto di ascoltare i reply */
-    await stop(tag, socket);
-    /* se non ha risposto nessuno mando una mossa casuale tra quelle possibili */
-    if(app.locals.moves[tag].length == 0){
-      const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
-      socket.emit("tweets", randomMove)
+    try{
+      /* creo la regola per rimanere in ascolto dei reply sotto al tweet postato in precedenza */
+      await start(socket, `in_reply_to_tweet_id:${tweetID}`, tag);
+      /* creo questa variabile globale per controllare se qualcuno risponde più volte */
+      app.locals.moves[tag] = [];
+      /* aspetto 1 minuto */
+      await sleep(60000);
+      /* smetto di ascoltare i reply */
+      await stop(tag, socket);
+      /* se non ha risposto nessuno mando una mossa casuale tra quelle possibili */
+      if(app.locals.moves[tag].length == 0){
+        const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+        socket.emit("tweets", randomMove)
+      }
+      /* invio al fronend che ho smesso di ascoltare e quindi può eseguire la mossa */
+      socket.emit("tweets", "fin")
+      /* smetto di controllare se qualcuno risponde più volte */
+      delete app.locals.moves[tweetID];
+      /* rimuovo il tweet */
+      await removeTweet(tweetID);
+    } catch (error) {
+      console.log(error);
+      /* smetto di controllare se qualcuno risponde più volte */
+      delete app.locals.moves[tweetID];
+      /* rimuovo il tweet */
+      await removeTweet(tweetID);
     }
-    /* invio al fronend che ho smesso di ascoltare e quindi può eseguire la mossa */
-    socket.emit("tweets", "fin")
-    /* smetto di controllare se qualcuno risponde più volte */
-    delete app.locals.moves[tweetID];
-    /* rimuovo il tweet */
-    await removeTweet(tweetID);
   });
   socket.on("disconnect", async () => {
     let release = await mutex.acquire();
