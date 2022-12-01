@@ -8,6 +8,7 @@ import ChartsView from './screens/ChartsView';
 import TweetsView from './screens/TweetsView';
 import Ghigliottina from './screens/Ghigliottina';
 import StreamPage from './screens/StreamPage';
+import Chess from './screens/Chess';
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           </Route>
           <Route path='/ghigliottina' element={<Ghigliottina />} />
           <Route path='/stream' element={<StreamPage />} />
+          <Route path='/chess' element={<Chess />} />
         </Routes>
       </BrowserRouter>
     </div>
