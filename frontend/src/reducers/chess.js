@@ -33,7 +33,7 @@ export function chess(state = initialState, data){
                 winnerMove
             }
         default:
-            return {...initialState};
+            return state;
     }
 }
 

@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import Chess from 'chess.js'
+import MovesViewer from './MovesViewer';
 import { Chessboard } from 'react-chessboard';
 import { clearGame, endGameAction, startGameAction } from '../actions/chess';
 import uniqid from 'uniqid';
@@ -88,6 +89,7 @@ export default function PlayVsPoll() {
   return (
     <>
       <span className='text-lg dark:text-white font-bold'> Stai giocando come <span className="text-amber-800 dark:text-yellow-300">{username.current}</span> </span>
+      <MovesViewer />
       <Chessboard
         id="PlayVsRandom"
         animationDuration={200}
