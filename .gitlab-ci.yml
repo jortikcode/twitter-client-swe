@@ -82,4 +82,4 @@ backend_deploy:
     - which rsync || ( apt-get update -y && apt-get install rsync -y )
   script:
     - cd backend && npm install
-    - rsync -av * .env.production.tokens .dockerignore node_modules $UNIBO_USER@lucia.cs.unibo.it:/home/web/site212236/html/twitter-app
+    - rsync -av --exclude 'node_modules/canvas' * .env.production.tokens .dockerignore node_modules $UNIBO_USER@lucia.cs.unibo.it:/home/web/site212236/html/twitter-app
