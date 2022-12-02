@@ -17,7 +17,7 @@ export const searchUser = async (req, res, next) => {
       return res.status(200).json({ no_matches: true });
     next();
   } catch (error) {
-    return res.status(500).send({ errore: "Errore HTTP " + error });
+    return res.status(500).send({ errore: "Errore HTTP " + error.message });
   }
 };
 
@@ -26,10 +26,7 @@ export async function getTweetFromUser(userID, params = {}) {
     if (!userID) {
       throw new Error("UserID mancante");
     }
-    const response = await client.user(userID, params);
-    if (response.errors) {
-      throw new Error("Nessun utente trovato");
-    }
+    const response = (await client.userTimeline(userID, params))["_realData"];
     return response;
   } catch (error) {
     throw new Error(error);
@@ -57,9 +54,6 @@ export async function tweetsRecentSearch(query, params = {}) {
       throw new Error("Query mancante");
     }
     const response = await client.search(query, params);
-    if (response._realData?.errors) {
-      throw new Error("Limite ricerche raggiunto");
-    }
     return response._realData;
   } catch (error) {
     throw new Error(error);
@@ -79,7 +73,7 @@ export const getChampionTweets = async (req, res, next) => {
   next();
 };
 
-export const getWinnerWordTweets = async(req, res, next) => {
+export const getWinnerWordTweets = async (req, res, next) => {
   req.query.query = "(#ghigliottina #parola oggi) from:quizzettone";
   next();
 };
@@ -88,8 +82,7 @@ export const processChampions = async (req, res, next) => {
   const { textTweets } = req.payload;
   let champions = [];
   champions = textTweets.map((tweet, index) => {
-    if (index === (textTweets.length - 1))
-      return tweet.text;
+    if (index === textTweets.length - 1) return tweet.text;
     return tweet.text.split(/campioni #leredita - \d*\n\n/i)[1];
   });
   champions.reverse();
@@ -105,7 +98,7 @@ export const getUserID = async (req, res, next) => {
     req.userID = id;
     next();
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).send({ error: error.message });
   }
 };
 
