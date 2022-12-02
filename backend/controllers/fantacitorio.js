@@ -8,6 +8,7 @@ export const weeklyPoints = async (req, res, next) => {
     const tweets = await tweetsRecentSearch("from:Fanta_citorio");
     return res.status(200).send(tweets);
     const rows = getRows(tweets.data);
+    next()
   } catch (error) {
     return res.status(500).send({ error: error });
   }

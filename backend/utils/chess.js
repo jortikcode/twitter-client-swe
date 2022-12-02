@@ -1,3 +1,4 @@
+/* global process */
 import { rwClient } from "./twitterClient.js";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
@@ -28,7 +29,7 @@ export const chessTweet = async (gameFEN, validMoves, username) => {
   try {
     const msg = username
       ? `La board: \n${process.env.boardurl}?fen=${gameFEN}\nPartita di ${username}, se vuoi sfidarlo vota la prossima mossa:\n${validMoves}`
-      : `${gameAscii}\nMosse valide:\n${validMoves}`;
+      : `La board: \n${process.env.boardurl}?fen=${gameFEN}\nMosse valide:\n${validMoves}`;
     const tweetText = createMsg(msg.substring(0, MAX_LENGTH - 1));
     const { data: createdTweet } = await rwClient.v2.tweet(tweetText);
     return createdTweet.id;
