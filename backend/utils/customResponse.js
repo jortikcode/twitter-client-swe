@@ -4,6 +4,15 @@ const RETWEET = "RETWEET";
 const QUOTED = "QUOTED";
 const NOTYPE = "NOTYPE";
 
+export function prepareTeamImages(medias) {
+  return medias.flatMap(media => {
+    if (media.type !== "photo")
+      return [];
+    else
+      return [media.url]
+  });
+}
+
 export function preparePayload(response) {
   // Array contenente gli id degli autori dei tweet ricevuti dalla richiesta
   let authorsId = [];

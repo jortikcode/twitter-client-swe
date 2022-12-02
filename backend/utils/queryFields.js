@@ -34,3 +34,15 @@ export function addFields(params = {}) {
 
   return params;
 }
+
+export const teamImagesFields = (params = {}) => {
+  params["expansions"] = [
+      "attachments.media_keys"
+    ];
+   
+  params["media.fields"] = [
+      "preview_image_url",
+      "url"
+    ];
+  return params;
+}
