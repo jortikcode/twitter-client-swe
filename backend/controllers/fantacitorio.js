@@ -1,14 +1,11 @@
-import { roClient } from "../utils/twitterClient.js";
 import { tweetsRecentSearch } from "./twitterfetch.js";
 
-const client = roClient.v2;
-
-export const weeklyPoints = async (req, res, next) => {
+export const weeklyPoints = async (req, res) => {
   try {
     const tweets = await tweetsRecentSearch("from:Fanta_citorio");
-    return res.status(200).send(tweets);
     const rows = getRows(tweets.data);
-    next()
+    console.log(rows);
+    return res.status(200).send(tweets);
   } catch (error) {
     return res.status(500).send({ error: error });
   }
