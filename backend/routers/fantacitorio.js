@@ -1,7 +1,11 @@
 import Express from "express";
-import { weeklyPoints } from "../controllers/fantacitorio.js";
+import { weeklyPoints, teamImages, teamUser, checkDataFantacitorio } from "../controllers/fantacitorio.js";
 const router = Express.Router();
 
 router.get("/weeklyPoints", weeklyPoints);
+
+router.get("/teamImages", checkDataFantacitorio, teamImages);
+
+router.get("/teamUser", teamUser);
 
 export default router;
