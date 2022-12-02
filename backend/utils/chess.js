@@ -1,6 +1,7 @@
 import { rwClient } from "./twitterClient.js";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import { default as turl } from 'turl';
 import dotenv from "dotenv";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -25,10 +26,11 @@ const createMsg = (text) => {
 
 /* funzione per iniziare una partita a scacchi se username è presente, oppure proseguirla se username manca */
 export const chessTweet = async (gameFEN, validMoves, username) => {
+  const boardurl = await turl.shorten(`${process.env.boardurl}?fen=${gameFEN}`);
   try {
     const msg = username
-      ? `La board: \n${process.env.boardurl}?fen=${gameFEN}\nPartita di ${username}, se vuoi sfidarlo vota la prossima mossa:\n${validMoves}`
-      : `${gameAscii}\nMosse valide:\n${validMoves}`;
+      ? `La board: ${boardurl}\nPartita di ${username}, se vuoi sfidarlo vota la prossima mossa:\n${validMoves}`
+      : `\nMosse valide:\n${validMoves}`;
     const tweetText = createMsg(msg.substring(0, MAX_LENGTH - 1));
     const { data: createdTweet } = await rwClient.v2.tweet(tweetText);
     return createdTweet.id;
