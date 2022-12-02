@@ -12,7 +12,7 @@ export default function PlayVsPoll() {
   const chessboardRef = useRef();
   const [chessboardSize, setChessboardSize] = useState(undefined);
   // Username della partita
-  const username = uniqid();
+  const username = useRef(uniqid());
   const [socket, setSocket] = useState();
   const [game, setGame] = useState(new Chess());
   const [boardOrientation, setBoardOrientation] = useState('white');
@@ -65,9 +65,9 @@ export default function PlayVsPoll() {
     if (!socket){
       const newSocket = io(process.env.REACT_APP_BASE_API_URL);
       setSocket(newSocket)
-      dispatch(startGameAction(newSocket, boardFEN, possibleMoves, true, username));
+      dispatch(startGameAction(newSocket, boardFEN, possibleMoves, true, username.current));
     }else
-      dispatch(startGameAction(socket, boardFEN, possibleMoves, false, username));
+      dispatch(startGameAction(socket, boardFEN, possibleMoves, false, username.current));
   }
 
   function onDrop(sourceSquare, targetSquare) {
@@ -87,7 +87,7 @@ export default function PlayVsPoll() {
 
   return (
     <>
-      <span className='text-lg dark:text-white font-bold'> Stai giocando come <span className="text-amber-800 dark:text-yellow-300">{username}</span> </span>
+      <span className='text-lg dark:text-white font-bold'> Stai giocando come <span className="text-amber-800 dark:text-yellow-300">{username.current}</span> </span>
       <Chessboard
         id="PlayVsRandom"
         animationDuration={200}
