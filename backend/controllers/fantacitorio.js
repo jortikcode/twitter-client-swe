@@ -1,4 +1,4 @@
-import { prepareTeamImages } from "../utils/customResponse.js";
+import { prepareFantacitorio } from "../utils/customResponse.js";
 import { checkDates } from "../utils/dateCheck.js";
 import { teamImagesFields } from "../utils/queryFields.js";
 import { tweetsRecentSearch } from "./twitterfetch.js";
@@ -28,8 +28,11 @@ export const teamImages = async (req, res) => {
     const tweets = (await tweetsRecentSearch("#fantacitorio has:images", params));
     if (tweets?.meta?.result_count === 0 || (tweets?.includes?.media === undefined))
       // Non sono stati trovati tweet con immagini / non e' possibile ricavare le immagini
-      return res.status(404).send({ error: error });
-    const response = prepareTeamImages(tweets.includes.media);
+      return res.status(404).json({ no_matches: true });
+    const response = prepareFantacitorio(tweets);
+    delete response.textTweets;
+    delete response.types;
+    delete response.places;
     return res.status(200).send(response);
   } catch (error) {
     return res.status(500).send({ error: error });
@@ -37,7 +40,22 @@ export const teamImages = async (req, res) => {
 };
 
 export const teamUser = async (req, res) => {
-  return res.status(200).send({ temp: "TODO" });
+  try {
+    const { username: username , ...params } = teamImagesFields(req.params);
+    if (!username)
+      throw new Error("Username mancante");
+    const tweets = await tweetsRecentSearch(`#fantacitorio from:${username} has:images`, params);
+    if (tweets?.meta?.result_count === 0 || (tweets?.includes?.media === undefined))
+      // Non sono stati trovati tweet con immagini / non e' possibile ricavare le immagini
+      return res.status(404).json({ no_matches: true });
+    const response = prepareFantacitorio(tweets);
+    delete response.textTweets;
+    delete response.types;
+    delete response.places;
+    return res.status(200).send(response);
+  } catch (error) {
+    return res.status(500).send({ error: error });
+  }
 }
 
 export const checkDataFantacitorio = (req, res, next) => {

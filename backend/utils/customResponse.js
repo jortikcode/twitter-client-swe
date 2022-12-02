@@ -4,15 +4,6 @@ const RETWEET = "RETWEET";
 const QUOTED = "QUOTED";
 const NOTYPE = "NOTYPE";
 
-export function prepareTeamImages(medias) {
-  return medias.flatMap(media => {
-    if (media.type !== "photo")
-      return [];
-    else
-      return [media.url]
-  });
-}
-
 export function preparePayload(response) {
   // Array contenente gli id degli autori dei tweet ricevuti dalla richiesta
   let authorsId = [];
@@ -43,6 +34,29 @@ export function preparePayload(response) {
     getAuthours(authorsId, response.includes.users),
     types,
     getGeo(placesId, response.includes.places),
+    getMedias(mediaKeys, response.includes.media)
+  );
+  return payload;
+}
+
+export function prepareFantacitorio(response){
+  // Array contenente gli id degli autori dei tweet ricevuti dalla richiesta
+  let authorsId = [];
+  // Array contenente elementi del tipo [media_keys]
+  let mediaKeys = [];
+  // Array delle date di creazione delle squadre
+  let creationDates = [];
+  for (const tweet of response.data){
+    authorsId.push(tweet.author_id);
+    mediaKeys.push(tweet?.attachments?.media_keys[0]);
+    creationDates.push(tweet.created_at);
+  }
+  const { payload } = searchSuccess(
+    [],
+    creationDates,
+    getAuthours(authorsId, response.includes.users),
+    [],
+    [],
     getMedias(mediaKeys, response.includes.media)
   );
   return payload;

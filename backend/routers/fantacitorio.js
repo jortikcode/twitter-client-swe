@@ -6,6 +6,6 @@ router.get("/weeklyPoints", weeklyPoints);
 
 router.get("/teamImages", checkDataFantacitorio, teamImages);
 
-router.get("/teamUser", teamUser);
+router.get("/teamUser", checkDataFantacitorio, teamUser);
 
 export default router;
