@@ -1,6 +1,7 @@
 import express, { json, urlencoded } from "express";
 import cors from "cors";
 import api from "./routers/twitterfetch.js";
+import fantacitorio from "./routers/fantacitorio.js";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
@@ -14,6 +15,8 @@ app.use(urlencoded({ extended: false }));
 app.use(express.static(join(__dirname, "build")));
 
 app.use("/api", api);
+
+app.use("/fantacitorio", fantacitorio);
 
 app.get("/chess", (req, res) => {
   res.sendFile(join(__dirname, "..", "sample", "chessSample.html"));
