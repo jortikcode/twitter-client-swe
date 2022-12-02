@@ -1,4 +1,19 @@
 import { rwClient } from "./twitterClient.js";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const MAX_LENGTH = 280;
+
+if (process.argv.length > 2) {
+  // Development enviroment variables
+  dotenv.config({ path: join(__dirname, "..", ".env.development.tokens") });
+}
+// Production enviroment variables
+else {
+  dotenv.config({ path: join(__dirname, "..", ".env.production.tokens") });
+}
 
 /* funzione per far rispettare la struttura di un tweet */
 const createMsg = (text) => {
@@ -8,19 +23,13 @@ const createMsg = (text) => {
   return msg;
 };
 
-/*
- * 1. verifico se c'è una regola libera
- * 2. genero un id della partita
- * 3. creo una regola con l'id della partita
- * 4. faccio il post su twitter con l'username di chi ha proposto la sfida
- */
-
-/* funzione per iniziare una partita a scacchi */
-export const chessTweet = async (username = "anonimo") => {
+/* funzione per iniziare una partita a scacchi se username è presente, oppure proseguirla se username manca */
+export const chessTweet = async (gameFEN, validMoves, username) => {
   try {
-    const tweetText = createMsg(
-      `Partita iniziata da ${username}, se vuoi sfidarlo rispondi a questo tweet con la mossa che vuoi fare, sarà fatta la mossa scelta di più`
-    );
+    const msg = username
+      ? `La board: \n${process.env.boardurl}?fen=${gameFEN}\nPartita di ${username}, se vuoi sfidarlo vota la prossima mossa:\n${validMoves}`
+      : `${gameAscii}\nMosse valide:\n${validMoves}`;
+    const tweetText = createMsg(msg.substring(0, MAX_LENGTH - 1));
     const { data: createdTweet } = await rwClient.v2.tweet(tweetText);
     return createdTweet.id;
   } catch (error) {
@@ -28,5 +37,10 @@ export const chessTweet = async (username = "anonimo") => {
   }
 };
 
-/* Probabilmente : in_reply_to_tweet_id:{id-del-tweet-fatto-in-precedenza} */
-/* tweet-specifico-generato-da-me forse: conversation_id:{id-del-tweet-fatto-in-precedenza} is:reply */
+export const removeTweet = async (tweetID) => {
+  try {
+    await rwClient.v2.deleteTweet(tweetID);
+  } catch (error) {
+    console.log(error);
+  }
+};

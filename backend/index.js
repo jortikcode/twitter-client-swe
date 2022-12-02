@@ -12,11 +12,12 @@ app.use(cors());
 app.use(json());
 app.use(urlencoded({ extended: false }));
 app.use(express.static(join(__dirname, "build")));
+app.use(express.static(join(__dirname, "boards")));
 
 app.use("/api", api);
 
 app.get("/chess", (req, res) => {
-  res.sendFile(join(__dirname, "..", "sample", "socketUsage.html"));
+  res.sendFile(join(__dirname, "..", "sample", "chessSample.html"));
 });
 
 /* La route /* e' generica, fa match con ogni richiesta.

@@ -9,8 +9,9 @@ import {
   generateDeleteRule,
 } from "./utils/stream.js";
 import { Mutex } from "async-mutex";
+import sleep from "sleep-promise";
 import uniqid from "uniqid";
-import { chessTweet } from "./utils/chess.js";
+import { chessTweet, removeTweet } from "./utils/chess.js";
 
 const mutex = new Mutex();
 
@@ -23,11 +24,13 @@ console.log(`app listening on port ${port}!`);
 /* IOStream */
 const io = new Server(server, {
   cors: {
-    origin: '*'
-  }
+    origin: "*",
+  },
 });
 
 app.locals.listeners = new Array();
+
+app.locals.moves = new Array();
 
 const activeRules = new Array();
 
@@ -55,18 +58,38 @@ io.on("connection", async (socket) => {
   socket.on("stopGhigliottina", async () => {
     await stop("ghigliottina", socket);
   });
-  socket.on("startChess", async (username) => {
-    let release = await mutex.acquire();
-    if (activeRules.length < 5) {
-      const gameID = uniqid();
-      const tweetID = await chessTweet(username);
-      await addOrDeleteRules(
-        generateAddRule(`in_reply_to_tweet_id:${tweetID}`, gameID)
-      );
-    } else {
-      socket.emit("tweets", "sono già presenti 5 regole");
+  socket.on("chess", async (gameFEN, validMoves, username) => {
+    /* creo il tweet per la proposta della sfida */
+    const tweetID = await chessTweet(gameFEN, validMoves, username);
+    /* genero un tag unico */
+    const tag = `chessRoomID ${uniqid()}`;
+    try{
+      /* creo la regola per rimanere in ascolto dei reply sotto al tweet postato in precedenza */
+      await start(socket, `in_reply_to_tweet_id:${tweetID}`, tag);
+      /* creo questa variabile globale per controllare se qualcuno risponde più volte */
+      app.locals.moves[tag] = [];
+      /* aspetto 2 minuto */
+      await sleep(120000);
+      /* smetto di ascoltare i reply */
+      await stop(tag, socket);
+      /* se non ha risposto nessuno mando una mossa casuale tra quelle possibili */
+      if(app.locals.moves[tag].length == 0){
+        const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+        socket.emit("tweets", randomMove)
+      }
+      /* invio al fronend che ho smesso di ascoltare e quindi può eseguire la mossa */
+      socket.emit("tweets", "fin")
+      /* smetto di controllare se qualcuno risponde più volte */
+      delete app.locals.moves[tweetID];
+      /* rimuovo il tweet */
+      await removeTweet(tweetID);
+    } catch (error) {
+      console.log(error);
+      /* smetto di controllare se qualcuno risponde più volte */
+      delete app.locals.moves[tweetID];
+      /* rimuovo il tweet */
+      await removeTweet(tweetID);
     }
-    release();
   });
   socket.on("disconnect", async () => {
     let release = await mutex.acquire();
