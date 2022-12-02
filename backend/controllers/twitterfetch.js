@@ -7,12 +7,13 @@ const client = roClient.v2;
 
 export const searchUser = async (req, res, next) => {
   try {
-    const { userID, params } = req;
+    const id = req.userID;
     /* Devo escludere il campo username dai parametri se no
      non sono validi per la richiesta */
+    let params = req.params;
     delete params.username;
-    req.response = await getTweetFromUser(userID, params);
-    if (req.response.meta.result_count == 0)
+    req.response = (await client.userTimeline(id, params))["_realData"];
+    if (req.response?.meta?.result_count == 0)
       // Non sono stati trovati risultati
       return res.status(200).json({ no_matches: true });
     next();
