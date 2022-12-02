@@ -68,8 +68,8 @@ io.on("connection", async (socket) => {
       await start(socket, `in_reply_to_tweet_id:${tweetID}`, tag);
       /* creo questa variabile globale per controllare se qualcuno risponde più volte */
       app.locals.moves[tag] = [];
-      /* aspetto 1 minuto */
-      await sleep(60000);
+      /* aspetto 2 minuto */
+      await sleep(120000);
       /* smetto di ascoltare i reply */
       await stop(tag, socket);
       /* se non ha risposto nessuno mando una mossa casuale tra quelle possibili */
