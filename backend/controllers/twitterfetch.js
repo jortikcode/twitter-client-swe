@@ -12,8 +12,8 @@ export const searchUser = async (req, res, next) => {
      non sono validi per la richiesta */
     let params = req.params;
     delete params.username;
-    req.response = await client.user(id, params);
-    if (req.response.meta.result_count == 0)
+    req.response = (await client.userTimeline(id, params))["_realData"];
+    if (req.response?.meta?.result_count == 0)
       // Non sono stati trovati risultati
       return res.status(200).json({ no_matches: true });
     next();
@@ -27,7 +27,7 @@ export const searchRecent = async (req, res, next) => {
     const { query: query, ...params } = req.params;
     const response = await client.search(query, params);
     req.response = response._realData;
-    if (req.response.meta.result_count == 0)
+    if (req.response?.meta?.result_count == 0)
       // Non sono stati trovati risultati
       res.status(404).json({ no_matches: true });
     else {
@@ -109,8 +109,8 @@ export const prepareDataInput = (req, res, next) => {
 export const prepareResponse = (req, res, next) => {
   const payload = preparePayload(req.response);
   req.payload = payload;
-  req.nextToken = req.response.meta.next_token;
-  req.previousToken = req.response.meta.previous_token;
+  req.nextToken = req.response?.meta?.next_token;
+  req.previousToken = req.response?.meta?.previous_token;
   next();
 };
 
