@@ -20,11 +20,14 @@ export function preparePayload(response) {
   let types = [];
   // Array contenente i place id dei tweet
   let placesId = [];
+  // Array contenente elementi del tipo [media_keys]
+  let mediaKeys = []
   const { payload } = searchSuccess(
     response.data.map((tweet, index) => {
       authorsId.push(tweet.author_id);
       placesId.push(tweet.geo?.place_id);
       types.push(getType(tweet));
+      mediaKeys.push(tweet?.attachments?.media_keys[0]);
       if (types[index] === "RETWEET") {
         // Si tratta di un retweet, e' necessario accedere al testo completo in un altro modo
         return getRetweetText(
@@ -39,9 +42,32 @@ export function preparePayload(response) {
     }),
     getAuthours(authorsId, response.includes.users),
     types,
-    getGeo(placesId, response.includes.places)
+    getGeo(placesId, response.includes.places),
+    getMedias(mediaKeys, response.includes.media)
   );
   return payload;
+}
+
+export const getMedias = (mediaKeys, allMedias) => {
+  let mediasInfo = [];
+  let index = 0;
+  if (mediaKeys.length === 0 || !allMedias)
+    return [];
+  for (const mediaKey of mediaKeys){
+    if (! mediaKey) {
+      index++;
+      continue;
+    }
+    const media = allMedias.find((extended_media) => {
+      return extended_media.media_key === mediaKey;
+    });
+    mediasInfo.push({
+      ...media,
+      index
+    });
+    index++;
+  }
+  return mediasInfo;
 }
 
 // Funzione che ritorna il tipo del tweet passato come argomento
@@ -93,7 +119,8 @@ export const searchSuccess = (
   creationDates = [],
   users = [],
   types = [],
-  places = []
+  places = [],
+  medias = []
 ) => {
   return {
     type: "SEARCH_SUCCESS",
@@ -103,6 +130,7 @@ export const searchSuccess = (
       users,
       types,
       places,
+      medias
     },
   };
 };
@@ -120,7 +148,10 @@ export const getGeo = (placesID, allPlaces) => {
   if (placesID.length === 0 || !allPlaces)
     return [];
   for (const placeId of placesID) {
-    if (! placeId) continue;
+    if (! placeId){
+      index++;
+      continue;
+    }
     const place = allPlaces.find((extended_place) => {
       return extended_place.id === placeId;
     });
