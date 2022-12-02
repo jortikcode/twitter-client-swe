@@ -13,6 +13,7 @@ app.use(cors());
 app.use(json());
 app.use(urlencoded({ extended: false }));
 app.use(express.static(join(__dirname, "build")));
+app.use(express.static(join(__dirname, "boards")));
 
 app.use("/api", api);
 
