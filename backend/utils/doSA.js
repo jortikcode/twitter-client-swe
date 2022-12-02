@@ -9,6 +9,9 @@ import { languages,
 const defaultLang = "en";
 
 export function doSentiment(tweets) {
+  if(!tweets){
+    throw new Error("Fornire dei tweet su cui fare la sentiment analysis")
+  }
   const len = tweets.length;
   const tweetSentiment = new Array();
 
@@ -48,7 +51,7 @@ export function doSentiment(tweets) {
         partial.tokens.length -
         (searchSentiment.positives + searchSentiment.negatives);
     } catch (error) {
-      throw new Error("Errore della sentiment: " + error);
+      throw new Error("Errore della sentiment");
     }
   }
 
