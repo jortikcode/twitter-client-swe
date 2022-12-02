@@ -117,8 +117,10 @@ export const searchSuccess = (
 export const getGeo = (placesID, allPlaces) => {
   let placesInfo = [];
   let index = 0;
+  if (placesID.length === 0 || !allPlaces)
+    return [];
   for (const placeId of placesID) {
-    if (!placeId) continue;
+    if (! placeId) continue;
     const place = allPlaces.find((extended_place) => {
       return extended_place.id === placeId;
     });
