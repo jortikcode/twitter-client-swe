@@ -40,21 +40,24 @@ export const searchRecent = async (req, res, next) => {
 
 export const getChampionTweets = async (req, res, next) => {
   const params = req.query;
-  if (! params.conversation_id)
-    throw new Error("Non e' stato specificato un tweet da cui ricavare i campioni!");
+  if (!params.conversation_id)
+    throw new Error(
+      "Non e' stato specificato un tweet da cui ricavare i campioni!"
+    );
   req.query.query = `(#leredita campioni) conversation_id:${params.conversation_id}`;
   // Al massimo 50 tweet con i vincitori del giorno
   req.query.max_results = "50";
   delete req.query.conversation_id;
   next();
-}
+};
 
-export const getWinnerWordTweets = async(req, res, next) => {
+
+export const getWinnerWordTweets = async (req, res, next) => {
   req.query.query = "(#ghigliottina #parola oggi) from:quizzettone";
   next();
-}
+};
 
-export const processChampions = async(req, res, next) => {
+export const processChampions = async (req, res, next) => {
   const { textTweets } = req.payload;
   let champions = [];
   champions = textTweets.map((tweet, index) => {
@@ -63,9 +66,9 @@ export const processChampions = async(req, res, next) => {
     return tweet.text.split(/campioni #leredita - \d*\n\n/i)[1];
   });
   champions.reverse();
-  req.payload.champions = (champions.join('\n'));
+  req.payload.champions = champions.join("\n");
   next();
-}
+};
 
 /* Middleware per prendere l'id dell'utente dal sul username */
 export const getUserID = async (req, res, next) => {
@@ -118,8 +121,8 @@ export const prepareResponse = (req, res, next) => {
 export const sendData = (req, res) => {
   if (req.payload.champions)
     req.payload = {
-      championsString: req.payload.champions
-    }
+      championsString: req.payload.champions,
+    };
   res.status(200).json({
     ...req.payload,
     nextToken: req.nextToken,
