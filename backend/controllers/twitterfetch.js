@@ -73,7 +73,7 @@ export const getChampionTweets = async (req, res, next) => {
   next();
 };
 
-export const getWinnerWordTweets = async(req, res, next) => {
+export const getWinnerWordTweets = async (req, res, next) => {
   req.query.query = "(#ghigliottina #parola oggi) from:quizzettone";
   next();
 };
@@ -82,8 +82,7 @@ export const processChampions = async (req, res, next) => {
   const { textTweets } = req.payload;
   let champions = [];
   champions = textTweets.map((tweet, index) => {
-    if (index === (textTweets.length - 1))
-      return tweet.text;
+    if (index === textTweets.length - 1) return tweet.text;
     return tweet.text.split(/campioni #leredita - \d*\n\n/i)[1];
   });
   champions.reverse();

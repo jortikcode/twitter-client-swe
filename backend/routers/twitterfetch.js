@@ -2,7 +2,6 @@ import Express from "express";
 const router = Express.Router();
 import { sentimentAnalysis } from "../middleware/sentimentAnalisys.js";
 import { getWordcloudInfo } from "../middleware/wordcloudInfo.js";
-import { generateBoard } from '../middleware/chessImage.js'
 import {
   searchRecent,
   prepareDataInput,
@@ -46,7 +45,7 @@ router.get(
   searchRecent,
   prepareResponse,
   sendData
-)
+);
 
 /* GET /api/ghigliottina/champions?conversation_id=id */
 router.get(
@@ -57,11 +56,6 @@ router.get(
   prepareResponse,
   processChampions,
   sendData
-)
-
-router.get(
-  "/chessboard",
-  generateBoard
-)
+);
 
 export default router;
