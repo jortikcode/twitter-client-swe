@@ -5,6 +5,7 @@ import {
     dateErrorAction, 
     loadingAction,
     clearTweets } from '../actions/tweets'
+import { clearFantacitorio, teams, loadingFantacitorio } from '../actions/fantacitorio'
 import { 
     formatISO,
     isValidDateRange,
@@ -13,13 +14,13 @@ import {
     configureDates,
     isIntervalSetted} from '../utils/form'
 import SearchFilters from './SearchFilters'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PageManager from './PageManager';
 import TabManager from './TabManager';
 import { Outlet } from 'react-router-dom'
 
 
-const SearchForm = () => {
+const SearchForm = ({ fantacitorio }) => {
     // Timestamp di adesso shiftato di error millisecondi indietro
     const error = 60 * 1000;
     const now = new Date(Date.now() - error);
@@ -63,9 +64,18 @@ const SearchForm = () => {
             textTweets,
             isLoading, 
             nextToken, 
-            previousToken } = useSelector(state => state.tweets);
-
+            previousToken,
+            isLoadingFantacitorio } = useSelector(state => fantacitorio ? state.fantacitorio : state.tweets);
     const { filtersEnabled } = useSelector(state => state.form);
+
+    useEffect(() => {
+        return () => {
+            if (fantacitorio)
+                dispatch(clearFantacitorio());
+            else
+                dispatch(clearTweets());
+        }
+    }, [dispatch, fantacitorio])
 
     // Funzione di submit del form
     const onSubmit = (data) => {
@@ -82,9 +92,15 @@ const SearchForm = () => {
         if (! isValid){
             dispatch(dateErrorAction(msg))
         }else{
-            dispatch(clearTweets());
+            if (fantacitorio)
+                dispatch(clearFantacitorio());
+            else
+                dispatch(clearTweets());
             // Spinner di caricamento visibile
-            dispatch(loadingAction());
+            if (fantacitorio)
+                dispatch(loadingFantacitorio(true))
+            else
+                dispatch(loadingAction(true));
             // Se si tratta di una keyword search di un hashtag/utente allora bisogna cambiare la query
             data.query = transformQuery(data.query);
             dispatch(dateErrorAction(""));
@@ -101,21 +117,25 @@ const SearchForm = () => {
 
             if (data.maxResults !== 10 && filtersEnabled)
                 dataToAction["maxResults"] = data.maxResults;
-
             // Si aggiornano i dati della ricerca corrente
             setStoredData(dataToAction);
             // Si attiva l'azione per la ricerca e si aggiorna lo stato centralizzato
-            dispatch(searchAction(dataToAction));
+            if (fantacitorio)
+                dispatch(teams(dataToAction));
+            else
+                dispatch(searchAction(dataToAction));
         }
         
     }
 
     return (
     <>
-        <div className="flex flex-col w-full min-h-screen h-auto p-5 items-center dark:bg-gray-900">
+        <div className="flex flex-col w-full p-5 items-center dark:bg-gray-900">
             <form className="flex w-full flex-col justify-center items-center gap-4" onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-col gap-4">
-                    <label className="text-center text-3xl dark:text-sky-400 text-black" htmlFor="query"> Cosa vorresti cercare? </label>
+                    {!fantacitorio ? <label className="text-center text-3xl dark:text-sky-400 text-black" htmlFor="query"> Cosa vorresti cercare? </label> :
+                    (type === "username" ? <label className="text-center text-3xl dark:text-sky-400 text-black"> Cerca un utente e scopri la sua squadra! </label> :
+                    <label className="text-center text-3xl dark:text-sky-400 text-black"> Cerca le squadre di questa settimana! </label>)}
                     <div className="flex md:flex-row flex-col justify-center items-center md:space-x-3 space-x-0 md:space-y-0 space-y-3">
                         <button data-testid="typeSearchToggle" type="button" className="p-2 bg-sky-400 rounded-full ml-3" onClick={(e) => {
                             const newType = type === "username" ? "keyword" : "username";
@@ -127,26 +147,27 @@ const SearchForm = () => {
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 {type === "username" 
                                 ? (<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>)
-                                : (<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>) }
+                                : (!fantacitorio ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+                                : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                                </path>) }
                             </svg>)}
                         </button>
-                        {type === "keyword" ? (
+                        {(type === "keyword" && !fantacitorio) ? (
                         <input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="query" id="query" type="text" placeholder="#hashtag, keyword. @utente" {...register("query", {
                             required: "Testo mancante",
                             pattern: {
                                 message: "Keyword non valido",
                                 value: /^([#@])?[a-zA-Z0-9_]+$/}
-                        })} />) : 
+                        })} />) : (type === "username" ?
                         (<input className="w-full dark:border-0 border-8 dark:border-white rounded-md md:w-96 p-3" name="username" id="username" type="text" placeholder="utente senza @" {...register("username", {
                             required: "Testo mancante",
                             pattern: {
                                 message: "Username non valido",
                                 value: /^[a-zA-Z0-9_]+$/}
-                        })} />)}
+                        })} />) : "")}
                     </div>
                     { errors.query && <p className="text-center dark:text-red-300 text-red-600"> { errors.query.message } </p> }
                     { errors.username && <p className="text-center dark:text-red-300 text-red-600"> { errors.username.message } </p> }
-
                 </div>
                 <SearchFilters type={type} setValue={setValue} register={register} errors={errors} noIntervalSearch={noIntervalSearch} />
                 <button className="text-3xl dark:text-white bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit"> Cerca </button>       
@@ -155,20 +176,20 @@ const SearchForm = () => {
             {((noMatch) ? (
                 <p className="pt-5 pb-5 dark:text-yellow-300">Nessun risultato trovato</p>
             ) : 
-            (textTweets.length === 0 && !isLoading ? 
+            (textTweets?.length === 0 && !isLoading ? 
                 <p className="pt-5 pb-5 dark:text-yellow-300">Effettua una ricerca</p>
               :
-            (!isLoading) ?
+            (!isLoading && !fantacitorio) ?
                 <p className="pt-5 pb-5 dark:text-green-400">Ricerca effettuata! Seleziona la visualizzazione </p>
               :
                 ""
               ))}
 
             <div className="pt-8">
-                <TabManager />
+                {!fantacitorio && <TabManager />}
             </div>
 
-            { (isLoading)  && (     
+            { (isLoading || isLoadingFantacitorio)  && (     
             <div className="pt-5" role="status">
                 <svg className="inline mr-2 w-10 h-10 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -179,9 +200,9 @@ const SearchForm = () => {
             )}
 
             <div className="pt-3">
-                <PageManager data={storedData} nextToken={nextToken} previousToken={previousToken} />
+                <PageManager data={storedData} nextToken={nextToken} previousToken={previousToken} fantacitorio={fantacitorio}/>
             </div>
-            <Outlet />
+            {!fantacitorio && <Outlet />}
         </div>
     </>
     );

@@ -1,13 +1,22 @@
 import { loadingAction, clearTweets, searchAction } from "../actions/tweets";
 import { useDispatch } from 'react-redux'
+import { clearFantacitorio, loadingFantacitorio, teams } from "../actions/fantacitorio";
 
 
-const PageManager = ({nextToken, previousToken, data}) => {
+const PageManager = ({nextToken, previousToken, data, fantacitorio}) => {
     const dispatch = useDispatch();
     const newPage = (token) => {
-        dispatch(clearTweets());
-        dispatch(loadingAction());
-        dispatch(searchAction({...data, token: token}));
+        if (fantacitorio){
+            dispatch(clearFantacitorio());
+            dispatch(loadingFantacitorio(true));
+        }else{
+            dispatch(clearTweets());
+            dispatch(loadingAction(true));
+        }
+        if (fantacitorio)
+            dispatch(teams({...data, token: token}))
+        else
+            dispatch(searchAction({...data, token: token}));
     }
 
     return (      
