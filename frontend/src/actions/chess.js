@@ -6,7 +6,7 @@ export const startGameAction = (socket, boardAscii, validMoves, firstMove = true
         socket.on('tweets', (move) => {
             if (move === "fin")
                 dispatch(makePollMove());
-            else
+            else if (validMoves.includes(move))
                 dispatch(updateHistory(move))
         });
     // Evento per iniziare la partita

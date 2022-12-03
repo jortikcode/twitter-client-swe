@@ -65,21 +65,8 @@ export function tweets(state = initialState, data){
             });
         case NO_MATCHES:
             return ({
-                ...state,
-                textTweets: [],
-                users: {},
-                creationDates: [],
-                noMatch: true,
-                sentiments: [],
-                searchSentiment: {},
-                types: [],
-                places: [],
-                wordcloudInfo: [],
-                isLoading: false,
-                championsString: "",
-                nextToken: "",
-                previousToken: "",
-                ghigliottinaDate: ""
+                ...initialState,
+                noMatch: true
             })
         case UPDATE_CHAMPIONS:
             return ({
