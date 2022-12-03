@@ -1,4 +1,4 @@
-import { CLEAR_FANTACITORIO, SCORES_SUCCESS, TEAM_SUCCESS } from "../actions/constants";
+import { CLEAR_FANTACITORIO, SCORES_SUCCESS, TEAM_SUCCESS, LOADING_FANTACITORIO } from "../actions/constants";
 
 const initialState = {
     users: [],
@@ -8,8 +8,10 @@ const initialState = {
     scores: [],
     previousToken: "",
     nextToken: "",
-    bestSingleScore: {}
+    bestSingleScore: {},
+    isLoadingFantacitorio: false
 }
+
 
 export const fantacitorio = (state = initialState, data) => {
     const payload = data.payload;
@@ -34,6 +36,11 @@ export const fantacitorio = (state = initialState, data) => {
             return ({
                 ...initialState
             });
+        case LOADING_FANTACITORIO:
+            return ({
+                ...state,
+                isLoadingFantacitorio: payload.isLoading
+            })
         default:
             return state;
     }

@@ -1,4 +1,4 @@
-import { SCORES_SUCCESS, TEAM_SUCCESS } from "./constants";
+import { CLEAR_FANTACITORIO, LOADING_FANTACITORIO, SCORES_SUCCESS, TEAM_SUCCESS } from "./constants";
 import { noMatches } from "./tweets";
 
 const baseUrl = process.env.REACT_APP_BASE_API_URL;
@@ -14,10 +14,11 @@ export const teams = (data) => async (dispatch) => {
     await fetch(url)
     .then(res => res.json())
     .then(json => {
-        if (json?.no_matches || json.error)
+        if (json?.no_matches || json.error){
             // Nessun risultato e' stato trovato
             dispatch(noMatches());
-        else{
+            dispatch(loadingFantacitorio(false));
+        }else{
             // Aggiornamento stato con le nuove informazioni ottenute dalla richiesta fetch
             dispatch(teamSuccess(
                 json.creationDates,
@@ -34,16 +35,26 @@ export const teams = (data) => async (dispatch) => {
     });
 }
 
+export const loadingFantacitorio = (isLoading) => {
+    return ({
+        type: LOADING_FANTACITORIO,
+        payload: {
+            isLoading
+        }
+    })
+}
+
 export const scores = (type) => async (dispatch) => {
     const url = fantacitorioUrl + `${type === "ranking" ? "ranking" : "weeklyScores"}`;
     // Richiesta fetch alla API
     await fetch(url)
     .then(res => res.json())
     .then(json => {
-        if (json?.no_matches || json.error)
+        if (json?.no_matches || json.error){
             // Nessun risultato e' stato trovato
             dispatch(noMatches());
-        else{
+            dispatch(loadingFantacitorio(false));
+        }else{
             // Aggiornamento stato con le nuove informazioni ottenute dalla richiesta fetch
             dispatch(scoreSuccess(
                 json.data,
@@ -88,5 +99,11 @@ function teamSuccess(
             nextToken,
             previousToken
         }
+    })
+}
+
+export function clearFantacitorio(){
+    return ({
+        type: CLEAR_FANTACITORIO
     })
 }
