@@ -13,7 +13,7 @@ export default function PlayVsPoll() {
   const chessboardRef = useRef();
   const [chessboardSize, setChessboardSize] = useState(undefined);
   // Username della partita
-  const username = useRef(uniqid());
+  const username = useRef("");
   const [socket, setSocket] = useState();
   const [game, setGame] = useState(new Chess());
   const [boardOrientation, setBoardOrientation] = useState('white');
@@ -66,9 +66,12 @@ export default function PlayVsPoll() {
     if (!socket){
       const newSocket = io(process.env.REACT_APP_BASE_API_URL);
       setSocket(newSocket)
+      username.current = uniqid();
       dispatch(startGameAction(newSocket, boardFEN, possibleMoves, true, username.current));
-    }else
+    }else{
+      username.current = uniqid();
       dispatch(startGameAction(socket, boardFEN, possibleMoves, false, username.current));
+    }
   }
 
   function onDrop(sourceSquare, targetSquare) {
