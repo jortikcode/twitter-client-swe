@@ -71,7 +71,11 @@ export function prepareFantacitorio(response){
   );
   delete payload.textTweets;
   delete payload.places;
-  return payload;
+  return {
+    ...payload,
+    nextToken: response?.meta?.next_token,
+    previousToken: response?.meta?.previous_token
+  };
 }
 
 export const getMedias = (mediaKeys, allMedias) => {
