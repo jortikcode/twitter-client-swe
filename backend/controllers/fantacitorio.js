@@ -11,12 +11,15 @@ export const ranking = async (req, res) => {
       { max_results: 100 }
     );
     const rows = getValidRows(tweets.data);
-    const points = getPointsfromText(rows);
-    const summedPoints = getSummedPoints(points);
+    const { list: points, bestSingleScore } = getPointsfromText(rows);
+    const fullNames = getFullNames(points);
+    const summedPoints = getSummedPoints(fullNames);
     const sortedPoints = summedPoints.sort((a, b) => {
       return b.points - a.points;
     });
-    return res.status(200).send(sortedPoints);
+    return res
+      .status(200)
+      .send({ data: sortedPoints, bestSingleScore: bestSingleScore });
   } catch (error) {
     return res.status(500).send({ error: error.message });
   }
@@ -28,18 +31,20 @@ export const weeklyPoints = async (req, res) => {
       max_results: 100,
     });
     const rows = getValidRows(tweets.data);
-    const points = getPointsfromText(rows);
-    return res.status(200).send(points);
+    const { list: points, bestSingleScore } = getPointsfromText(rows);
+    return res
+      .status(200)
+      .send({ data: points, bestSingleScore: bestSingleScore });
   } catch (error) {
     return res.status(500).send({ error: error.message });
   }
 };
 
-/* prende una lista di oggetti nomePoilitico, punti e somma i punti gruppati per nomePolitico */
-function getSummedPoints(points) {
+/* prende una lista di oggetti nomePolitico, punti e restutisce la stessa lista dove il campo nomePolitico viene normalizzato */
+function getFullNames(list) {
   const surnames = [];
   const fullNames = [];
-  for (const entry of points) {
+  for (const entry of list) {
     /* prendo solamente quelli con solo il cognome o con il cognome di 2 parole */
     if (
       entry.politic.split(/\s+/).length == 1 ||
@@ -50,20 +55,22 @@ function getSummedPoints(points) {
       fullNames.push(entry.politic);
     }
   }
-  for (const element of points) {
+  for (const element of list) {
     if (surnames.includes(element.politic)) {
-      console.log(`Primo if: ${element.politic}`);
       for (const fullName of fullNames) {
         if (fullName.includes(element.politic)) {
-          console.log(`Prima: ${element.politic} | ${fullName}`);
           element.politic = fullName;
-          console.log(`Dopo: ${element.politic} | ${fullName}`);
         }
       }
     }
   }
+  return list;
+}
+
+/* prende una lista di oggetti nomePoilitico, punti e somma i punti gruppati per nomePolitico */
+function getSummedPoints(list) {
   const summedPoints = [];
-  for (const element of points) {
+  for (const element of list) {
     if (element.politic in summedPoints) {
       summedPoints[element.politic] += element.points;
     } else {
@@ -86,6 +93,7 @@ function getPointsfromText(rows) {
   if (!rows) {
     throw new Error("Righe mancanti");
   }
+  const bestSingleScore = { politc: "", points: 0 };
   const list = [];
   for (let i = 0; i < rows.length; i += 1) {
     list[i] = {};
@@ -114,8 +122,12 @@ function getPointsfromText(rows) {
 
     list[i].politic = politic;
     list[i].points = points;
+    if (points > bestSingleScore.points) {
+      bestSingleScore.politc = politic;
+      bestSingleScore.points = points;
+    }
   }
-  return list;
+  return { list, bestSingleScore };
 }
 
 /* prende tutti i tweet in input e ritorna una lista di righe di punteggio */
@@ -139,6 +151,18 @@ function getValidRows(tweets) {
       ) {
         /* vado a considerare solo le righe di punteggio */
         rows.push(row);
+      } else if (
+        row.includes(":") &&
+        validRow(row) &&
+        !row.includes("SQUADRE")
+      ) {
+        const politicians = getListOfPoliticians(
+          tweetRows,
+          tweetRows.indexOf(row)
+        );
+        for (const politc of politicians) {
+          rows.push(row.replace(":", ` ${politc}`));
+        }
       }
     }
   }
@@ -148,4 +172,22 @@ function getValidRows(tweets) {
 /* controlla se una riga è di punteggio */
 function validRow(row) {
   return /(\d+|\d(O+)) (PUNTI|punti)/.test(row);
+}
+
+function getListOfPoliticians(tweetRows, index) {
+  try {
+    if (index == -1) {
+      throw new Error("Indice non esistente");
+    }
+    const politicians = [];
+    /* mi sposto sulla riga successiva che dovrebbe essere il primo nome della lista */
+    index += 1;
+    while (tweetRows[index] != "") {
+      politicians.push(tweetRows[index]);
+      index += 1;
+    }
+    return politicians;
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
