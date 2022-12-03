@@ -59,6 +59,9 @@ export function prepareFantacitorio(response){
     [],
     getMedias(mediaKeys, response.includes.media)
   );
+  delete payload.textTweets;
+  delete payload.types;
+  delete payload.places;
   return payload;
 }
 

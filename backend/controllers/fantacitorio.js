@@ -30,12 +30,9 @@ export const teamImages = async (req, res) => {
       // Non sono stati trovati tweet con immagini / non e' possibile ricavare le immagini
       return res.status(404).json({ no_matches: true });
     const response = prepareFantacitorio(tweets);
-    delete response.textTweets;
-    delete response.types;
-    delete response.places;
     return res.status(200).send(response);
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -49,12 +46,9 @@ export const teamUser = async (req, res) => {
       // Non sono stati trovati tweet con immagini / non e' possibile ricavare le immagini
       return res.status(404).json({ no_matches: true });
     const response = prepareFantacitorio(tweets);
-    delete response.textTweets;
-    delete response.types;
-    delete response.places;
     return res.status(200).send(response);
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 }
 
@@ -65,6 +59,6 @@ export const checkDataFantacitorio = (req, res, next) => {
     req.params = params;
     next();
   } catch (error) {
-    res.status(400).send({ error: error });
+    return res.status(400).json({ error: error.message });
   }
 }
