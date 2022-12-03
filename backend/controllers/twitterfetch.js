@@ -17,7 +17,7 @@ export const searchUser = async (req, res, next) => {
       return res.status(200).json({ no_matches: true });
     next();
   } catch (error) {
-    return res.status(500).send({ errore: "Errore HTTP " + error });
+    return res.status(500).send({ errore: "Errore HTTP " + error.message });
   }
 };
 
@@ -44,7 +44,7 @@ export const searchRecent = async (req, res, next) => {
       next();
     }
   } catch (error) {
-    res.status(500).send({ error: error });
+    res.status(500).send({ error: error.message });
   }
 };
 
@@ -54,12 +54,9 @@ export async function tweetsRecentSearch(query, params = {}) {
       throw new Error("Query mancante");
     }
     const response = await client.search(query, params);
-    if (response._realData?.errors) {
-      throw new Error("Limite ricerche raggiunto");
-    }
     return response._realData;
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error.message);
   }
 }
 
@@ -102,7 +99,7 @@ export const getUserID = async (req, res, next) => {
     req.userID = id;
     next();
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).send({ error: error.message });
   }
 };
 
@@ -137,7 +134,7 @@ export const prepareDataInput = (req, res, next) => {
     req.params = { ...params };
     next();
   } catch (error) {
-    res.status(400).send({ error: error });
+    res.status(400).send({ error: error.message });
   }
 };
 
