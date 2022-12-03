@@ -9,6 +9,7 @@ import TweetsView from './screens/TweetsView';
 import Ghigliottina from './screens/Ghigliottina';
 import StreamPage from './screens/StreamPage';
 import Chess from './screens/Chess';
+import Fantacitorio from './screens/Fantacitorio';
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route path='/ghigliottina' element={<Ghigliottina />} />
           <Route path='/stream' element={<StreamPage />} />
           <Route path='/chess' element={<Chess />} />
+          <Route path='/fantacitorio' element={<Fantacitorio />} />
         </Routes>
       </BrowserRouter>
     </div>
