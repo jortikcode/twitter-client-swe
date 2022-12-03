@@ -41,6 +41,7 @@ export const chessTweet = async (gameFEN, validMoves, username) => {
       ? `Partita di ${username}, se vuoi sfidarlo vota la prossima mossa:\n${validMoves}`
       : `Mosse valide:\n${validMoves}`;
     const tweetText = createMsg(msg.substring(0, MAX_LENGTH - 1), mediaId);
+
     const { data: createdTweet } = await rwClient.v2.tweet(tweetText);
     return createdTweet.id;
   } catch (error) {

@@ -11,8 +11,8 @@ export const searchUser = async (req, res, next) => {
     /* Devo escludere il campo username dai parametri se no
      non sono validi per la richiesta */
     delete params.username;
-    req.response = await getTweetFromUser(userID, params);
-    if (req.response.meta.result_count == 0)
+    req.response = await getTweetFromUser(userID, params);    
+    if (req.response?.meta?.result_count == 0)
       // Non sono stati trovati risultati
       return res.status(200).json({ no_matches: true });
     next();
@@ -44,7 +44,7 @@ export const searchRecent = async (req, res, next) => {
       next();
     }
   } catch (error) {
-    res.status(500).send({ error: error });
+    res.status(500).send({ error: error.message });
   }
 };
 
@@ -56,7 +56,7 @@ export async function tweetsRecentSearch(query, params = {}) {
     const response = await client.search(query, params);
     return response._realData;
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error.message);
   }
 }
 
@@ -133,7 +133,7 @@ export const prepareDataInput = (req, res, next) => {
     req.params = { ...params };
     next();
   } catch (error) {
-    res.status(400).send({ error: error });
+    res.status(400).send({ error: error.message });
   }
 };
 
