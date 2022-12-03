@@ -7,36 +7,58 @@ const client = roClient.v2;
 
 export const searchUser = async (req, res, next) => {
   try {
-    const id = req.userID;
+    const { userID, params } = req;
     /* Devo escludere il campo username dai parametri se no
      non sono validi per la richiesta */
-    let params = req.params;
     delete params.username;
-    req.response = (await client.userTimeline(id, params))["_realData"];
+    req.response = await getTweetFromUser(userID, params);    
     if (req.response?.meta?.result_count == 0)
       // Non sono stati trovati risultati
       return res.status(200).json({ no_matches: true });
     next();
   } catch (error) {
-    return res.status(500).send({ errore: "Errore HTTP " + error });
+    return res.status(500).send({ errore: "Errore HTTP " + error.message });
   }
 };
+
+export async function getTweetFromUser(userID, params = {}) {
+  try {
+    if (!userID) {
+      throw new Error("UserID mancante");
+    }
+    const response = (await client.userTimeline(userID, params))["_realData"];
+    return response;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
 
 export const searchRecent = async (req, res, next) => {
   try {
     const { query: query, ...params } = req.params;
-    const response = await client.search(query, params);
-    req.response = response._realData;
-    if (req.response?.meta?.result_count == 0)
+    req.response = await tweetsRecentSearch(query, params);
+    if (req.response.meta.result_count == 0)
       // Non sono stati trovati risultati
       res.status(404).json({ no_matches: true });
     else {
       next();
     }
   } catch (error) {
-    res.status(500).send({ error: error });
+    res.status(500).send({ error: error.message });
   }
 };
+
+export async function tweetsRecentSearch(query, params = {}) {
+  try {
+    if (!query) {
+      throw new Error("Query mancante");
+    }
+    const response = await client.search(query, params);
+    return response._realData;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 
 export const getChampionTweets = async (req, res, next) => {
   const params = req.query;
@@ -73,23 +95,32 @@ export const processChampions = async (req, res, next) => {
 export const getUserID = async (req, res, next) => {
   try {
     const { username } = req.query;
-    if (!username) {
-      throw new Error("Username mancante");
-    }
-    // Username dell'utente di cui ci interessano i tweets
-    //Interrogazione della API all'URL https://api.twitter.com/2/users/by/username/:username
-    const response = await client.userByUsername(username);
-    if (response?.errors) {
-      throw new Error("Nessun utente trovato");
-    }
-    // id dell'utente risultante dalla richiesta
-    const { id } = response.data;
+    const id = await userIDByUsername(username);
     req.userID = id;
     next();
   } catch (error) {
-    return res.status(500).send({ error: error });
+    return res.status(500).send({ error: error.message });
   }
 };
+
+/* funzione wrapper per l'api di twitter */
+export async function userIDByUsername(username) {
+  try {
+    /* controllo se l'username è stato fornito */
+    if (!username) {
+      throw new Error("Fornire un unsername");
+    }
+    //Interrogazione della API all'URL https://api.twitter.com/2/users/by/username/:username
+    const response = await client.userByUsername(username);
+    if (response.errors) {
+      throw new Error("Nessun utente trovato");
+    }
+    const { id } = response.data;
+    return id;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
 
 /* Middleware che controlla i dati per la successiva richiesta */
 export const prepareDataInput = (req, res, next) => {
@@ -103,7 +134,7 @@ export const prepareDataInput = (req, res, next) => {
     req.params = { ...params };
     next();
   } catch (error) {
-    res.status(400).send({ error: error });
+    res.status(400).send({ error: error.message });
   }
 };
 

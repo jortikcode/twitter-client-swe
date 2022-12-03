@@ -1,16 +1,18 @@
 import { default as sentiment } from "multilang-sentiment";
-import { languages,
-  NEGATIVE_SENTIMENT, 
-  NEUTRAL_SENTIMENT, 
-  POSITIVE_SENTIMENT, 
-  TRESHOLD_SCORE } from "../utils/constants.js";
+import {
+  languages,
+  NEGATIVE_SENTIMENT,
+  NEUTRAL_SENTIMENT,
+  POSITIVE_SENTIMENT,
+  TRESHOLD_SCORE,
+} from "../utils/constants.js";
 
 // Lingua predefinita: la lingua del tweet non e' supportata da multilang-sentiment, essa viene forzata ad essere "en"
 const defaultLang = "en";
 
 export function doSentiment(tweets) {
-  if(!tweets){
-    throw new Error("Fornire dei tweet su cui fare la sentiment analysis")
+  if (!tweets) {
+    throw new Error("Fornire dei tweet su cui fare la sentiment analysis");
   }
   const len = tweets.length;
   const tweetSentiment = new Array();
@@ -31,16 +33,21 @@ export function doSentiment(tweets) {
       }
       let partial = sentiment(tweets[i].text, lang);
       // Push delle info di sentiment nell'array dei sentimenti dei tweet
-      const sentiment_type = partial.score > TRESHOLD_SCORE ? POSITIVE_SENTIMENT
-      : partial.score < TRESHOLD_SCORE ? NEGATIVE_SENTIMENT
-      : NEUTRAL_SENTIMENT; 
+      let sentiment_type;
+      if (partial.score > TRESHOLD_SCORE) {
+        sentiment_type = POSITIVE_SENTIMENT;
+      } else if (partial.score < TRESHOLD_SCORE) {
+        sentiment_type = NEGATIVE_SENTIMENT;
+      } else {
+        sentiment_type = NEUTRAL_SENTIMENT;
+      }
 
       tweetSentiment.push({
         score: partial.score,
         comparative: partial.comparative,
         sentiment: sentiment_type,
         positiveWords: partial.positive,
-        negativeWords: partial.negative
+        negativeWords: partial.negative,
       });
 
       searchSentiment.comparative += partial.comparative;

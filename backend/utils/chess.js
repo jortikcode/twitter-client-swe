@@ -1,3 +1,4 @@
+/* global process */
 import { rwClient } from "./twitterClient.js";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
