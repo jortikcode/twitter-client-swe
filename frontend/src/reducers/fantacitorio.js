@@ -1,4 +1,4 @@
-import { CLEAR_FANTACITORIO, SCORES_SUCCESS, TEAM_SUCCESS, LOADING_FANTACITORIO } from "../actions/constants";
+import { CLEAR_FANTACITORIO, SCORES_SUCCESS, TEAM_SUCCESS, LOADING_FANTACITORIO, UPDATE_SCOREBOARD } from "../actions/constants";
 
 const initialState = {
     users: [],
@@ -12,8 +12,16 @@ const initialState = {
     isLoadingFantacitorio: false
 }
 
+const updateScores = (index, score, stateScores) => {
+    const newScores = [...stateScores]
+    if (index === -1)
+        newScores.push(score);
+    else
+        newScores[index] = score;
+    return newScores;
+}
 
-export const fantacitorio = (state = initialState, data) => {
+export const fantacitorio = (state = initialState, data = {}) => {
     const payload = data.payload;
     switch (data.type){
         case TEAM_SUCCESS:
@@ -35,6 +43,13 @@ export const fantacitorio = (state = initialState, data) => {
         case CLEAR_FANTACITORIO:
             return ({
                 ...initialState
+            });
+        case UPDATE_SCOREBOARD:
+            console.log(payload)
+            const newScores = updateScores(payload.index, payload.score, state.scores);
+            return ({
+                ...state,
+                scores: newScores
             });
         case LOADING_FANTACITORIO:
             return ({

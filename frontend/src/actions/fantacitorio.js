@@ -1,4 +1,4 @@
-import { CLEAR_FANTACITORIO, LOADING_FANTACITORIO, SCORES_SUCCESS, TEAM_SUCCESS } from "./constants";
+import { CLEAR_FANTACITORIO, LOADING_FANTACITORIO, SCORES_SUCCESS, TEAM_SUCCESS, UPDATE_SCOREBOARD } from "./constants";
 import appendQuery from 'append-query'
 import { noMatches } from "./tweets";
 
@@ -7,7 +7,9 @@ const fantacitorioUrl = baseUrl + "/fantacitorio/";
 
 export const teams = (data) => async (dispatch) => {
     let url = fantacitorioUrl;
-    url += `${data.type === "keyword" ? `teamImages` : `teamUser?username=${data.username}`}`;
+    url += data.type === "keyword" ? "teamImages" : "teamUser";
+    if (data.type === "username")
+        url = appendQuery(url, `username=${data.username}`);
     if (data.maxResults && data.maxResults <= 100 && !data.token)
         url = appendQuery(url, `max_results=${data.maxResults}`);
     if (data.startDate)
@@ -71,6 +73,17 @@ export const scores = (type) => async (dispatch) => {
     .catch(e => {
         throw new Error("Errore HTTP");
     });
+}
+
+export function updateScoreboardEntry(score, index = -1) {
+    console.log(score);
+    return ({
+        type: UPDATE_SCOREBOARD,
+        payload: {
+            score,
+            index
+        }
+    })
 }
 
 function scoreSuccess(
