@@ -1,10 +1,11 @@
 import { loadingAction, clearTweets, searchAction } from "../actions/tweets";
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { clearFantacitorio, loadingFantacitorio, teams } from "../actions/fantacitorio";
 
 
-const PageManager = ({nextToken, previousToken, data, fantacitorio}) => {
+const PageManager = ({data, fantacitorio}) => {
     const dispatch = useDispatch();
+    const { previousToken, nextToken } = useSelector(state => fantacitorio ? state.fantacitorio : state.tweets);
     const newPage = (token) => {
         if (fantacitorio){
             dispatch(clearFantacitorio());
