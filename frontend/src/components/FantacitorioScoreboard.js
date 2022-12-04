@@ -29,7 +29,7 @@ const FantacitorioScoreboard = () => {
                                 })}
                             </tbody>
                         </table>
-                        { bestSingleScore.politic }   </div>
+                    </div>
                 </div>
 
                 </section>

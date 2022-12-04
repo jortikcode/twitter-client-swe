@@ -14,7 +14,7 @@ const Ranks = () => {
     return (
         <>
         <form className="flex flex-col gap-y-6" >
-            <label className="pt-12 font-bold dark:text-white" htmlFor="classifica"> Seleziona quale classifica visualizzare </label>
+            <label className="pt-12 text-center text-3xl dark:text-sky-400 text-black" htmlFor="classifica"> Seleziona quale classifica visualizzare </label>
             <select ref={type}>
                 <option value={WEEKLY_SCORES}> Classifica delle settimana </option>
                 <option value={ALL_SCORES}> Classifica di sempre </option>
