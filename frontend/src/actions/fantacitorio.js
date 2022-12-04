@@ -1,4 +1,5 @@
 import { CLEAR_FANTACITORIO, LOADING_FANTACITORIO, SCORES_SUCCESS, TEAM_SUCCESS } from "./constants";
+import appendQuery from 'append-query'
 import { noMatches } from "./tweets";
 
 const baseUrl = process.env.REACT_APP_BASE_API_URL;
@@ -7,9 +8,14 @@ const fantacitorioUrl = baseUrl + "/fantacitorio/";
 export const teams = (data) => async (dispatch) => {
     let url = fantacitorioUrl;
     url += `${data.type === "keyword" ? `teamImages` : `teamUser?username=${data.username}`}`;
-    url += `${data.maxResults && data.maxResults <= 100 && !data.token ? `&max_results=${data.maxResults}` : ``}`;
-    url += `${data.startDate ? `&start_time=${data.startDate}&end_time=${data.endDate}` : ``}`;
-    url += `${data.token ? `&pagination_token=${data.token}` : ``}`;
+    if (data.maxResults && data.maxResults <= 100 && !data.token)
+        url = appendQuery(url, `max_results=${data.maxResults}`);
+    if (data.startDate)
+        url = appendQuery(url, `start_time=${data.startDate}`);
+    if (data.endDate)
+        url = appendQuery(url, `end_time=${data.endDate}`);
+    if (data.token)
+        url = appendQuery(url, `pagination_token=${data.token}`);
     // Richiesta fetch alla API
     await fetch(url)
     .then(res => res.json())
