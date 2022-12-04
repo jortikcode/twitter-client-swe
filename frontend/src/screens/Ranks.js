@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { loadingFantacitorio, scores } from '../actions/fantacitorio'
 import { useRef } from 'react';
+import FantacitorioScoreboard from '../components/FantacitorioScoreboard';
 
 const WEEKLY_SCORES = "weeklyPoints";
 const ALL_SCORES = "ranking"
@@ -27,6 +28,7 @@ const Ranks = () => {
                         }}> Cerca </button>       
         </form>
         <LoadingSpinner isVisible={isLoadingFantacitorio} />
+        <FantacitorioScoreboard />
         </>
     );
 }
