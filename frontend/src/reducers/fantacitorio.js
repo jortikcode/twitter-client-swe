@@ -29,7 +29,7 @@ export const fantacitorio = (state = initialState, data) => {
         case SCORES_SUCCESS:
             return ({
                 ...initialState,
-                scores: payload.score,
+                scores: payload.data,
                 bestSingleScore: payload.bestSingleScore
             });
         case CLEAR_FANTACITORIO:

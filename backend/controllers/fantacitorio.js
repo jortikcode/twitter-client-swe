@@ -128,7 +128,7 @@ function getPointsfromText(rows) {
     list[i].politic = politic;
     list[i].points = points;
     if (points > bestSingleScore.points) {
-      bestSingleScore.politc = politic;
+      bestSingleScore.politic = politic;
       bestSingleScore.points = points;
     }
   }
