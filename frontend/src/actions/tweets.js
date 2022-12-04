@@ -91,10 +91,16 @@ export const clearScoreboard = () => {
 // Azione in cui viene fatta la chiamata alla API /search passandone la parola chiave
 export const searchAction = (data) => async (dispatch) => {
     let url = apiUrl;
-    url += `${data.type === "keyword" ? `search?query=${data.query}` : `tweets?username=${data.username}`}`;
-    url += `${data.maxResults && data.maxResults <= 100 && !data.token ? `&max_results=${data.maxResults}` : ``}`;
-    url += `${data.startDate ? `&start_time=${data.startDate}&end_time=${data.endDate}` : ``}`;
-    url += `${data.token ? `&pagination_token=${data.token}` : ``}`;
+    const searchUrl = `search?query=${data.query}`;
+    const tweetsUrl = `tweets?username=${data.username}`;
+    const maxResults = `&max_results=${data.maxResults}`;
+    const empty = ``;
+    const startTimeEndTime = `&start_time=${data.startDate}&end_time=${data.endDate}`;
+    const paginationToken = `&pagination_token=${data.token}` 
+    url += `${data.type === "keyword" ? searchUrl : tweetsUrl}`;
+    url += `${data.maxResults && data.maxResults <= 100 && !data.token ? maxResults : empty}`;
+    url += `${data.startDate ? startTimeEndTime : empty}`;
+    url += `${data.token ? paginationToken : empty}`;
     // Richiesta fetch alla API
     await fetch(url)
     .then(res => res.json())
