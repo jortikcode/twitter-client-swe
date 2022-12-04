@@ -10,7 +10,6 @@ const Tweet = (props) => {
         props.sentiment?.sentiment === POSITIVE_SENTIMENT ? (<span className="text-green-800 dark:text-green-400"> Buono </span> ) :
         props.sentiment?.sentiment === NEUTRAL_SENTIMENT ? (<span className="text-gray-800 dark:text-gray-400"> Neutro </span> ) : ""
     );
-    console.log(props)
     return (
         <>
         <div className="flex flex-col items-center bg-white rounded-lg border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 hover:cursor-pointer">

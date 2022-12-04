@@ -44,7 +44,9 @@ const deleteAllRules = async () => {
   const rules = await client.streamRules();
   if (rules.data) {
     const ids = [];
-    rules.data.map((rule) => ids.push(rule.id));
+    rules.data.forEach((rule) => {
+      ids.push(rule.id);
+    });
     await client.updateStreamRules(generateDeleteRule(ids));
   }
 };
