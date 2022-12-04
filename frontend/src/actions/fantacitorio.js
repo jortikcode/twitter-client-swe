@@ -51,7 +51,7 @@ export const loadingFantacitorio = (isLoading) => {
 }
 
 export const scores = (type) => async (dispatch) => {
-    const url = fantacitorioUrl + `${type === "ranking" ? "ranking" : "weeklyScores"}`;
+    const url = fantacitorioUrl + `${type === "ranking" ? "ranking" : "weeklyPoints"}`;
     // Richiesta fetch alla API
     await fetch(url)
     .then(res => res.json())
