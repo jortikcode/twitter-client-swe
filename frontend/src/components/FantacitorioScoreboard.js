@@ -6,8 +6,8 @@ const FantacitorioScoreboard = () => {
         <> {(scores.length > 0) && (JSON.stringify(bestSingleScore) !== JSON.stringify({})) &&
             <div className="dark:bg-gray-900 bg-white max-w-full w-[26rem] md:w-[40rem]">
                 <section className="container mx-auto p-6 font-mono">
-                <div class="p-4 mb-4 text-sm text-green-700 text-center bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
-                    <span class="font-medium"> BEST SINGLE SCORE: </span> <span className="font-bold" > { bestSingleScore.politic } </span> { bestSingleScore.points } punti
+                <div className="p-4 mb-4 text-sm text-green-700 text-center bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
+                    <span className="font-medium"> BEST SINGLE SCORE: </span> <span className="font-bold" > { bestSingleScore.politic } </span> { bestSingleScore.points } punti
                 </div>
                 <div className="w-full mb-8 overflow-hidden rounded-lg shadow-lg">
                     <div className="w-full overflow-x-auto">

@@ -22,7 +22,6 @@ const Ranks = () => {
             <button className="text-3xl dark:text-white bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" 
                     type="button"
                     onClick={e => {
-                        console.log(type.current.value)
                         dispatch(loadingFantacitorio(true));
                         dispatch(scores(type.current.value));
                         }}> Cerca </button>       
