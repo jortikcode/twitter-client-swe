@@ -95,7 +95,7 @@ function getPointsfromText(rows) {
   if (!rows) {
     throw new Error("Righe mancanti");
   }
-  const bestSingleScore = { politc: "", points: 0 };
+  const bestSingleScore = { points: 0 };
   const list = [];
   for (let i = 0; i < rows.length; i += 1) {
     list[i] = {};
