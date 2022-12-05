@@ -46,8 +46,8 @@ export function getDateInterval(data, dataToAction, now) {
 
 export function transformQuery(query) {
   // Espressioni regolari per la ricerca tramite hashtag (@hashtag) o nome utente (@username)
-  const hashtagSearchRegex = /"^(#)\w+$"/;
-  const userSearchRegex = /"^(@)\w+$"/;
+  const hashtagSearchRegex = /^(#)\w+$/;
+  const userSearchRegex = /^(@)\w+$/;
   if (hashtagSearchRegex.test(query)) query = "%23" + query.split("#")[1];
   else if (userSearchRegex.test(query)) query = "%40" + query.split("@")[1];
   return query;
