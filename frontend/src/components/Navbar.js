@@ -26,6 +26,9 @@ function Navbar() {
 						<Link to='/chess' className="text-lg font-semibold dark:text-sky-400 hover:text-cyan-500 duration-500">Scacchi</Link>
 					</li>
 					<li className="mx-4 mt-4 md:my-0">
+						<Link to='/fantacitorio/teams' className="text-lg font-semibold dark:text-sky-400 hover:text-cyan-500 duration-500">Fantacitorio</Link>
+					</li>
+					<li className="mx-4 mt-4 md:my-0">
 						<TogglerColor />
 					</li>
 				</ul>

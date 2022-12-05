@@ -35,7 +35,7 @@ const StreamPage = () => {
             required: "Hashtag mancante",
             pattern: {
               message: "Hashtag non valido",
-              value: /^#[a-zA-Z0-9_]+$/,
+              value: /^#\w+$/,
             },
           })}
         />

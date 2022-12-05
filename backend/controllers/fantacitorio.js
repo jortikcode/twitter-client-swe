@@ -1,6 +1,7 @@
 import { prepareFantacitorio } from "../utils/customResponse.js";
 import { checkDates } from "../utils/dateCheck.js";
 import { teamImagesFields } from "../utils/queryFields.js";
+import { sortByPoints } from "../utils/sort.js";
 import {
   tweetsRecentSearch,
   getTweetFromUser,
@@ -17,9 +18,7 @@ export const ranking = async (req, res) => {
     const { list: points, bestSingleScore } = getPointsfromText(rows);
     const fullNames = getFullNames(points);
     const summedPoints = getSummedPoints(fullNames);
-    const sortedPoints = summedPoints.sort((a, b) => {
-      return b.points - a.points;
-    });
+    const sortedPoints = sortByPoints(summedPoints);
     return res
       .status(200)
       .send({ data: sortedPoints, bestSingleScore: bestSingleScore });
@@ -27,8 +26,6 @@ export const ranking = async (req, res) => {
     return res.status(500).send({ error: error.message });
   }
 };
-
-
 
 export const weeklyPoints = async (req, res) => {
   try {
@@ -128,7 +125,7 @@ function getPointsfromText(rows) {
     list[i].politic = politic;
     list[i].points = points;
     if (points > bestSingleScore.points) {
-      bestSingleScore.politc = politic;
+      bestSingleScore.politic = politic;
       bestSingleScore.points = points;
     }
   }
@@ -165,13 +162,18 @@ function getValidRows(tweets) {
           tweetRows,
           tweetRows.indexOf(row)
         );
-        for (const politc of politicians) {
-          rows.push(row.replace(":", ` ${politc}`));
-        }
+        rows = addPoliticians(rows, row, politicians);
       }
     }
   }
   return rows;
+}
+
+function addPoliticians(list, row, politicians) {
+  for (const politc of politicians) {
+    list.push(row.replace(":", ` ${politc}`));
+  }
+  return list;
 }
 
 /* controlla se una riga è di punteggio */

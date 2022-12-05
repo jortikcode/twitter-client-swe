@@ -1,11 +1,11 @@
-import { useRef, useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux'
-import Chess from 'chess.js'
-import MovesViewer from './MovesViewer';
-import { Chessboard } from 'react-chessboard';
-import { clearGame, endGameAction, startGameAction } from '../actions/chess';
-import uniqid from 'uniqid';
-import { io } from 'socket.io-client';
+import { useRef, useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Chess from "chess.js";
+import MovesViewer from "./MovesViewer";
+import { Chessboard } from "react-chessboard";
+import { clearGame, endGameAction, startGameAction } from "../actions/chess";
+import uniqid from "uniqid";
+import { io } from "socket.io-client";
 
 const MAX_WIDTH = 600;
 
@@ -16,26 +16,27 @@ export default function PlayVsPoll() {
   const username = useRef("");
   const [socket, setSocket] = useState();
   const [game, setGame] = useState(new Chess());
-  const [boardOrientation, setBoardOrientation] = useState('white');
+  const [boardOrientation, setBoardOrientation] = useState("white");
   const dispatch = useDispatch();
-  const { winnerMove } = useSelector(state => state.chess);
+  const { winnerMove } = useSelector((state) => state.chess);
 
   useEffect(() => {
     function handleResize() {
-      const display = window.innerWidth > MAX_WIDTH ? MAX_WIDTH : window.innerWidth;
+      const display =
+        window.innerWidth > MAX_WIDTH ? MAX_WIDTH : window.innerWidth;
       setChessboardSize(display - 20);
     }
 
     window.addEventListener("resize", handleResize);
     handleResize();
     return () => {
-      window.removeEventListener("resize", handleResize)
+      window.removeEventListener("resize", handleResize);
     };
   }, [dispatch]);
 
   useEffect(() => {
     return () => {
-      if (socket){
+      if (socket) {
         dispatch(endGameAction(socket));
         setSocket(undefined);
       }
@@ -47,7 +48,7 @@ export default function PlayVsPoll() {
       safeGameMutate((game) => {
         game.move(winnerMove);
       });
-      dispatch(clearGame());
+    dispatch(clearGame());
   }, [winnerMove, dispatch]);
 
   function safeGameMutate(modify) {
@@ -62,36 +63,59 @@ export default function PlayVsPoll() {
     const possibleMoves = game.moves();
     const boardFEN = game.fen();
     // exit if the game is over
-    if (game.game_over() || game.in_draw() || possibleMoves.length === 0) return;
-    if (!socket){
+    if (game.game_over() || game.in_draw() || possibleMoves.length === 0)
+      return;
+    if (!socket) {
       const newSocket = io(process.env.REACT_APP_BASE_API_URL);
-      setSocket(newSocket)
+      setSocket(newSocket);
       username.current = uniqid();
-      dispatch(startGameAction(newSocket, boardFEN, possibleMoves, true, username.current));
-    }else{
+      dispatch(
+        startGameAction(
+          newSocket,
+          boardFEN,
+          possibleMoves,
+          true,
+          username.current
+        )
+      );
+    } else {
       username.current = uniqid();
-      dispatch(startGameAction(socket, boardFEN, possibleMoves, false, username.current));
+      dispatch(
+        startGameAction(
+          socket,
+          boardFEN,
+          possibleMoves,
+          false,
+          username.current
+        )
+      );
     }
   }
 
   function onDrop(sourceSquare, targetSquare) {
-    const gameCopy = {...game};
+    const gameCopy = { ...game };
     const move = gameCopy.move({
       from: sourceSquare,
       to: targetSquare,
-      promotion: 'q' // always promote to a queen for example simplicity
+      promotion: "q", // always promote to a queen for example simplicity
     });
     setGame(gameCopy);
     // illegal move
     if (move === null) return false;
 
-    makePollMove();   
+    makePollMove();
     return true;
   }
 
   return (
     <>
-      <span className='text-lg dark:text-white font-bold'> Stai giocando come <span className="text-amber-800 dark:text-yellow-300">{username.current}</span> </span>
+      <span className="text-lg dark:text-white font-bold">
+        {" "}
+        Stai giocando come{" "}
+        <span className="text-amber-800 dark:text-yellow-300">
+          {username.current}
+        </span>{" "}
+      </span>
       <MovesViewer />
       <Chessboard
         id="PlayVsRandom"
@@ -101,8 +125,8 @@ export default function PlayVsPoll() {
         position={game.fen()}
         onPieceDrop={onDrop}
         customBoardStyle={{
-          borderRadius: '4px',
-          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.5)'
+          borderRadius: "4px",
+          boxShadow: "0 5px 15px rgba(0, 0, 0, 0.5)",
         }}
         ref={chessboardRef}
       />
@@ -121,7 +145,9 @@ export default function PlayVsPoll() {
       <button
         className="rc-button md:text-xl text-lg dark:text-white bg-sky-500 hover:bg-sky-700 text-white py-2 px-4 rounded mt-2"
         onClick={() => {
-          setBoardOrientation((currentOrientation) => (currentOrientation === 'white' ? 'black' : 'white'));
+          setBoardOrientation((currentOrientation) =>
+            currentOrientation === "white" ? "black" : "white"
+          );
         }}
       >
         Flip board

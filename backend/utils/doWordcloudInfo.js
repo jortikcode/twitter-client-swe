@@ -3,6 +3,7 @@ import {
   maxWordsPerWordcloud,
 } from "../utils/constants.js";
 import keyword_extractor from "keyword-extractor";
+import { sortByValue } from "./sort.js";
 
 // Lingua predefinita per effettuare l'estrazione delle keyword
 const defaultLang = "english";
@@ -54,9 +55,8 @@ export function doWordcloudInfo(tweets) {
   }
 
   // Ordinamento dell'array e rimozione delle keyword con valori non significativi
-  wordcloudInfoArray = wordcloudInfoArray
-    .sort((a, b) => b.value - a.value)
-    .slice(0, maxWordsPerWordcloud);
+  wordcloudInfoArray = sortByValue(wordcloudInfoArray);
+  wordcloudInfoArray = wordcloudInfoArray.slice(0, maxWordsPerWordcloud);
 
   return wordcloudInfoArray;
 }
