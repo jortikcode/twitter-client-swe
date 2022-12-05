@@ -110,7 +110,7 @@ const start = async (socket, value, tag) => {
   /* prendo la mutua esclusione per la variabile activeRules */
   let release = await mutex.acquire();
   /* controllo se è già presente una regola con il tag passato  */
-  if (!activeRules.includes(tag)) {
+  if (!(tag in activeRules)) {
     const rule = await addOrDeleteRules(generateAddRule(value, tag));
     app.locals.listeners[tag] = new Array();
     activeRules[tag] = rule.data[0].id;
@@ -125,6 +125,7 @@ const start = async (socket, value, tag) => {
 /* Funzione generica per fermare l'ascolto di uno stream */
 const stop = async (tag, socket) => {
   await removeItem(tag, socket);
+  console.log(JSON.stringify(activeRules));
 };
 
 /* rimuove uno specifico socket da una lista */
@@ -137,8 +138,7 @@ const removeItem = async (tag, socket) => {
     if (app.locals.listeners[tag].length == 0) {
       delete app.locals.listeners[tag];
       await addOrDeleteRules(generateDeleteRule([activeRules[tag]]));
-      const tagIndex = activeRules.indexOf(tag);
-      activeRules.splice(tagIndex, 1);
+      delete activeRules[tag];
     }
   }
 };

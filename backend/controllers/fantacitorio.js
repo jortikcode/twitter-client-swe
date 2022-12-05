@@ -73,7 +73,7 @@ function getFullNames(list) {
 function getSummedPoints(list) {
   const summedPoints = [];
   for (const element of list) {
-    if (summedPoints.includes(element.politc)) {
+    if (element.politic in summedPoints) {
       summedPoints[element.politic] += element.points;
     } else {
       summedPoints[element.politic] = element.points;
