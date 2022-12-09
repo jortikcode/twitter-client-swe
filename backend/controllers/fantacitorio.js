@@ -170,8 +170,8 @@ function getValidRows(tweets) {
 }
 
 function addPoliticians(list, row, politicians) {
-  for (const politc of politicians) {
-    list.push(row.replace(":", ` ${politc}`));
+  for (const politic of politicians) {
+    list.push(row.replace(":", ` ${politic}`));
   }
   return list;
 }
