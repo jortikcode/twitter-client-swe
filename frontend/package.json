@@ -44,7 +44,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --testPathIgnorePatterns=tailwind.config.js,./node_modules/*,src/utils/tests/*,src/mocks/*,src/index.js,src/reportWebVitals.js --transformIgnorePatterns \"node_modules/(?!react-leaflet)/\",",
+    "test": "react-scripts test --testPathIgnorePatterns=tailwind.config.js,test-utils.js,./node_modules/*,src/utils/tests/*,src/mocks/*,src/index.js,src/reportWebVitals.js --transformIgnorePatterns \"node_modules/(?!react-leaflet)/\",",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

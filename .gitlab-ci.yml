@@ -23,6 +23,8 @@ backend_test:
     - main
     - merge_requests
   script:
+    - ls frontend
+    - ls
     - cd backend
     - npm install
     - npm run test -- --coverage --watchAll=false
