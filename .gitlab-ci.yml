@@ -19,6 +19,7 @@ frontend_test:
 
 backend_test:
   stage: test
+  needs: ["frontend_test"]
   only:
     - main
     - merge_requests
