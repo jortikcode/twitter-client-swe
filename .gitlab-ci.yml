@@ -15,7 +15,7 @@ frontend_test:
     - npm run test -- --coverage --watchAll=false
   artifacts:
     paths:
-    - coverage
+    - frontend/coverage
 
 backend_test:
   stage: test
