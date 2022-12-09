@@ -44,6 +44,8 @@ frontend_build:
     - merge_requests
   script:
     - cd frontend
+    - ls
+    - ls frontend
     - npm install
     - npm run build
 
