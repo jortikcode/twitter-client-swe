@@ -43,7 +43,7 @@ export const weeklyPoints = async (req, res) => {
 };
 
 /* prende una lista di oggetti nomePolitico, punti e restutisce la stessa lista dove il campo nomePolitico viene normalizzato */
-function getFullNames(list) {
+export function getFullNames(list) {
   const surnames = [];
   const fullNames = [];
   for (const entry of list) {
@@ -70,7 +70,7 @@ function getFullNames(list) {
 }
 
 /* prende una lista di oggetti nomePoilitico, punti e somma i punti gruppati per nomePolitico */
-function getSummedPoints(list) {
+export function getSummedPoints(list) {
   const summedPoints = [];
   for (const element of list) {
     if (element.politic in summedPoints) {
@@ -91,7 +91,7 @@ function getSummedPoints(list) {
 }
 
 /* prende una lista di righe di punteggio e ritorna una lista di oggetti nomePolitico, punti */
-function getPointsfromText(rows) {
+export function getPointsfromText(rows) {
   if (!rows) {
     throw new Error("Righe mancanti");
   }
@@ -133,7 +133,7 @@ function getPointsfromText(rows) {
 }
 
 /* prende tutti i tweet in input e ritorna una lista di righe di punteggio */
-function getValidRows(tweets) {
+export function getValidRows(tweets) {
   if (!tweets) {
     throw new Error("Tweets mancanti");
   }
@@ -169,19 +169,19 @@ function getValidRows(tweets) {
   return rows;
 }
 
-function addPoliticians(list, row, politicians) {
-  for (const politc of politicians) {
-    list.push(row.replace(":", ` ${politc}`));
+export function addPoliticians(list, row, politicians) {
+  for (const politic of politicians) {
+    list.push(row.replace(":", ` ${politic}`));
   }
   return list;
 }
 
 /* controlla se una riga è di punteggio */
-function validRow(row) {
+export function validRow(row) {
   return /(\d+|\d(O+)) (PUNTI|punti)/.test(row);
 }
 
-function getListOfPoliticians(tweetRows, index) {
+export function getListOfPoliticians(tweetRows, index) {
   try {
     if (index == -1) {
       throw new Error("Indice non esistente");
