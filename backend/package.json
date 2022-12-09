@@ -9,7 +9,12 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "jest": {
-    "testTimeout": 150000
+    "testTimeout": 150000,
+    "testPathIgnorePatterns": [
+      "boards/*",
+      "server.js",
+      "index.js"
+    ]
   },
   "dependencies": {
     "async-mutex": "^0.4.0",
