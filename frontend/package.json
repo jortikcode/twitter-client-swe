@@ -9,7 +9,8 @@
       "!src/mocks/**",
       "!src/index.js",
       "!src/reportWebVitals.js"
-    ]
+    ],
+    "resetMocks": false
   },
   "version": "0.1.0",
   "private": true,
