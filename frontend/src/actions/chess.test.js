@@ -1,4 +1,4 @@
-import { startGameAction, clearGame, makePollMove, updateHistory } from "./chess"
+import { startGameAction, clearGame, makePollMove, updateHistory, endGameAction } from "./chess"
 import { CLEAR_GAME, MAKE_POLL_MOVE, UPDATE_HISTORY } from "./constants"
 import { setupStore } from "../store/store";
 
@@ -7,10 +7,16 @@ const io = jest.fn(() => {
     const mockedSocket = {
       on: jest.fn(),
       emit: jest.fn(),
-      removeAllListeners: jest.fn()
+      removeAllListeners: jest.fn(),
+      disconnect: jest.fn()
     };
     return mockedSocket;
 });
+
+const emptyChess = {
+    votedMoves: {},
+    winnerMove: ""
+}
 
 describe("clear game action", () => {
     test("should return an action obj w/type clear game", () => {
@@ -60,5 +66,21 @@ describe("start game action", () => {
         const validMoves = ["a6", "d6"]
         store.dispatch(startGameAction(mockedSocket, boardFEN, validMoves, "jjuan01"))
         expect(mockedSocket.emit).toHaveBeenCalledWith("chess", boardFEN, validMoves, "jjuan01");
+    })
+});
+
+describe("end game action", () => {
+    let store;
+    beforeEach(() => {
+        store = setupStore();
+    })
+    test("should disconnect socket if it is provided",() => {
+        const mockedSocket = io();
+        store.dispatch(endGameAction(mockedSocket))
+        expect(mockedSocket.disconnect).toHaveBeenCalled();
+    })
+    test("should clear the game state",() => {
+        store.dispatch(endGameAction(undefined))
+        expect(JSON.stringify(store.getState().chess)).toBe(JSON.stringify(emptyChess));
     })
 });
