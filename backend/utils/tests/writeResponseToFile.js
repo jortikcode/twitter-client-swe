@@ -49,4 +49,12 @@ fetch(apiUrlToSave)
       const mockPath = join(__dirname, `mock${fileIdentifier}.js`);
       console.log(`Il file di mock e' stato salvato in:\n ${mockPath}`);
     });
+  })
+  .catch(e => {
+    const buffer = `export const mock${fileIdentifier} = { error: "errore generico" }`;
+    fs.writeFile(`mock${fileIdentifier}.js`, buffer, (err) => {
+      if (err) throw err;
+      const mockPath = join(__dirname, `mock${fileIdentifier}.js`);
+      console.log(`Il file di mock e' stato salvato in:\n ${mockPath}`);
+    });  
   });

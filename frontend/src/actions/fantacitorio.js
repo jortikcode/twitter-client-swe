@@ -76,7 +76,6 @@ export const scores = (type) => async (dispatch) => {
 }
 
 export function updateScoreboardEntry(score, index = -1) {
-    console.log(score);
     return ({
         type: UPDATE_SCOREBOARD,
         payload: {
@@ -86,7 +85,7 @@ export function updateScoreboardEntry(score, index = -1) {
     })
 }
 
-function scoreSuccess(
+export function scoreSuccess(
     data = [],
     bestSingleScore = {}
 ){
@@ -100,7 +99,7 @@ function scoreSuccess(
 }
 
 
-function teamSuccess(
+export function teamSuccess(
     creationDates = [], 
     users = [],
     types = [], 

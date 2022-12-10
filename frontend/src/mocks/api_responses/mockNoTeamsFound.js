@@ -1,0 +1,1 @@
+export const mockNoTeamsFound = { error: "errore generico" }

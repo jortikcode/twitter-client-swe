@@ -74,7 +74,6 @@ export default function PlayVsPoll() {
           newSocket,
           boardFEN,
           possibleMoves,
-          true,
           username.current
         )
       );
@@ -85,7 +84,6 @@ export default function PlayVsPoll() {
           socket,
           boardFEN,
           possibleMoves,
-          false,
           username.current
         )
       );
