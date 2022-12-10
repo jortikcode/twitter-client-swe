@@ -14,7 +14,7 @@
       "boards/*",
       "server.js",
       "index.js",
-      "utils/tests/**", 
+      "utils/tests/*", 
       "utils/constants.js",
       "tests/testUtils.js"
     ]
