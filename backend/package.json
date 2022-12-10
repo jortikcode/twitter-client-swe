@@ -13,7 +13,10 @@
     "testPathIgnorePatterns": [
       "boards/*",
       "server.js",
-      "index.js"
+      "index.js",
+      "utils/tests/**", 
+      "utils/constants.js",
+      "tests/testUtils.js"
     ]
   },
   "dependencies": {
