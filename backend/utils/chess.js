@@ -60,8 +60,8 @@ export const removeTweet = async (tweetID) => {
 async function createImageAndUpload(gameFEN) {
   imageGenerator.loadFEN(gameFEN);
   const imgPath = join(__dirname, "..", "boards", `board${uniqid()}.png`);
-  imageGenerator.generatePNG(imgPath);
-  await sleep(500);
+  await imageGenerator.generatePNG(imgPath);
+  await sleep(1000);
   const mediaId = await rwClient.v1.uploadMedia(imgPath);
   unlink(imgPath, (err) => {
     if (err) console.log(err);
