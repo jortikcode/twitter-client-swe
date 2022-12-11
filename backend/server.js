@@ -125,7 +125,7 @@ const start = async (socket, value, tag) => {
 /* Funzione generica per fermare l'ascolto di uno stream */
 const stop = async (tag, socket) => {
   await removeItem(tag, socket);
-  console.log(JSON.stringify(activeRules));
+  console.log(activeRules);
 };
 
 /* rimuove uno specifico socket da una lista */

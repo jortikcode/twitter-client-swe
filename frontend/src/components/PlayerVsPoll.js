@@ -65,29 +65,20 @@ export default function PlayVsPoll() {
     // exit if the game is over
     if (game.game_over() || game.in_draw() || possibleMoves.length === 0)
       return;
+    let newSocket = undefined;
     if (!socket) {
-      const newSocket = io(process.env.REACT_APP_BASE_API_URL);
+      newSocket = io(process.env.REACT_APP_BASE_API_URL);
       setSocket(newSocket);
-      username.current = uniqid();
-      dispatch(
-        startGameAction(
-          newSocket,
-          boardFEN,
-          possibleMoves,
-          username.current
-        )
-      );
-    } else {
-      username.current = uniqid();
-      dispatch(
-        startGameAction(
-          socket,
-          boardFEN,
-          possibleMoves,
-          username.current
-        )
-      );
     }
+    username.current = uniqid();
+    dispatch(
+      startGameAction(
+        newSocket || socket,
+        boardFEN,
+        possibleMoves,
+        username.current
+      )
+    );
   }
 
   function onDrop(sourceSquare, targetSquare) {
@@ -117,6 +108,7 @@ export default function PlayVsPoll() {
       <MovesViewer />
       <Chessboard
         id="PlayVsRandom"
+        isDraggablePiece={({ piece }) => {return piece[0] === "w"}}
         animationDuration={200}
         boardOrientation={boardOrientation}
         boardWidth={chessboardSize}
