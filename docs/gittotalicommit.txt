@@ -1,0 +1,11 @@
+   215	Juan Guillermo Jaramillo Saa <jjuanjaramillo01@gmail.com>
+    62	Juan Guillermo Jaramillo Saa <juan.jaramillosaa@studio.unibo.it>
+    25	alexandrunicolescu <alexandru.nicolescu@studio.unibo.it>
+    14	Riccardo Fava <rickyfava01@gmail.com>
+     9	HiImAlex-hub <alexandru.nicolescu06@gmail.com>
+     3	daniele iaisy <daniele.tarek.iaisy@hotmail.it>
+     2	Alexandru Nicolescu <alexandru.nicolescu@studio.unibo.it>
+     2	Andrea Largura <andrea.largura@studio.unibo.it>
+     1	Daniele Tarek Iaisy <daniele.tarek.iaisy@cern.ch>
+co-authored commits:336
+Co-author list:    Co-authored-by: Andrea Largura <andrea.largura@studio.unibo.it>

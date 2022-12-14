@@ -1,0 +1,8 @@
+1° dicembre 
+Jaramillo ha un enorme numero di commit, anche se alcuni di essi sono in co-author con altri. Al dilà di questo dato, la distribuzione pare abbastanza equilibrata
+Nel frontend non ci sono test. Nel backend è presente qualche test, più di integrazione che di unità
+
+spostate il report di scrumble dentro a docs
+Tracce di SonarQube ma non dei suoi report
+
+
