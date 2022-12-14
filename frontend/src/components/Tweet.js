@@ -17,9 +17,9 @@ const Tweet = (props) => {
             <div className="flex flex-col justify-between p-4 leading-normal">
                 <span className="mb-2 text-2xl font-bold tracking-tight dark:text-sky-400 text-black">{props.name} (@{props.username})</span>
                 <span className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{tweetTypeQuote}:</span>
-                <p className="mb-3 font-normal text-gray-700 dark:text-white">{props.text}</p>
+                {props.text && <p className="mb-3 font-normal text-gray-700 dark:text-white">{props.text}</p>}
                 <span className="flex items-center font-semibold">
-                    {sentimentSpan}
+                    {props.sentiment ? sentimentSpan : ""}
                 </span>
                 <span className="flex items-center font-semibold text-green-800 dark:text-green-200">
                     {props.sentiment?.positiveWords?.length > 0 &&
@@ -29,6 +29,10 @@ const Tweet = (props) => {
                     {props.sentiment?.negativeWords?.length > 0 && 
                      props.sentiment?.negativeWords.map((word, index) => index < (props.sentiment.negativeWords.length - 1) ? `${word}, ` : word)}
                 </span>
+                {props.fantacitorio && 
+                (<div className=""> 
+                    <img src={props.teamImageUrl} alt="team pic" /> 
+                </div>)}
                 <span className="flex items-center text-blue-600 dark:text-gray-400 font-semibold">
                     {props.date}
                 </span>

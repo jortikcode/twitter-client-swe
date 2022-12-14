@@ -1,17 +1,15 @@
-import { TOGGLE_COLOR_MODE } from '../actions/constants'
+import { TOGGLE_COLOR_MODE } from "../actions/constants";
 
 const initialState = {
-    darkMode: true
+  darkMode: true,
 };
 
 export const theme = (state = initialState, data) => {
-    switch(data.type){
-        case TOGGLE_COLOR_MODE:
-            return {
-                ...state,
-                darkMode: !data.payload.darkMode
-            }
-        default:
-            return state
-    }
-}
+  if (data.type === TOGGLE_COLOR_MODE) {
+    return {
+      darkMode: !data.payload.darkMode,
+    };
+  } else {
+    return state;
+  }
+};

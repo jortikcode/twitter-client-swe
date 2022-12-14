@@ -12,17 +12,15 @@ frontend_test:
   script:
     - cd frontend
     - npm install
-    - npm run test -- --coverage
-    - |
-      which sonar-scanner || curl -sL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip \
-      -o sonarscanner.zip && \
-      unzip sonarscanner.zip -d ~/scanner_folder && \
-      echo "export PATH=\"$PATH:~/scanner_folder/sonar-scanner-4.7.0.2747-linux/bin\"" >> ~/.profile && \
-      source ~/.profile
-    - cd .. && sonar-scanner -Dsonar.login=$SONAR_TOKEN -Dsonar.host.url=$SONAR_HOST_URL
+    - npm run test -- --coverage --watchAll=false
+  artifacts:
+    paths:
+    - frontend/coverage
+    - frontend/node_modules
 
 backend_test:
   stage: test
+  needs: ["frontend_test"]
   only:
     - main
     - merge_requests
@@ -37,6 +35,9 @@ backend_test:
       echo "export PATH=\"$PATH:~/scanner_folder/sonar-scanner-4.7.0.2747-linux/bin\"" >> ~/.profile && \
       source ~/.profile
     - cd .. && sonar-scanner -Dsonar.login=$SONAR_TOKEN -Dsonar.host.url=$SONAR_HOST_URL
+  artifacts:
+    paths:
+    - backend/node_modules
 
 frontend_build:
   stage: build
@@ -45,8 +46,11 @@ frontend_build:
     - merge_requests
   script:
     - cd frontend
-    - npm install
     - npm run build
+  artifacts:
+    paths:
+    - frontend/build
+  
 
 frontend_deploy:
   stage: deploy
@@ -63,8 +67,6 @@ frontend_deploy:
     - which rsync || ( apt-get update -y && apt-get install rsync -y )
   script:
     - cd frontend
-    - npm install
-    - npm run build
     - rsync -av build $UNIBO_USER@lucia.cs.unibo.it:/home/web/site212236/html/twitter-app
 
 backend_deploy:
@@ -81,5 +83,5 @@ backend_deploy:
     - chmod 644 ~/.ssh/known_hosts
     - which rsync || ( apt-get update -y && apt-get install rsync -y )
   script:
-    - cd backend && npm install
-    - rsync -av * .env.production.tokens .dockerignore node_modules $UNIBO_USER@lucia.cs.unibo.it:/home/web/site212236/html/twitter-app
+    - cd backend
+    - rsync -av --exclude 'node_modules/canvas' * .env.production.tokens .dockerignore node_modules $UNIBO_USER@lucia.cs.unibo.it:/home/web/site212236/html/twitter-app

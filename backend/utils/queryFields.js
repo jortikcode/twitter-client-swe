@@ -34,3 +34,20 @@ export function addFields(params = {}) {
 
   return params;
 }
+
+export const teamImagesFields = (params = {}) => {
+  params["tweet.fields"] = [
+    "created_at",
+    "author_id"
+  ]
+  params["expansions"] = [
+      "attachments.media_keys",
+      "referenced_tweets.id.author_id",
+    ];
+  params["media.fields"] = [
+      "preview_image_url",
+      "url"
+    ];
+  params["user.fields"] = ["profile_image_url"];
+  return params;
+}

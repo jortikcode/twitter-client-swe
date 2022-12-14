@@ -30,9 +30,75 @@ export function preparePayload(response) {
     }),
     getAuthours(authorsId, response.includes.users),
     types,
-    getGeo(placesId, response.includes.places)
+    getGeo(placesId, response.includes.places),
   );
   return payload;
+}
+
+export function prepareFantacitorio(response){
+  let index = 0
+  // Array contenente gli id degli autori dei tweet ricevuti dalla richiesta
+  let authorsId = [];
+  // Array contenente elementi del tipo [media_keys]
+  let mediaKeys = [];
+  // Array delle date di creazione delle squadre
+  let creationDates = [];
+  // Array contenete i tipi dei tweet: TWEET, RETWEET, REPLY
+  let types = [];
+
+  for (const tweet of response.data){
+    authorsId.push(tweet.author_id);
+    types.push(getType(tweet));
+    if (types[index] === "RETWEET") {
+      // Si tratta di un retweet, e' necessario accedere all'immagine in un altro modo
+      const { mediaKey: mediaKey } = getRetweetText(
+        tweet.referenced_tweets[0].id,
+        response.includes.tweets
+      );
+      mediaKeys.push(mediaKey);
+    } else
+      mediaKeys.push(tweet?.attachments?.media_keys[0]);
+    creationDates.push(tweet.created_at);
+    index++;
+  }
+  const { payload } = searchSuccess(
+    [],
+    creationDates,
+    getAuthours(authorsId, response.includes.users),
+    types,
+    [],
+    getMedias(mediaKeys, response.includes.media)
+  );
+  delete payload.textTweets;
+  delete payload.places;
+  return {
+    ...payload,
+    nextToken: response?.meta?.next_token,
+    previousToken: response?.meta?.previous_token
+  };
+}
+
+export const getMedias = (mediaKeys, allMedias) => {
+  let mediasInfo = [];
+  let index = 0;
+  if (mediaKeys.length === 0 || !allMedias)
+    return [];
+  for (const mediaKey of mediaKeys){
+    if (! mediaKey) {
+      index++;
+      continue;
+    }
+    const media = allMedias.find((extended_media) => {
+      return extended_media.media_key === mediaKey;
+    });
+    if (media)
+      mediasInfo.push({
+        ...media,
+        index
+      });
+    index++;
+  }
+  return mediasInfo;
 }
 
 // Funzione che ritorna il tipo del tweet passato come argomento
@@ -53,10 +119,18 @@ export const getType = (tweet) => {
 
 // Ritorna il testo (campo text) del retweet in allRetweets con id che vale retweetId
 export const getRetweetText = (retweetId, allRetweets) => {
+  let retweetInfo = undefined;
   for (const retweet_extended of allRetweets)
-    if (retweetId === retweet_extended.id)
-      return { text: retweet_extended?.text, lang: retweet_extended?.lang };
-  throw new Error("Retweet text not found");
+    if (retweetId === retweet_extended.id){
+      retweetInfo = { text: retweet_extended?.text, lang: retweet_extended?.lang };
+      if (retweet_extended?.attachments?.media_keys)
+        retweetInfo["mediaKey"] = retweet_extended.attachments.media_keys[0]
+      break;
+    }
+  
+  if (!retweetInfo)
+    throw new Error("Retweet text not found");
+  return retweetInfo;
 };
 
 /* Ritorna un array che contiene elementi del tipo
@@ -84,7 +158,8 @@ export const searchSuccess = (
   creationDates = [],
   users = [],
   types = [],
-  places = []
+  places = [],
+  medias = []
 ) => {
   return {
     type: "SEARCH_SUCCESS",
@@ -94,6 +169,7 @@ export const searchSuccess = (
       users,
       types,
       places,
+      medias
     },
   };
 };
@@ -108,8 +184,13 @@ export const searchSuccess = (
 export const getGeo = (placesID, allPlaces) => {
   let placesInfo = [];
   let index = 0;
+  if (placesID.length === 0 || !allPlaces)
+    return [];
   for (const placeId of placesID) {
-    if (!placeId) continue;
+    if (! placeId){
+      index++;
+      continue;
+    }
     const place = allPlaces.find((extended_place) => {
       return extended_place.id === placeId;
     });

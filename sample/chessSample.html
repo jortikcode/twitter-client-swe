@@ -28,7 +28,7 @@
         buttonStart.addEventListener("click", function (e) {
             let username = document.getElementById("username").value;
             if (username != "") {
-                socket.emit("startChess", username)
+                socket.emit("chess","board\n", ["a", "b", "c", "d", "e", "f", "g"])
             }
         });
 

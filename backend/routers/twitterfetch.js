@@ -45,7 +45,7 @@ router.get(
   searchRecent,
   prepareResponse,
   sendData
-)
+);
 
 /* GET /api/ghigliottina/champions?conversation_id=id */
 router.get(
@@ -56,6 +56,6 @@ router.get(
   prepareResponse,
   processChampions,
   sendData
-)
+);
 
 export default router;

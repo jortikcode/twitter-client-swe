@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { filtersAction } from "../actions/tweets";
 
 
-const SearchFilters = ({ register, errors, type, noIntervalSearch, setValue }) => {
+const SearchFilters = ({ register, errors, type, noIntervalSearch, setValue, fantacitorio }) => {
     const { filtersEnabled, dateError } = useSelector(state => state.form);
     const dispatch = useDispatch();
 
@@ -24,9 +24,10 @@ const SearchFilters = ({ register, errors, type, noIntervalSearch, setValue }) =
             <>                
                 <label htmlFor="disabled-checked-toggle" className="inline-flex relative items-center cursor-pointer">
                     <input data-testid="ofEverDate" type="checkbox" id="disabled-checked-toggle" className="sr-only peer" {...register("noIntervalSearch", {
-                        disabled: type === "keyword"
+                        disabled: (type === "keyword") || fantacitorio
                     })} />
-                    <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-600"></div>                    {type === "username" 
+                    <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-600"></div>
+                    {(type === "username") && !fantacitorio 
                     ? <span className="ml-3 text-sm font-medium text-black dark:text-white">Di sempre</span>
                     : <span className="ml-3 text-sm font-medium text-gray-400 dark:text-gray-500">Di sempre</span>}
                 </label>

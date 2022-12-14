@@ -8,7 +8,7 @@ const SearchPage = () => {
         dispatch(clearTweets())
     }, [dispatch])
     return (
-        <div className="min-h-screen h-auto" >
+        <div className="flex min-h-screen h-auto" >
             <SearchForm />    
         </div>
     );

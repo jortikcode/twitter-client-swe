@@ -1,7 +1,7 @@
-import { argv, exit } from 'node:process';
-import fetch from 'node-fetch';
-import fs from 'fs';
-import path, { dirname, join } from 'node:path';
+import { argv, exit } from "node:process";
+import fetch from "node-fetch";
+import fs from "fs";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -28,22 +28,33 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 */
 
 // Parametri mancanti
-if (argv.length !== 4){
-    console.log("Missing parameters\n","node writeResponseToFile.js {fileIdentifier} {apiUrlToSave}")
-    exit(-1);
+if (argv.length !== 4) {
+  console.log(
+    "Missing parameters\n",
+    "node writeResponseToFile.js {fileIdentifier} {apiUrlToSave}"
+  );
+  exit(-1);
 }
 const fileIdentifier = argv[2];
 const apiUrlToSave = argv[3];
 fetch(apiUrlToSave)
-.then(res => {
-    if (!res.ok)
-        throw new Error("Errore HTTP: " + res.status);
+  .then((res) => {
+    if (!res.ok) throw new Error("Errore HTTP: " + res.status);
     return res.text();
-})
-.then(JSONStringResponse => {
+  })
+  .then((JSONStringResponse) => {
     const buffer = `export const mock${fileIdentifier} = ` + JSONStringResponse;
     fs.writeFile(`mock${fileIdentifier}.js`, buffer, (err) => {
-        if (err) throw err;
-        console.log(`Il file di mock e' stato salvato in:\n ${path.join(__dirname, `mock${fileIdentifier}.js`)}`);
-    })
-})
+      if (err) throw err;
+      const mockPath = join(__dirname, `mock${fileIdentifier}.js`);
+      console.log(`Il file di mock e' stato salvato in:\n ${mockPath}`);
+    });
+  })
+  .catch(e => {
+    const buffer = `export const mock${fileIdentifier} = { error: "errore generico" }`;
+    fs.writeFile(`mock${fileIdentifier}.js`, buffer, (err) => {
+      if (err) throw err;
+      const mockPath = join(__dirname, `mock${fileIdentifier}.js`);
+      console.log(`Il file di mock e' stato salvato in:\n ${mockPath}`);
+    });  
+  });

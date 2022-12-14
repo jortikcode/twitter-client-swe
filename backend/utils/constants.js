@@ -131,3 +131,6 @@ export const POSITIVE_SENTIMENT = "POSITIVE_SENTIMENT";
 export const NEGATIVE_SENTIMENT = "NEGATIVE_SENTIMENT";
 export const NEUTRAL_SENTIMENT = "NEUTRAL_SENTIMENT";
 export const TRESHOLD_SCORE = 0;
+
+/* Politici */
+//export const 
