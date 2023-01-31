@@ -1,5 +1,5 @@
 # Twitter App
-
+![](https://github.com/jortikcode/twitter-client-swe/blob/main/docs/dummy_demo.gif)
 ## Descrizione
 L’obiettivo generico dell'applicazione è quello di raccogliere i tweet, organizzarli e analizzarli visualizzandoli in forma sintetica.
 Lo scopo è rilevare e classificare tweet che includono particolari parole chiave esaminando i tweet stessi. La raccolta può essere storica (es. ultima settimana) o in stream in tempo reale.
